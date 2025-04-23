@@ -64,7 +64,12 @@ class MainViewModel: ObservableObject {
         })
     }
 
-    func pause() { }
+    func pause() {
+        isRunning = false
+        timer?.invalidate()
+        timer = nil
+    }
+
     func reset() { }
     func switchMode() { }
     func setTime(from angle: Double) { }
