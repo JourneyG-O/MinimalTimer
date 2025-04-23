@@ -40,7 +40,30 @@ class MainViewModel: ObservableObject {
     }
 
     // 필요한 함수
-    func start() { }
+    func start() {
+        // 실행 중이거나 유효한 타이머가 없으면 중단
+        guard !isRunning, timers.indices.contains(selectedTimerIndex) else { return }
+
+        isRunning = true
+
+        timer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true, block: { [weak self] _ in
+            guard let self = self else { return }
+
+            guard self.timers.indices.contains(self.selectedTimerIndex) else {
+                self.pause()
+                return
+            }
+
+            // 시간 감소
+            self.timers[self.selectedTimerIndex].currentTime -= 1
+
+            // 시간이 0 이하가 되면 자동 정지
+            if self.timers[self.selectedTimerIndex].currentTime <= 0 {
+                self.pause()
+            }
+        })
+    }
+
     func pause() { }
     func reset() { }
     func switchMode() { }
