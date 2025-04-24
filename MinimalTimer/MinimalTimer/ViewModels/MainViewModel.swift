@@ -70,7 +70,12 @@ class MainViewModel: ObservableObject {
         timer = nil
     }
 
-    func reset() { }
+    func reset() {
+        guard timers.indices.contains(selectedTimerIndex) else { return }
+        pause()
+        timers[selectedTimerIndex].currentTime = timers[selectedTimerIndex].totalTime
+    }
+
     func switchMode() { }
     func setTime(from angle: Double) { }
 }
