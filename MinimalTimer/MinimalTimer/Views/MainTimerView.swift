@@ -34,7 +34,7 @@ struct MainTimerView: View {
                         .gesture(
                             DragGesture()
                                 .onChanged { value in
-                                    let center = CGPoint(x: size, y: size)
+                                    let center = CGPoint(x: size / 2, y: size / 2)
                                     let dx = value.location.x - center.x
                                     let dy = value.location.y - center.y
                                     let angle = atan2(dy, dx)
