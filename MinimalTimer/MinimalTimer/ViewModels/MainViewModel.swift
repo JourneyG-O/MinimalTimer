@@ -27,6 +27,11 @@ class MainViewModel: ObservableObject {
         return timers[selectedTimerIndex]
     }
 
+    var progress: CGFloat {
+        guard let timer = currentTimer, timer.totalTime > 0 else { return 0 }
+        return CGFloat(timer.currentTime / timer.totalTime)
+    }
+
     init() {
         // 개발 중 디버깅 용도로 기본 타이머 추가
         timers.append(
