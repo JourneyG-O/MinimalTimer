@@ -77,5 +77,15 @@ class MainViewModel: ObservableObject {
     }
 
     func switchMode() { }
-    func setTime(from angle: Double) { }
+    func setTime(from angle: Double) {
+        guard timers.indices.contains(selectedTimerIndex) else { return }
+
+        let maxTime: TimeInterval = timers[selectedTimerIndex].totalTime
+        let percentage = angle / 360
+        let newTime = maxTime * percentage
+
+        timers[selectedTimerIndex].currentTime = newTime
+        print(newTime)
+        pause()
+    }
 }

@@ -18,15 +18,37 @@ struct MainTimerView: View {
 
             Spacer()
 
-            Circle()
-                .fill(viewModel.currentTimer?.color ?? .gray)
-                .frame(width: 260, height: 260)
-                .onTapGesture(count: 1) {
-                    viewModel.isRunning ? viewModel.pause() : viewModel.start()
+            ZStack {
+                GeometryReader { geometry in
+                    let size = min(geometry.size.width, geometry.size.height)
+
+                    Circle()
+                        .fill(viewModel.currentTimer?.color ?? .gray)
+                        .frame(width: 260, height: 260)
+                        .onTapGesture(count: 1) {
+                            viewModel.isRunning ? viewModel.pause() : viewModel.start()
+                        }
+                        .onTapGesture(count: 2) {
+                            viewModel.reset()
+                        }
+                        .gesture(
+                            DragGesture()
+                                .onChanged { value in
+                                    let center = CGPoint(x: size, y: size)
+                                    let dx = value.location.x - center.x
+                                    let dy = value.location.y - center.y
+                                    let angle = atan2(dy, dx)
+                                    let degrees = angle * 180 / .pi
+                                    let adjusted = degrees < 0 ? degrees + 360 : degrees
+
+                                    viewModel.setTime(from: adjusted)
+                                }
+                        )
                 }
-                .onTapGesture(count: 2) {
-                    viewModel.reset()
-                }
+            }
+            .aspectRatio(1, contentMode: .fit)
+            .frame(width: 260, height: 260)
+
 
             Spacer()
 
