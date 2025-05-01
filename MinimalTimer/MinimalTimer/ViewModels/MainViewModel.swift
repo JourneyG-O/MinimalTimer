@@ -8,32 +8,40 @@
 import SwiftUI
 
 class MainViewModel: ObservableObject {
-    // 선택 된 타이머
+    // 선택된 타이머 리스트와 인덱스
     @Published var timers: [TimerModel] = []
     @Published var selectedTimerIndex = 0
 
-    // 타이머 실행 상태
+    // 실행 상태
     @Published var isRunning = false
-
-    // 타이머 전환 모드 상태
     @Published var isInSwitchMode: Bool = false
 
-    // 시간 제어용 타이머
+    // 드래그 상태 및 진행률 표시용 값
+    @Published var isDragging: Bool = false
+    @Published var userSetProgress: Double = 1.0
+
+    // wrap-around 방지용
+    @Published var previousAngle: Double = 0.0
+    @Published var maxMode: Bool = false
+    @Published var minMode: Bool = false
+
+    // 타이머 객체
     private var timer: Timer?
 
-    // 현재 선택된 타이머를 가져오는 계산 속성
+    // 현재 선택된 타이머 모델
     var currentTimer: TimerModel? {
         guard timers.indices.contains(selectedTimerIndex) else { return nil }
         return timers[selectedTimerIndex]
     }
 
+    // 현재 진행률 계산
     var progress: CGFloat {
         guard let timer = currentTimer, timer.totalTime > 0 else { return 0 }
-        return CGFloat(timer.currentTime / timer.totalTime)
+        let ratio = timer.currentTime / timer.totalTime
+        return CGFloat(min(max(ratio, 0.0), 1.0))
     }
 
     init() {
-        // 개발 중 디버깅 용도로 기본 타이머 추가
         timers.append(
             TimerModel(
                 title: "테스트 타이머",
@@ -44,29 +52,23 @@ class MainViewModel: ObservableObject {
         )
     }
 
-    // 필요한 함수
     func start() {
-        // 실행 중이거나 유효한 타이머가 없으면 중단
         guard !isRunning, timers.indices.contains(selectedTimerIndex) else { return }
-
         isRunning = true
 
-        timer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true, block: { [weak self] _ in
+        timer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { [weak self] _ in
             guard let self = self else { return }
-
             guard self.timers.indices.contains(self.selectedTimerIndex) else {
                 self.pause()
                 return
             }
 
-            // 시간 감소
             self.timers[self.selectedTimerIndex].currentTime -= 1
 
-            // 시간이 0 이하가 되면 자동 정지
             if self.timers[self.selectedTimerIndex].currentTime <= 0 {
                 self.pause()
             }
-        })
+        }
     }
 
     func pause() {
@@ -79,18 +81,40 @@ class MainViewModel: ObservableObject {
         guard timers.indices.contains(selectedTimerIndex) else { return }
         pause()
         timers[selectedTimerIndex].currentTime = timers[selectedTimerIndex].totalTime
+        userSetProgress = 1.0
+    }
+
+    func setUserProgress(from angle: Double) {
+        if previousAngle >= 340 && angle <= 30 {
+            setUserProgress(to: 1.0)
+            return
+        }
+        if previousAngle <= 20 && angle >= 330 {
+            setUserProgress(to: 0.0)
+            return
+        }
+
+        let progress = min(max(angle / 360, 0.0), 1.0)
+        setUserProgress(to: progress)
+        previousAngle = angle
+    }
+
+    func setUserProgress(to percentage: Double) {
+        guard timers.indices.contains(selectedTimerIndex) else { return }
+        let clamped = max(0.0, min(percentage, 1.0))
+        let maxTime = timers[selectedTimerIndex].totalTime
+        timers[selectedTimerIndex].currentTime = maxTime * clamped
+        userSetProgress = clamped
+        pause()
+    }
+
+    func syncUserProgressWithCurrentTime() {
+        guard timers.indices.contains(selectedTimerIndex) else { return }
+        let timer = timers[selectedTimerIndex]
+        let ratio = max(0.0, min(timer.currentTime / timer.totalTime, 1.0))
+        userSetProgress = ratio
     }
 
     func switchMode() { }
-    func setTime(from angle: Double) {
-        guard timers.indices.contains(selectedTimerIndex) else { return }
-
-        let maxTime: TimeInterval = timers[selectedTimerIndex].totalTime
-        let percentage = angle / 360
-        let newTime = maxTime * percentage
-
-        timers[selectedTimerIndex].currentTime = newTime
-        print(newTime)
-        pause()
-    }
 }
+
