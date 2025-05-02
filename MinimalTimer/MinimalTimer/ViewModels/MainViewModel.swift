@@ -85,11 +85,11 @@ class MainViewModel: ObservableObject {
     }
 
     func setUserProgress(from angle: Double) {
-        if previousAngle >= 340 && angle <= 30 {
+        if previousAngle >= 270 && angle <= 180 {
             setUserProgress(to: 1.0)
             return
         }
-        if previousAngle <= 20 && angle >= 330 {
+        if previousAngle <= 90 && angle >= 180 {
             setUserProgress(to: 0.0)
             return
         }
