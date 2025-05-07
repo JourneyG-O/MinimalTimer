@@ -7,13 +7,6 @@
 
 import SwiftUI
 
-enum TimerInteractionMode {
-    case normal
-    case switchMode
-    case create
-    case edit(index: Int)
-}
-
 struct MainTimerView: View {
     @ObservedObject var viewModel: MainViewModel
 

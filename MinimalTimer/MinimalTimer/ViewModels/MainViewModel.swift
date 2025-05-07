@@ -7,6 +7,13 @@
 
 import SwiftUI
 
+enum InteractionMode: Equatable {
+    case normal
+    case edit
+    case create
+    case editTimer(index: Int)
+}
+
 class MainViewModel: ObservableObject {
     // 선택된 타이머
     @Published var timers: [TimerModel] = []
@@ -14,6 +21,8 @@ class MainViewModel: ObservableObject {
 
     // 타이머 실행 상태
     @Published var isRunning: Bool = false
+
+    @Published var intercationMode: InteractionMode = .normal
 
     // 타이머 객체
     private var timer: Timer?
