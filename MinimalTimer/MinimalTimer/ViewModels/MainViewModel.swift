@@ -8,25 +8,21 @@
 import SwiftUI
 
 class MainViewModel: ObservableObject {
-    // 선택된 타이머 리스트와 인덱스
+    // 선택된 타이머
     @Published var timers: [TimerModel] = []
-    @Published var selectedTimerIndex = 0
+    @Published var selectedTimerIndex: Int = 0
 
-    // 실행 상태
-    @Published var isRunning = false
-    @Published var isInSwitchMode: Bool = false
-
-    // 드래그 상태 및 진행률 표시용 값
-    @Published var isDragging: Bool = false
-    @Published var userSetProgress: Double = 1.0
-
-    // wrap-around 방지용
-    @Published var previousAngle: Double = 0.0
-    @Published var maxMode: Bool = false
-    @Published var minMode: Bool = false
+    // 타이머 실행 상태
+    @Published var isRunning: Bool = false
 
     // 타이머 객체
     private var timer: Timer?
+
+    // 현재 진행률 계산
+    var progress: CGFloat {
+        guard let timer = currentTimer, timer.totalTime > 0 else { return 0 }
+        return CGFloat(timer.currentTime / timer.totalTime)
+    }
 
     // 현재 선택된 타이머 모델
     var currentTimer: TimerModel? {
@@ -34,19 +30,17 @@ class MainViewModel: ObservableObject {
         return timers[selectedTimerIndex]
     }
 
-    // 현재 진행률 계산
-    var progress: CGFloat {
-        guard let timer = currentTimer, timer.totalTime > 0 else { return 0 }
-        let ratio = timer.currentTime / timer.totalTime
-        return CGFloat(min(max(ratio, 0.0), 1.0))
-    }
+    // wrap-around 방지용
+    private var previousAngle: Double = 0.0
+    private var maxMode: Bool = false
+    private var minMode: Bool = false
 
     init() {
         timers.append(
             TimerModel(
                 title: "테스트 타이머",
-                totalTime: 60 * 5,
-                currentTime: 60 * 5,
+                totalTime: 60 * 30,
+                currentTime: 60 * 30,
                 color: .blue
             )
         )
@@ -58,6 +52,7 @@ class MainViewModel: ObservableObject {
 
         timer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { [weak self] _ in
             guard let self = self else { return }
+
             guard self.timers.indices.contains(self.selectedTimerIndex) else {
                 self.pause()
                 return
@@ -78,43 +73,37 @@ class MainViewModel: ObservableObject {
     }
 
     func reset() {
-        guard timers.indices.contains(selectedTimerIndex) else { return }
-        pause()
-        timers[selectedTimerIndex].currentTime = timers[selectedTimerIndex].totalTime
-        userSetProgress = 1.0
-    }
-
-    func setUserProgress(from angle: Double) {
-        if previousAngle >= 270 && angle <= 180 {
-            setUserProgress(to: 1.0)
-            return
-        }
-        if previousAngle <= 90 && angle >= 180 {
-            setUserProgress(to: 0.0)
-            return
+            guard timers.indices.contains(selectedTimerIndex) else { return }
+            pause()
+            timers[selectedTimerIndex].currentTime = timers[selectedTimerIndex].totalTime
         }
 
-        let progress = min(max(angle / 360, 0.0), 1.0)
-        setUserProgress(to: progress)
-        previousAngle = angle
-    }
+        func setUserProgress(to percentage: Double) {
+            guard timers.indices.contains(selectedTimerIndex) else { return }
 
-    func setUserProgress(to percentage: Double) {
-        guard timers.indices.contains(selectedTimerIndex) else { return }
-        let clamped = max(0.0, min(percentage, 1.0))
-        let maxTime = timers[selectedTimerIndex].totalTime
-        timers[selectedTimerIndex].currentTime = maxTime * clamped
-        userSetProgress = clamped
-        pause()
-    }
+            let clamped = min(max(percentage, 0.0), 1.0)
+            timers[selectedTimerIndex].currentTime = timers[selectedTimerIndex].totalTime * clamped
 
-    func syncUserProgressWithCurrentTime() {
-        guard timers.indices.contains(selectedTimerIndex) else { return }
-        let timer = timers[selectedTimerIndex]
-        let ratio = max(0.0, min(timer.currentTime / timer.totalTime, 1.0))
-        userSetProgress = ratio
-    }
+            pause()
+        }
 
-    func switchMode() { }
+        func setUserProgress(from angle: Double) {
+            if previousAngle >= 270 && angle <= 180 {
+                setUserProgress(to: 1.0)
+                return
+            }
+            if previousAngle <= 90 && angle >= 180 {
+                setUserProgress(to: 0.0)
+                return
+            }
+
+            let progress = min(max(angle / 360, 0.0), 1.0)
+            setUserProgress(to: progress)
+            previousAngle = angle
+        }
+
+        func switchMode() {
+            // 화면 전환용 편집 모드 로직 등 여기에 구현 가능
+        }
 }
 
