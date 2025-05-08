@@ -22,7 +22,7 @@ class MainViewModel: ObservableObject {
     // 타이머 실행 상태
     @Published var isRunning: Bool = false
 
-    @Published var intercationMode: InteractionMode = .normal
+    @Published var interactionMode: InteractionMode = .normal
 
     // 타이머 객체
     private var timer: Timer?
@@ -56,7 +56,7 @@ class MainViewModel: ObservableObject {
     }
 
     func switchMode() {
-        intercationMode = .switchMode
+        interactionMode = .switchMode
     }
 
     func start() {
@@ -113,10 +113,6 @@ class MainViewModel: ObservableObject {
             let progress = min(max(angle / 360, 0.0), 1.0)
             setUserProgress(to: progress)
             previousAngle = angle
-        }
-
-        func switchMode() {
-            // 화면 전환용 편집 모드 로직 등 여기에 구현 가능
         }
 }
 
