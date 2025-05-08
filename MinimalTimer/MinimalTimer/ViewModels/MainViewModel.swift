@@ -9,9 +9,9 @@ import SwiftUI
 
 enum InteractionMode: Equatable {
     case normal
-    case edit
-    case create
-    case editTimer(index: Int)
+    case switchMode // 롱탭시 진입
+    case create // 새로운 타이머 생성
+    case editTimer(index: Int) // 기존 타이머 수정
 }
 
 class MainViewModel: ObservableObject {
@@ -53,6 +53,10 @@ class MainViewModel: ObservableObject {
                 color: .blue
             )
         )
+    }
+
+    func switchMode() {
+        intercationMode = .switchMode
     }
 
     func start() {
