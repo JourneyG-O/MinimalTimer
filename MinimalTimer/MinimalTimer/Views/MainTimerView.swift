@@ -13,7 +13,7 @@ struct MainTimerView: View {
     var body: some View {
         NavigationStack {
             VStack(spacing: 20) {
-                TimerContnetView(viewModel: viewModel)
+                TimerContentView(viewModel: viewModel)
                     .frame(maxHeight: .infinity)
                 Spacer()
                 RemainingTimeView(viewModel: viewModel)
