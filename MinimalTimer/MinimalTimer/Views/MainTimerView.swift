@@ -61,10 +61,7 @@ struct MainTimerView: View {
                 .frame(height: 280)
             }
         case . switchMode:
-            // CarouselView 예정
-            Text("타이머 전환 모드입니다.")
-                .font(.title2)
-                .foregroundColor(.gray)
+            TimerCarouselView(viewModel: viewModel)
         default:
             EmptyView()
         }

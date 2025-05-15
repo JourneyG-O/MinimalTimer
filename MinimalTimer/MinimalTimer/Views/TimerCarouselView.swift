@@ -10,19 +10,34 @@ import SwiftUI
 struct TimerCarouselView: View {
     @ObservedObject var viewModel: MainViewModel
 
-    var timers: [TimerModel] {
-            viewModel.timers
-        }
-
-
     var body: some View {
-        ScrollView(.horizontal) {
-            ForEach(timers, id: \.id) { item in
-                
+        ScrollView(.horizontal, showsIndicators: false) {
+            LazyHStack(spacing: 20) {
+                ForEach(Array(viewModel.timers.enumerated()), id: \.element.id) { index, timer in
+                    TimerContentView(
+                        timer: timer,
+                        progress: 1,
+                        isInteractive: false,
+                        onSingleTap: {
+                            withAnimation {
+                                viewModel.selectedTimerIndex = index
+                                viewModel.interactionMode = .normal
+                            }
+                        },
+                        onDoubleTap: nil,
+                        onDrag: nil
+                    )
+                    .frame(width: index == viewModel.selectedTimerIndex ? 240 : 160)
+                    .scaleEffect(index == viewModel.selectedTimerIndex ? 1.0 : 0.85)
+                    .opacity(index == viewModel.selectedTimerIndex ? 1.0 : 0.6)
+                }
             }
+            .padding(.horizontal, 32)
         }
     }
 }
+
+
 //
 //ScrollView(.horizontal) {
 //    LazyHStack(spacing: 20) {
