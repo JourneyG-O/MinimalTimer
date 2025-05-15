@@ -45,14 +45,38 @@ class MainViewModel: ObservableObject {
     private var minMode: Bool = false
 
     init() {
-        timers.append(
+        timers = [
             TimerModel(
-                title: "테스트 타이머",
+                title: "테스트 타이머1",
                 totalTime: 60 * 30,
                 currentTime: 60 * 30,
                 color: .blue
+            ),
+            TimerModel(
+                title: "테스트 타이머",
+                totalTime: 60 * 60,
+                currentTime: 60 * 60,
+                color: .blue
+            ),
+            TimerModel(
+                title: "테스트 타이머",
+                totalTime: 60 * 120,
+                currentTime: 60 * 120,
+                color: .blue
+            ),
+            TimerModel(
+                title: "테스트 타이머",
+                totalTime: 60 * 50,
+                currentTime: 60 * 50,
+                color: .blue
+            ),
+            TimerModel(
+                title: "테스트 타이머",
+                totalTime: 60 * 5,
+                currentTime: 60 * 5,
+                color: .blue
             )
-        )
+        ]
     }
 
     func switchMode() {

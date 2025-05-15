@@ -8,7 +8,14 @@
 import SwiftUI
 
 struct TimerContentView: View {
-    @ObservedObject var viewModel: MainViewModel
+    let timer: TimerModel
+    let progress: CGFloat
+    let isInteractive: Bool
+
+    // Interaction 콜백
+    let onSingleTap: (() -> Void)?
+    let onDoubleTap: (() -> Void)?
+    let onDrag: ((Double) -> Void)?
 
     var body: some View {
         GeometryReader { geometry in
@@ -16,42 +23,45 @@ struct TimerContentView: View {
             let center = CGPoint(x: geometry.size.width / 2, y: geometry.size.height / 2)
 
             ZStack {
-                PieShape(progress: viewModel.progress)
-                    .fill(viewModel.currentTimer?.color ?? .blue)
+                // 남은 시간 표시용 PieShape
+                PieShape(progress: progress)
+                    .fill(timer.color)
 
-                Circle()
-                    .fill(Color.clear)
-                    .contentShape(Circle())
-                    .gesture(
-                        DragGesture()
-                            .onChanged { value in
-                                let angle = angleFrom(center: center, to: value.location)
-                                viewModel.setUserProgress(from: angle)
-                            }
-                    )
-                    .onTapGesture(count: 1) {
-                        viewModel.isRunning ? viewModel.pause() : viewModel.start()
-                    }
-                    .onTapGesture(count: 2) {
-                        viewModel.reset()
-                    }
+                // 상호작용 레이어 (재사용 가능한 뷰 블럭으로 분리)
+                interactionLayer(center: center)
             }
             .frame(width: size, height: size)
             .position(x: geometry.size.width / 2, y: geometry.size.height / 2)
         }
-        .frame(height: 280)
     }
 
-    // 드래그 위치를 각도로 변환
-    func angleFrom(center: CGPoint, to point: CGPoint) -> Double {
-        let dx = point.x - center.x
-        let dy = point.y - center.y
-        var angle = atan2(dy, dx) * 180 / .pi
-        angle = angle < -90 ? angle + 450 : angle + 90
-        return min(max(angle, 0), 360)
-    }
-}
+    // 터치 / 드래그 입력을 처리하는 레이어
+    @ViewBuilder
+    private func interactionLayer(center: CGPoint) -> some View {
+        let baseCircle = Circle()
+            .fill(Color.clear)
+            .contentShape(Circle())
 
-#Preview {
-    TimerContentView(viewModel: .init())
+        if isInteractive {
+            baseCircle
+                .gesture(
+                    DragGesture()
+                        .onChanged { value in
+                            let angle = center.angle(to: value.location)
+                            onDrag?(angle)
+                        }
+                )
+                .onTapGesture(count: 1) {
+                    onSingleTap?()
+                }
+                .onTapGesture(count: 2) {
+                    onDoubleTap?()
+                }
+        } else {
+            baseCircle
+                .onTapGesture {
+                    onSingleTap?()
+                }
+        }
+    }
 }
