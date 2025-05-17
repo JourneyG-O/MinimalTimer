@@ -7,12 +7,12 @@
 
 import SwiftUI
 
-enum InteractionMode: Equatable {
-    case normal
-    case switchMode // 롱탭시 진입
-    case create // 새로운 타이머 생성
-    case editTimer(index: Int) // 기존 타이머 수정
-}
+//enum InteractionMode: Equatable {
+//    case normal
+//    case switchMode // 롱탭시 진입
+//    case create // 새로운 타이머 생성
+//    case editTimer(index: Int) // 기존 타이머 수정
+//}
 
 class MainViewModel: ObservableObject {
     // 선택된 타이머
@@ -22,7 +22,7 @@ class MainViewModel: ObservableObject {
     // 타이머 실행 상태
     @Published var isRunning: Bool = false
 
-    @Published var interactionMode: InteractionMode = .normal
+//    @Published var interactionMode: InteractionMode = .normal
 
     // 타이머 객체
     private var timer: Timer?
@@ -79,9 +79,9 @@ class MainViewModel: ObservableObject {
         ]
     }
 
-    func switchMode() {
-        interactionMode = .switchMode
-    }
+//    func switchMode() {
+//        interactionMode = .switchMode
+//    }
 
     func start() {
         guard !isRunning, timers.indices.contains(selectedTimerIndex) else { return }

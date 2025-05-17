@@ -24,47 +24,54 @@ struct MainTimerView: View {
             .padding()
             .navigationTitle(viewModel.currentTimer?.title ?? "Minimal Timer")
             .navigationBarTitleDisplayMode(.inline)
-            .background(
-                Color.clear
-                    .contentShape(Rectangle())
-                    .gesture(
-                        LongPressGesture(minimumDuration: 0.5)
-                            .onEnded { _ in
-                                withAnimation {
-                                    viewModel.switchMode()
-                                }
-                            }
-                    )
-            )
+//            .background(
+//                Color.clear
+//                    .contentShape(Rectangle())
+//                    .gesture(
+//                        LongPressGesture(minimumDuration: 0.5)
+//                            .onEnded { _ in
+//                                withAnimation {
+//                                    viewModel.switchMode()
+//                                }
+//                            }
+//                    )
+//            )
         }
     }
 
     @ViewBuilder
     var timerDisplayView: some View {
+        if let timer = viewModel.currentTimer {
+            TimerContentView(
+                timer: timer,
+                progress: viewModel.progress,
+                isInteractive: true,
+                onSingleTap: {
+                    viewModel.isRunning ? viewModel.pause() : viewModel.start()
+                },
+                onDoubleTap: {
+                    viewModel.reset()
+                },
+                onDrag: { angle in
+                    viewModel.setUserProgress(from: angle)
+                }
+            )
+            .frame(height: 280)
+        }
+
+        // 향후 확장용 코드 - v1 출시에서는 사용 안함
+        /*
         switch viewModel.interactionMode {
         case .normal:
             if let timer = viewModel.currentTimer {
-                TimerContentView(
-                    timer: timer,
-                    progress: viewModel.progress,
-                    isInteractive: true,
-                    onSingleTap: {
-                        viewModel.isRunning ? viewModel.pause() : viewModel.start()
-                    },
-                    onDoubleTap: {
-                        viewModel.reset()
-                    },
-                    onDrag: { angle in
-                        viewModel.setUserProgress(from: angle)
-                    }
-                )
-                .frame(height: 280)
+                ...
             }
-        case . switchMode:
+        case .switchMode:
             TimerCarouselView(viewModel: viewModel)
         default:
             EmptyView()
         }
+        */
     }
 }
 
