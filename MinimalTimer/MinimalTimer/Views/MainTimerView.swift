@@ -42,6 +42,7 @@ struct MainTimerView: View {
                                     }
                                 )
                                 .frame(width: size, height: size)
+                                .shadow(color: .black.opacity(0.5), radius: 4, x: 4, y: 4)
                                 .opacity(viewModel.isRunning ? 1.0 : 0.5)
                                 .animation(.easeInOut(duration: 0.25), value: viewModel.isRunning)
                             }
