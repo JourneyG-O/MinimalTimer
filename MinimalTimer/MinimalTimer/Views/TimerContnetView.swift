@@ -10,21 +10,39 @@ import SwiftUI
 struct TimerContentView: View {
     let timer: TimerModel
     let progress: CGFloat
-    let size: CGFloat
+    let diameter: CGFloat
 
     var body: some View {
-        GeometryReader { geometry in
-            let size = min(geometry.size.width, geometry.size.height)
-            let center = CGPoint(x: geometry.size.width / 2, y: geometry.size.height / 2)
+        styledTimerBody()
+            .frame(width: diameter)
+    }
 
+    @ViewBuilder
+    private func styledTimerBody() -> some View {
+        switch timer.style {
+        case .neumorphic:
             ZStack {
-                // 남은 시간 표시용 PieShape
+                // 스타일 데코
+                Circle()
+                    .fill(Color.gray.opacity(0.1))
+                    .frame(width: diameter)
+                    .shadow(radius: 8)
+
+                // 진행률 표시
                 PieShape(progress: progress)
                     .fill(timer.color)
-
+                    .frame(width: diameter * 0.8)
             }
-            .frame(width: size, height: size)
-            .position(x: geometry.size.width / 2, y: geometry.size.height / 2)
+        case .flat:
+            // 진행률 표시
+            PieShape(progress: progress)
+                .fill(timer.color)
+                .frame(width: diameter)
+        case . dial:
+            // 진행률 표시
+            PieShape(progress: progress)
+                .fill(timer.color)
+                .frame(width: diameter)
         }
     }
 }

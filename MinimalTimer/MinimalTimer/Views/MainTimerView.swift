@@ -15,8 +15,16 @@ struct MainTimerView: View {
             ZStack {
                 GeometryReader { geometry in
                     let width = geometry.size.width
-                    // 원형 타이머
-                    // TimerContentView()
+
+                    if let timer = viewModel.currentTimer {
+                        // 원형 타이머
+                        TimerContentView(
+                            timer: timer,
+                            progress: viewModel.progress,
+                            diameter: width * 0.8
+                        )
+                    }
+
 
                     // 남은 시간
                     // RemainingTimeView()
