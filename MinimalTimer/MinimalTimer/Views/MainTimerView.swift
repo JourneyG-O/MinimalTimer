@@ -10,6 +10,40 @@ struct MainTimerView: View {
     @ObservedObject var viewModel: MainViewModel
 
     var body: some View {
+
+        NavigationStack {
+            ZStack {
+                GeometryReader { geometry in
+                    let width = geometry.size.width
+                    // 원형 타이머
+                    // TimerContentView()
+
+                    // 남은 시간
+                    // RemainingTimeView()
+
+                    // 타이머 인터랙션을 받을 뷰
+                    TimerInteractionView(
+                        isInteractive: true,
+                        diameter: width * 0.8,
+                        onSingleTap: {
+                            viewModel.isRunning ? viewModel.pause() : viewModel.start()
+                        },
+                        onDoubleTap: {
+                            viewModel.reset()
+                        },
+                        onDrag: { angle in
+                            viewModel.setUserProgress(from: angle)
+                        }
+                    )
+                }
+
+            }
+        }
+
+
+        // TODO: 리팩토링 전 구조 참고용, v1 UI 완성 후 삭제 예정
+        // MARK: - Legacy 타이머 UI 구조
+        /*
         NavigationStack {
             VStack {
                 Spacer()
@@ -62,6 +96,7 @@ struct MainTimerView: View {
             .navigationTitle(viewModel.currentTimer?.title ?? "Minimal Timer")
             .navigationBarTitleDisplayMode(.inline)
         }
+        */
     }
 }
 
