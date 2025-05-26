@@ -17,17 +17,18 @@ struct TimerInteractionView: View {
     let onDrag: ((Double) -> Void)?
 
     var body: some View {
-        let baseCircle = Circle()
-            .fill(Color.clear)
-            .frame(width: diameter, height: diameter)
-            .contentShape(Circle())
 
         if isInteractive {
-            baseCircle
+            Circle()
+                .fill(Color.clear)
+                .frame(width: diameter, height: diameter)
+                .contentShape(Circle())
                 .gesture(
                     DragGesture()
                         .onChanged { value in
-                            let angle = CGPoint(x: diameter / 2, y: diameter / 2).angle(to: value.location)
+                            let location = value.location
+                            let centerPoint = CGPoint(x: diameter / 2, y: diameter / 2)
+                            let angle = centerPoint.angle(to: location)
                             onDrag?(angle)
                         }
                 )
@@ -38,9 +39,14 @@ struct TimerInteractionView: View {
                     onDoubleTap?()
                 }
         } else {
-            baseCircle.onTapGesture {
-                onSingleTap?()
-            }
+            Circle()
+                .fill(Color.black)
+                .frame(width: diameter, height: diameter)
+                .contentShape(Circle())
+                .onTapGesture {
+                    onSingleTap?()
+                }
         }
     }
 }
+
