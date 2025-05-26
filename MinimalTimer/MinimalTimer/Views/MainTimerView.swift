@@ -16,6 +16,8 @@ struct MainTimerView: View {
                 let diameter = width * 0.8
 
                 ZStack {
+                    Color.smoke.ignoresSafeArea()
+
                     if let timer = viewModel.currentTimer {
                         TimerContentView(viewModel: viewModel,timer: timer, progress: viewModel.progress, diameter: diameter)
                     }

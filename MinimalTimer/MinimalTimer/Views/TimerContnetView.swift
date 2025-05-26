@@ -25,15 +25,27 @@ struct TimerContentView: View {
         case .neumorphic:
             ZStack {
                 // 스타일 데코
-                Circle()
-                    .fill(Color.gray.opacity(0.1))
-                    .frame(width: diameter)
-                    .shadow(radius: 8)
+                if viewModel.isRunning {
+                    Circle()
+                        .fill(
+                            Color.smoke
+                                .shadow(.inner(color: .white.opacity(0.6), radius: 6, x: -6, y: -6))
+                                .shadow(.inner(color: .gray.opacity(0.6), radius: 6, x: 6, y: 6))
+                        )
+                        .frame(width: diameter)
+                } else {
+                    Circle()
+                        .fill(Color.smoke)
+                        .frame(width: diameter)
+                        .shadow(color: .white.opacity(0.6), radius: 6, x: -6, y: -6)
+                        .shadow(color: .gray.opacity(0.6), radius: 6, x: 6, y: 6)
+                }
+
 
                 // 진행률 표시
                 PieShape(progress: progress)
                     .fill(timer.color)
-                    .frame(width: diameter * 0.8)
+                    .frame(width: diameter * 0.9)
             }
         case .flat:
             // 진행률 표시
