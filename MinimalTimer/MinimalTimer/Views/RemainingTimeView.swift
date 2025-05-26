@@ -13,6 +13,8 @@ struct RemainingTimeView: View {
     var body: some View {
         Text(formatTime(viewModel.currentTimer?.currentTime ?? 0))
             .font(.system(size: 28, weight: .bold, design: .rounded))
+            .opacity(viewModel.isRunning ? 1.0 : 0.5)
+            .animation(.easeInOut(duration: 0.25), value: viewModel.isRunning)
     }
 
     func formatTime(_ timeInterval: TimeInterval) -> String {

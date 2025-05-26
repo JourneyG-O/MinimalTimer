@@ -33,18 +33,21 @@ struct TimerContentView: View {
                                 .shadow(.inner(color: .gray.opacity(0.6), radius: 6, x: 6, y: 6))
                         )
                         .frame(width: diameter)
+                        .animation(.easeInOut(duration: 0.25), value: viewModel.isRunning)
                 } else {
                     Circle()
                         .fill(Color.smoke)
                         .frame(width: diameter)
                         .shadow(color: .white.opacity(0.6), radius: 6, x: -6, y: -6)
                         .shadow(color: .gray.opacity(0.6), radius: 6, x: 6, y: 6)
+                        .animation(.easeInOut(duration: 0.25), value: viewModel.isRunning)
                 }
 
 
                 // 진행률 표시
                 PieShape(progress: progress)
                     .fill(viewModel.isRunning ? timer.color : timer.color.opacity(0.3))
+                    .animation(.easeInOut(duration: 0.25), value: viewModel.isRunning)
                     .frame(width: diameter * 0.9)
             }
         case .flat:

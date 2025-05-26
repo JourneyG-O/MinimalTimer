@@ -28,7 +28,9 @@ struct MainTimerView: View {
                         onSingleTap: {
                             viewModel.isRunning ? viewModel.pause() : viewModel.start()
                         }, onDoubleTap: {
-                            viewModel.reset()
+                            withAnimation(.easeInOut(duration: 0.25)) {
+                                    viewModel.reset()
+                                }
                         }, onDrag: { angle in
                             viewModel.setUserProgress(from: angle)
                         }
