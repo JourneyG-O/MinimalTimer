@@ -8,6 +8,8 @@
 import SwiftUI
 
 struct TimerContentView: View {
+    @ObservedObject var viewModel: MainViewModel
+
     let timer: TimerModel
     let progress: CGFloat
     let diameter: CGFloat

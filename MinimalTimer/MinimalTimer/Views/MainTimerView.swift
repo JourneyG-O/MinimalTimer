@@ -17,7 +17,7 @@ struct MainTimerView: View {
 
                 ZStack {
                     if let timer = viewModel.currentTimer {
-                        TimerContentView(timer: timer, progress: viewModel.progress, diameter: diameter)
+                        TimerContentView(viewModel: viewModel,timer: timer, progress: viewModel.progress, diameter: diameter)
                     }
 
                     TimerInteractionView(
