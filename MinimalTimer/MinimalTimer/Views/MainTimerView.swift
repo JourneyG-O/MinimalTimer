@@ -32,8 +32,8 @@ struct MainTimerView: View {
                         }
                     )
 
-                    Text("Hello")
-                        .offset(y: width / 2 + 20) // 중심에서 아래로 120pt (반지름 100 + 여유 20)
+                    RemainingTimeView(viewModel: viewModel)
+                        .offset(y: width / 2 + 10)
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
             }

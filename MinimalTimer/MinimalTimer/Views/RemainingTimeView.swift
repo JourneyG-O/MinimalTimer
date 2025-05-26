@@ -12,7 +12,7 @@ struct RemainingTimeView: View {
 
     var body: some View {
         Text(formatTime(viewModel.currentTimer?.currentTime ?? 0))
-            .font(.system(size: 48, weight: .bold, design: .monospaced))
+            .font(.system(size: 28, weight: .bold, design: .rounded))
     }
 
     func formatTime(_ timeInterval: TimeInterval) -> String {
