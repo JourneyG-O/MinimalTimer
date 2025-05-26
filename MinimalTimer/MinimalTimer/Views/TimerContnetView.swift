@@ -44,7 +44,7 @@ struct TimerContentView: View {
 
                 // 진행률 표시
                 PieShape(progress: progress)
-                    .fill(timer.color)
+                    .fill(viewModel.isRunning ? timer.color : timer.color.opacity(0.3))
                     .frame(width: diameter * 0.9)
             }
         case .flat:
