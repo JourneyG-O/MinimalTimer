@@ -47,31 +47,31 @@ class MainViewModel: ObservableObject {
     init() {
         timers = [
             TimerModel(
-                title: "테스트 타이머1",
+                title: "Test Timer1",
                 totalTime: 60 * 30,
                 currentTime: 60 * 30,
                 color: .blue
             ),
             TimerModel(
-                title: "테스트 타이머",
+                title: "Test Timer2",
                 totalTime: 60 * 60,
                 currentTime: 60 * 60,
                 color: .blue
             ),
             TimerModel(
-                title: "테스트 타이머",
+                title: "Test Timer3",
                 totalTime: 60 * 120,
                 currentTime: 60 * 120,
                 color: .blue
             ),
             TimerModel(
-                title: "테스트 타이머",
+                title: "Test Timer4",
                 totalTime: 60 * 50,
                 currentTime: 60 * 50,
                 color: .blue
             ),
             TimerModel(
-                title: "테스트 타이머",
+                title: "Test Timer5",
                 totalTime: 60 * 5,
                 currentTime: 60 * 5,
                 color: .blue

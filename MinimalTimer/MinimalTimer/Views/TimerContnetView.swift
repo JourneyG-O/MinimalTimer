@@ -21,44 +21,23 @@ struct TimerContentView: View {
 
     @ViewBuilder
     private func styledTimerBody() -> some View {
-        switch timer.style {
-        case .neumorphic:
-            ZStack {
-                // 스타일 데코
-                if viewModel.isRunning {
-                    Circle()
-                        .fill(
-                            Color.smoke
-                                .shadow(.inner(color: .white.opacity(0.6), radius: 6, x: -6, y: -6))
-                                .shadow(.inner(color: .gray.opacity(0.6), radius: 6, x: 6, y: 6))
-                        )
-                        .frame(width: diameter)
-                        .animation(.easeInOut(duration: 0.25), value: viewModel.isRunning)
-                } else {
-                    Circle()
-                        .fill(Color.smoke)
-                        .frame(width: diameter)
-                        .shadow(color: .white.opacity(0.6), radius: 6, x: -6, y: -6)
-                        .shadow(color: .gray.opacity(0.6), radius: 6, x: 6, y: 6)
-                        .animation(.easeInOut(duration: 0.25), value: viewModel.isRunning)
-                }
 
+        ZStack {
 
-                // 진행률 표시
-                PieShape(progress: progress)
-                    .fill(viewModel.isRunning ? timer.color : timer.color.opacity(0.3))
-                    .animation(.easeInOut(duration: 0.25), value: viewModel.isRunning)
-                    .frame(width: diameter * 0.9)
-            }
-        case .flat:
-            // 진행률 표시
-            PieShape(progress: progress)
-                .fill(timer.color)
+            // 배경 원
+            Circle()
+                .fill(
+                    Color.smoke
+                        .shadow(.inner(color: .white.opacity(0.6), radius: 6, x: -6, y: -6))
+                        .shadow(.inner(color: .gray.opacity(0.6), radius: 6, x: 6, y: 6))
+                )
                 .frame(width: diameter)
-        case . dial:
+                .animation(.easeInOut(duration: 0.25), value: viewModel.isRunning)
+
             // 진행률 표시
             PieShape(progress: progress)
-                .fill(timer.color)
+                .fill(viewModel.isRunning ? timer.color.opacity(0.6) : timer.color.opacity(0.3))
+                .animation(.easeInOut(duration: 0.25), value: viewModel.isRunning)
                 .frame(width: diameter)
         }
     }
