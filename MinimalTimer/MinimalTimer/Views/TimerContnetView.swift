@@ -24,11 +24,19 @@ struct TimerContentView: View {
 
         ZStack {
 
+            Circle()
+                .fill(Color.clear)
+                .frame(width: diameter + 8)
+
+            Circle()
+                .fill(Color.white.opacity(0.7))
+                .frame(width: diameter)
+                .offset(x: 4, y: 4)
+
             // 배경 원
             Circle()
                 .fill(
                     Color.smoke
-                        .shadow(.inner(color: .white.opacity(0.6), radius: 6, x: -6, y: -6))
                         .shadow(.inner(color: .gray.opacity(0.6), radius: 6, x: 6, y: 6))
                 )
                 .frame(width: diameter)
