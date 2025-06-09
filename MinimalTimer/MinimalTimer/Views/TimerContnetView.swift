@@ -26,11 +26,11 @@ struct TimerContentView: View {
 
             Circle()
                 .fill(Color.clear)
-                .frame(width: diameter + 8)
+                .frame(width: diameter + 8, height: diameter + 8)
 
             Circle()
                 .fill(Color.white.opacity(0.7))
-                .frame(width: diameter)
+                .frame(width: diameter, height: diameter)
                 .offset(x: 4, y: 4)
 
             // 배경 원
@@ -39,14 +39,14 @@ struct TimerContentView: View {
                     Color.smoke
                         .shadow(.inner(color: .gray.opacity(0.6), radius: 6, x: 6, y: 6))
                 )
-                .frame(width: diameter)
+                .frame(width: diameter, height: diameter)
                 .animation(.easeInOut(duration: 0.25), value: viewModel.isRunning)
 
             // 진행률 표시
             PieShape(progress: progress)
                 .fill(viewModel.isRunning ? timer.color.opacity(0.6) : timer.color.opacity(0.3))
                 .animation(.easeInOut(duration: 0.25), value: viewModel.isRunning)
-                .frame(width: diameter)
+                .frame(width: diameter, height: diameter)
         }
     }
 }
