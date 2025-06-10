@@ -18,14 +18,15 @@ struct MainTimerView: View {
                 Color.smoke.ignoresSafeArea()
                 VStack {
 
-                    Spacer().frame(height: geometry.size.height * 0.05) // 타이틀 아래 여백
+                    Spacer()
 
                     // 타이틀
                     Text("Minimal Timer")
-                        .font(.largeTitle)
+                        .font(.system(size: 40, weight: .bold, design: .rounded))
                         .fontWeight(.semibold)
+                        .foregroundColor(.black)
 
-                    Spacer().frame(height: geometry.size.height * 0.15) // 타이틀 아래 여백
+                    Spacer()
 
                     ZStack {
                         if let timer = viewModel.currentTimer {
@@ -47,22 +48,19 @@ struct MainTimerView: View {
                         )
                     }
 
-                    Spacer().frame(height: geometry.size.height * 0.02)
-
-                    // 상태 텍스트 (정지 중일 때만)
-                    Text("Paused")
-                        .font(.body)
-                        .foregroundColor(viewModel.isRunning ? .clear : .gray)
-                        .transition(.opacity)
-
                     Spacer()
-
 
                     // 남은 시간
                     RemainingTimeView(viewModel: viewModel)
 
                     Spacer()
                 }
+
+                Text("Paused")
+                    .font(.body)
+                    .opacity(viewModel.isRunning ? 0 : 1)
+                    .animation(.easeInOut(duration: 0.3), value: viewModel.isRunning)
+                    .offset(y: diameter / 2 + 20)
             }
         }
     }
