@@ -161,7 +161,7 @@ class MainViewModel: ObservableObject {
             previousAngle = angle
         }
 
-    func endDragginh() {
+    func endDragging() {
         isDragging = false
     }
 }

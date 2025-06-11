@@ -10,11 +10,10 @@ import SwiftUI
 struct TimerInteractionView: View {
     let isInteractive: Bool
     let diameter: CGFloat
-
-    // Interaction 콜백
     let onSingleTap: (() -> Void)?
     let onDoubleTap: (() -> Void)?
     let onDrag: ((Double) -> Void)?
+    let onDragEnd: (() -> Void)?
 
     var body: some View {
 
@@ -30,6 +29,9 @@ struct TimerInteractionView: View {
                             let centerPoint = CGPoint(x: diameter / 2, y: diameter / 2)
                             let angle = centerPoint.angle(to: location)
                             onDrag?(angle)
+                        }
+                        .onEnded { _ in
+                            onDragEnd?()
                         }
                 )
                 .onTapGesture(count: 1) {

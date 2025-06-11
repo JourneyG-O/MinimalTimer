@@ -44,6 +44,8 @@ extension MainTimerView {
                         }
                     }, onDrag: { angle in
                         viewModel.setUserProgress(from: angle)
+                    }, onDragEnd: {
+                        viewModel.endDragging()
                     }
                 )
             }

@@ -47,6 +47,13 @@ struct TimerContentView: View {
                 .fill(viewModel.isRunning ? timer.color.opacity(0.6) : timer.color.opacity(0.3))
                 .animation(.easeInOut(duration: 0.25), value: viewModel.isRunning)
                 .frame(width: diameter, height: diameter)
+
+            if viewModel.isDragging {
+                TickMarksView(
+                    diameter: diameter,
+                              totalMinutes: Int(timer.totalTime) / 60
+                )
+            }
         }
     }
 }
