@@ -22,6 +22,9 @@ class MainViewModel: ObservableObject {
     // 타이머 실행 상태
     @Published var isRunning: Bool = false
 
+    // 타이머 설정 상태
+    @Published var isDragging: Bool = false
+
 //    @Published var interactionMode: InteractionMode = .normal
 
     // 타이머 객체
@@ -125,6 +128,12 @@ class MainViewModel: ObservableObject {
         }
 
         func setUserProgress(from angle: Double) {
+            isDragging = true
+
+            guard let timer = currentTimer else { return }
+            let total = timer.totalTime
+
+            // wrap-around 방지
             if previousAngle >= 270 && angle <= 180 {
                 setUserProgress(to: 1.0)
                 return
@@ -134,9 +143,26 @@ class MainViewModel: ObservableObject {
                 return
             }
 
-            let progress = min(max(angle / 360, 0.0), 1.0)
-            setUserProgress(to: progress)
+//            let progress = min(max(angle / 360, 0.0), 1.0)
+//            setUserProgress(to: progress)
+//            previousAngle = angle
+
+            // 각도 기반 퍼센트 계산
+            let rawProgress = angle / 360
+            let rawTime = rawProgress * total
+
+            // 스냅 적용 (1분 = 60초 단위)
+            let snappedTime = round(rawTime / 60) * 60
+            let clampedTime = max(0, min(snappedTime, total))
+            let snappedProgress = clampedTime / total
+
+            setUserProgress(to: snappedProgress)
+
             previousAngle = angle
         }
+
+    func endDragginh() {
+        isDragging = false
+    }
 }
 
