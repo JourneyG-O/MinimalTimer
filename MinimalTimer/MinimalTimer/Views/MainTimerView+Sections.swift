@@ -10,9 +10,9 @@ import SwiftUI
 // MARK: - Title View
 extension MainTimerView {
     struct TitleView: View {
-        @ObservedObject var viewModel: MainViewModel
+        let title: String?
         var body: some View {
-            Text("Minimal Timer")
+            Text(title ?? "Minimal Timer")
                 .font(.system(size: 40, weight: .bold, design: .rounded))
                 .fontWeight(.semibold)
                 .foregroundColor(.black)

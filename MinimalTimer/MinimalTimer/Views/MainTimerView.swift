@@ -17,50 +17,16 @@ struct MainTimerView: View {
             ZStack {
                 Color.smoke.ignoresSafeArea()
                 VStack {
-
                     Spacer()
-
-                    // 타이틀
-                    Text("Minimal Timer")
-                        .font(.system(size: 40, weight: .bold, design: .rounded))
-                        .fontWeight(.semibold)
-                        .foregroundColor(.black)
-
+                    TitleView(title: viewModel.currentTimer?.title)
                     Spacer()
-
-                    ZStack {
-                        if let timer = viewModel.currentTimer {
-                            TimerContentView(viewModel: viewModel,timer: timer, progress: viewModel.progress, diameter: diameter)
-                        }
-
-                        TimerInteractionView(
-                            isInteractive: true,
-                            diameter: diameter,
-                            onSingleTap: {
-                                viewModel.isRunning ? viewModel.pause() : viewModel.start()
-                            }, onDoubleTap: {
-                                withAnimation(.easeInOut(duration: 0.25)) {
-                                    viewModel.reset()
-                                }
-                            }, onDrag: { angle in
-                                viewModel.setUserProgress(from: angle)
-                            }
-                        )
-                    }
-
+                    TimerDisplaySection(viewModel: viewModel, diameter: diameter)
                     Spacer()
-
-                    // 남은 시간
                     RemainingTimeView(viewModel: viewModel)
-
                     Spacer()
                 }
 
-                Text("Paused")
-                    .font(.body)
-                    .opacity(viewModel.isRunning ? 0 : 1)
-                    .animation(.easeInOut(duration: 0.3), value: viewModel.isRunning)
-                    .offset(y: diameter / 2 + 20)
+                PausedStatusText(isRunning: viewModel.isRunning, diameter: diameter)
             }
         }
     }
