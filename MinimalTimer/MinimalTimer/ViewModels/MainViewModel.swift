@@ -25,6 +25,9 @@ class MainViewModel: ObservableObject {
     // 타이머 설정 상태
     @Published var isDragging: Bool = false
 
+    // 사용자 설정 시간
+    private var lastUserSetTime: TimeInterval?
+
 //    @Published var interactionMode: InteractionMode = .normal
 
     // 타이머 객체
@@ -115,15 +118,19 @@ class MainViewModel: ObservableObject {
     func reset() {
             guard timers.indices.contains(selectedTimerIndex) else { return }
             pause()
-            timers[selectedTimerIndex].currentTime = timers[selectedTimerIndex].totalTime
+
+            if let lastSet = lastUserSetTime {
+                timers[selectedTimerIndex].currentTime = lastSet
+            } else {
+                timers[selectedTimerIndex].currentTime = timers[selectedTimerIndex].totalTime
+            }
         }
 
         func setUserProgress(to percentage: Double) {
             guard timers.indices.contains(selectedTimerIndex) else { return }
-
             let clamped = min(max(percentage, 0.0), 1.0)
             timers[selectedTimerIndex].currentTime = timers[selectedTimerIndex].totalTime * clamped
-
+            lastUserSetTime = timers[selectedTimerIndex].totalTime * clamped
             pause()
         }
 
@@ -153,7 +160,6 @@ class MainViewModel: ObservableObject {
             let snappedProgress = clampedTime / total
 
             setUserProgress(to: snappedProgress)
-
             previousAngle = angle
         }
 
