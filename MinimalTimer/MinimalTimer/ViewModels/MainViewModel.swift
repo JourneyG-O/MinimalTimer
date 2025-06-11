@@ -143,10 +143,6 @@ class MainViewModel: ObservableObject {
                 return
             }
 
-//            let progress = min(max(angle / 360, 0.0), 1.0)
-//            setUserProgress(to: progress)
-//            previousAngle = angle
-
             // 각도 기반 퍼센트 계산
             let rawProgress = angle / 360
             let rawTime = rawProgress * total

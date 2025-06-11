@@ -51,7 +51,7 @@ struct TimerContentView: View {
             if viewModel.isDragging {
                 TickMarksView(
                     diameter: diameter,
-                              totalMinutes: Int(timer.totalTime) / 60
+                    totalMinutes: Int(timer.totalTime) / 60
                 )
             }
         }
