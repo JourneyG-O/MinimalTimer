@@ -95,6 +95,7 @@ class MainViewModel: ObservableObject {
 
     func start() {
         guard !isRunning, timers.indices.contains(selectedTimerIndex) else { return }
+
         isRunning = true
 
         timer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { [weak self] _ in
@@ -109,14 +110,18 @@ class MainViewModel: ObservableObject {
 
             if self.timers[self.selectedTimerIndex].currentTime <= 0 {
                 self.pause()
+                self.playEndFeedback()
             }
         }
+        playTapFeedback()
     }
+
 
     func pause() {
         isRunning = false
         timer?.invalidate()
         timer = nil
+        playTapFeedback()
     }
 
     func reset() {
@@ -173,6 +178,15 @@ class MainViewModel: ObservableObject {
 
         setUserProgress(to: snappedProgress)
         previousAngle = angle
+    }
+
+    private func playEndFeedback() {
+        feedbackGenerator.impactOccurred()
+        AudioServicesPlaySystemSound(1322)
+    }
+
+    private func playTapFeedback() {
+        feedbackGenerator.impactOccurred()
     }
 
     private func playSnapFeedback() {
