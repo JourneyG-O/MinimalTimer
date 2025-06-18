@@ -94,7 +94,9 @@ class MainViewModel: ObservableObject {
     //    }
 
     func start() {
-        guard !isRunning, timers.indices.contains(selectedTimerIndex) else { return }
+        guard !isRunning,
+              timers.indices.contains(selectedTimerIndex),
+              timers[selectedTimerIndex].currentTime > 0 else { return }
 
         isRunning = true
 
