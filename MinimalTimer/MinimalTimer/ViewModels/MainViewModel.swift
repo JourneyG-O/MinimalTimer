@@ -17,9 +17,6 @@ import SwiftUI
 
 class MainViewModel: ObservableObject {
 
-    // 테스트용... 지울 것!
-    var num = 0
-    var num2 = 0
     // 선택된 타이머
     @Published var timers: [TimerModel] = []
     @Published var selectedTimerIndex: Int = 0
@@ -201,18 +198,11 @@ class MainViewModel: ObservableObject {
     }
 
     private func playTapFeedback() {
-        print("playTapFeedback이 호출 됨, \(num2)")
-        num2 += 1
         feedbackGenerator.impactOccurred()
     }
 
     private func playSnapFeedback() {
-        print("playSnapFeedback이 호출 됨, \(num)")
-        num += 1
-        // 햅틱
         feedbackGenerator.impactOccurred()
-
-        // 사운드 (Tock, 시스템 사운드 ID: 1104)
         AudioServicesPlaySystemSound(1104)
     }
 
