@@ -5,6 +5,7 @@
 //  Created by KoJeongseok on 4/23/25.
 //
 
+import AudioToolbox
 import SwiftUI
 
 //enum InteractionMode: Equatable {
@@ -28,10 +29,13 @@ class MainViewModel: ObservableObject {
     // 사용자 설정 시간
     private var lastUserSetTime: TimeInterval?
 
-//    @Published var interactionMode: InteractionMode = .normal
+    //    @Published var interactionMode: InteractionMode = .normal
 
     // 타이머 객체
     private var timer: Timer?
+
+    private var previousSnappedMinutes: Int?
+    private let feedbackGenerator = UIImpactFeedbackGenerator(style: .light)
 
     // 현재 진행률 계산
     var progress: CGFloat {
@@ -85,9 +89,9 @@ class MainViewModel: ObservableObject {
         ]
     }
 
-//    func switchMode() {
-//        interactionMode = .switchMode
-//    }
+    //    func switchMode() {
+    //        interactionMode = .switchMode
+    //    }
 
     func start() {
         guard !isRunning, timers.indices.contains(selectedTimerIndex) else { return }
@@ -116,52 +120,68 @@ class MainViewModel: ObservableObject {
     }
 
     func reset() {
-            guard timers.indices.contains(selectedTimerIndex) else { return }
-            pause()
+        guard timers.indices.contains(selectedTimerIndex) else { return }
+        pause()
 
-            if let lastSet = lastUserSetTime {
-                timers[selectedTimerIndex].currentTime = lastSet
-            } else {
-                timers[selectedTimerIndex].currentTime = timers[selectedTimerIndex].totalTime
-            }
+        if let lastSet = lastUserSetTime {
+            timers[selectedTimerIndex].currentTime = lastSet
+        } else {
+            timers[selectedTimerIndex].currentTime = timers[selectedTimerIndex].totalTime
+        }
+    }
+
+    func setUserProgress(to percentage: Double) {
+        guard timers.indices.contains(selectedTimerIndex) else { return }
+        let clamped = min(max(percentage, 0.0), 1.0)
+        timers[selectedTimerIndex].currentTime = timers[selectedTimerIndex].totalTime * clamped
+        lastUserSetTime = timers[selectedTimerIndex].totalTime * clamped
+        pause()
+    }
+
+    func setUserProgress(from angle: Double) {
+        isDragging = true
+
+        guard let timer = currentTimer else { return }
+        let total = timer.totalTime
+
+        // wrap-around 방지
+        if previousAngle >= 270 && angle <= 180 {
+            setUserProgress(to: 1.0)
+            return
+        }
+        if previousAngle <= 90 && angle >= 180 {
+            setUserProgress(to: 0.0)
+            return
         }
 
-        func setUserProgress(to percentage: Double) {
-            guard timers.indices.contains(selectedTimerIndex) else { return }
-            let clamped = min(max(percentage, 0.0), 1.0)
-            timers[selectedTimerIndex].currentTime = timers[selectedTimerIndex].totalTime * clamped
-            lastUserSetTime = timers[selectedTimerIndex].totalTime * clamped
-            pause()
+
+        // 각도 기반 퍼센트 계산
+        let rawProgress = angle / 360
+        let rawTime = rawProgress * total
+
+        // 스냅 적용 (1분 = 60초 단위)
+        let snappedTime = round(rawTime / 60) * 60
+        let clampedTime = max(0, min(snappedTime, total))
+        let snappedProgress = clampedTime / total
+
+        // 스탭 바뀔 때 피드백
+        let snappedMinutes = Int(clampedTime / 60)
+        if snappedMinutes != previousSnappedMinutes {
+            playSnapFeedback()
+            previousSnappedMinutes = snappedMinutes
         }
 
-        func setUserProgress(from angle: Double) {
-            isDragging = true
+        setUserProgress(to: snappedProgress)
+        previousAngle = angle
+    }
 
-            guard let timer = currentTimer else { return }
-            let total = timer.totalTime
+    private func playSnapFeedback() {
+        // 햅틱
+        feedbackGenerator.impactOccurred()
 
-            // wrap-around 방지
-            if previousAngle >= 270 && angle <= 180 {
-                setUserProgress(to: 1.0)
-                return
-            }
-            if previousAngle <= 90 && angle >= 180 {
-                setUserProgress(to: 0.0)
-                return
-            }
-
-            // 각도 기반 퍼센트 계산
-            let rawProgress = angle / 360
-            let rawTime = rawProgress * total
-
-            // 스냅 적용 (1분 = 60초 단위)
-            let snappedTime = round(rawTime / 60) * 60
-            let clampedTime = max(0, min(snappedTime, total))
-            let snappedProgress = clampedTime / total
-
-            setUserProgress(to: snappedProgress)
-            previousAngle = angle
-        }
+        // 사운드 (Tock, 시스템 사운드 ID: 1104)
+        AudioServicesPlaySystemSound(1104)
+    }
 
     func endDragging() {
         isDragging = false
