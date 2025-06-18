@@ -37,7 +37,7 @@ extension MainTimerView {
                     isInteractive: true,
                     diameter: diameter,
                     onSingleTap: {
-                        viewModel.isRunning ? viewModel.pause() : viewModel.start()
+                        viewModel.isRunning ? viewModel.pause(fromUser: true) : viewModel.start()
                     }, onDoubleTap: {
                         withAnimation(.easeInOut(duration: 0.25)) {
                             viewModel.reset()

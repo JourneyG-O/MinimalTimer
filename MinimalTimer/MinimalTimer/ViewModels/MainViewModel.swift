@@ -16,6 +16,10 @@ import SwiftUI
 //}
 
 class MainViewModel: ObservableObject {
+
+    // 테스트용... 지울 것!
+    var num = 0
+    var num2 = 0
     // 선택된 타이머
     @Published var timers: [TimerModel] = []
     @Published var selectedTimerIndex: Int = 0
@@ -104,14 +108,14 @@ class MainViewModel: ObservableObject {
             guard let self = self else { return }
 
             guard self.timers.indices.contains(self.selectedTimerIndex) else {
-                self.pause()
+                self.pause(fromUser: false)
                 return
             }
 
             self.timers[self.selectedTimerIndex].currentTime -= 1
 
             if self.timers[self.selectedTimerIndex].currentTime <= 0 {
-                self.pause()
+                self.pause(fromUser: false)
                 self.playEndFeedback()
             }
         }
@@ -119,16 +123,19 @@ class MainViewModel: ObservableObject {
     }
 
 
-    func pause() {
+    func pause(fromUser: Bool) {
         isRunning = false
         timer?.invalidate()
         timer = nil
-        playTapFeedback()
+
+        if fromUser {
+            playTapFeedback()
+        }
     }
 
     func reset() {
         guard timers.indices.contains(selectedTimerIndex) else { return }
-        pause()
+        pause(fromUser: false)
 
         if let lastSet = lastUserSetTime {
             timers[selectedTimerIndex].currentTime = lastSet
@@ -142,7 +149,9 @@ class MainViewModel: ObservableObject {
         let clamped = min(max(percentage, 0.0), 1.0)
         timers[selectedTimerIndex].currentTime = timers[selectedTimerIndex].totalTime * clamped
         lastUserSetTime = timers[selectedTimerIndex].totalTime * clamped
-        pause()
+        if isRunning {
+            pause(fromUser: false)
+        }
     }
 
     func setUserProgress(from angle: Double) {
@@ -161,7 +170,6 @@ class MainViewModel: ObservableObject {
             return
         }
 
-
         // 각도 기반 퍼센트 계산
         let rawProgress = angle / 360
         let rawTime = rawProgress * total
@@ -171,10 +179,15 @@ class MainViewModel: ObservableObject {
         let clampedTime = max(0, min(snappedTime, total))
         let snappedProgress = clampedTime / total
 
-        // 스탭 바뀔 때 피드백
+        // ✅ 스냅 분 단위 계산 시 round 추가
         let snappedMinutes = Int(clampedTime / 60)
-        if snappedMinutes != previousSnappedMinutes {
-            playSnapFeedback()
+
+        if let previous = previousSnappedMinutes {
+            if snappedMinutes != previous {
+                playSnapFeedback()
+                previousSnappedMinutes = snappedMinutes
+            }
+        } else {
             previousSnappedMinutes = snappedMinutes
         }
 
@@ -188,10 +201,14 @@ class MainViewModel: ObservableObject {
     }
 
     private func playTapFeedback() {
+        print("playTapFeedback이 호출 됨, \(num2)")
+        num2 += 1
         feedbackGenerator.impactOccurred()
     }
 
     private func playSnapFeedback() {
+        print("playSnapFeedback이 호출 됨, \(num)")
+        num += 1
         // 햅틱
         feedbackGenerator.impactOccurred()
 
@@ -201,6 +218,7 @@ class MainViewModel: ObservableObject {
 
     func endDragging() {
         isDragging = false
+        previousSnappedMinutes = nil
     }
 }
 
