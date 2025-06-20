@@ -8,18 +8,21 @@
 import AudioToolbox
 import SwiftUI
 
-//enum InteractionMode: Equatable {
-//    case normal
-//    case switchMode // 롱탭시 진입
-//    case create // 새로운 타이머 생성
-//    case editTimer(index: Int) // 기존 타이머 수정
-//}
-
 class MainViewModel: ObservableObject {
+    
+    private let store = TimerStore()
 
     // 선택된 타이머
-    @Published var timers: [TimerModel] = []
-    @Published var selectedTimerIndex: Int = 0
+    @Published var timers: [TimerModel] = [] {
+        didSet {
+            saveTimers()
+        }
+    }
+    @Published var selectedTimerIndex: Int = 0 {
+        didSet {
+            saveTimers()
+        }
+    }
 
     // 타이머 실행 상태
     @Published var isRunning: Bool = false
@@ -29,8 +32,6 @@ class MainViewModel: ObservableObject {
 
     // 사용자 설정 시간
     private var lastUserSetTime: TimeInterval?
-
-    //    @Published var interactionMode: InteractionMode = .normal
 
     // 타이머 객체
     private var timer: Timer?
@@ -56,43 +57,14 @@ class MainViewModel: ObservableObject {
     private var minMode: Bool = false
 
     init() {
-        timers = [
-            TimerModel(
-                title: "Test Timer1",
-                totalTime: 60 * 30,
-                currentTime: 60 * 30,
-                color: .blue
-            ),
-            TimerModel(
-                title: "Test Timer2",
-                totalTime: 60 * 60,
-                currentTime: 60 * 60,
-                color: .blue
-            ),
-            TimerModel(
-                title: "Test Timer3",
-                totalTime: 60 * 120,
-                currentTime: 60 * 120,
-                color: .blue
-            ),
-            TimerModel(
-                title: "Test Timer4",
-                totalTime: 60 * 50,
-                currentTime: 60 * 50,
-                color: .blue
-            ),
-            TimerModel(
-                title: "Test Timer5",
-                totalTime: 60 * 5,
-                currentTime: 60 * 5,
-                color: .blue
-            )
-        ]
+        let (savedTimers, savedIndex) = store.load()
+        self.timers = savedTimers
+        self.selectedTimerIndex = savedIndex
     }
 
-    //    func switchMode() {
-    //        interactionMode = .switchMode
-    //    }
+    func saveTimers() {
+        store.save(timers: timers, selectedIndex: selectedTimerIndex)
+    }
 
     func start() {
         guard !isRunning,
