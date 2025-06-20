@@ -13,5 +13,4 @@ struct TimerModel: Identifiable {
     var totalTime: TimeInterval
     var currentTime: TimeInterval
     var color: Color
-    var style: TimerStyleType = .neumorphic
 }
