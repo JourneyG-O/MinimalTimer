@@ -9,10 +9,10 @@ import AudioToolbox
 import SwiftUI
 
 class MainViewModel: ObservableObject {
-    
+    // MARK: - Dependencies
     private let store = TimerStore()
 
-    // 선택된 타이머
+    // MARK: - Published Properties
     @Published var timers: [TimerModel] = [] {
         didSet {
             saveTimers()
@@ -24,48 +24,43 @@ class MainViewModel: ObservableObject {
         }
     }
 
-    // 타이머 실행 상태
     @Published var isRunning: Bool = false
-
-    // 타이머 설정 상태
     @Published var isDragging: Bool = false
 
-    // 사용자 설정 시간
-    private var lastUserSetTime: TimeInterval?
-
-    // 타이머 객체
+    // MARK: - Internal State
     private var timer: Timer?
-
+    private var lastUserSetTime: TimeInterval?
     private var previousSnappedMinutes: Int?
+    private var previousAngle: Double = 0.0
+    private var maxMode: Bool = false
+    private var minMode: Bool = false
+
     private let feedbackGenerator = UIImpactFeedbackGenerator(style: .light)
 
-    // 현재 진행률 계산
+    // MARK: - Computed Properties
     var progress: CGFloat {
         guard let timer = currentTimer, timer.totalTime > 0 else { return 0 }
         return CGFloat(timer.currentTime / timer.totalTime)
     }
 
-    // 현재 선택된 타이머 모델
     var currentTimer: TimerModel? {
         guard timers.indices.contains(selectedTimerIndex) else { return nil }
         return timers[selectedTimerIndex]
     }
 
-    // wrap-around 방지용
-    private var previousAngle: Double = 0.0
-    private var maxMode: Bool = false
-    private var minMode: Bool = false
-
+    // MARK: - Initialization
     init() {
         let (savedTimers, savedIndex) = store.load()
         self.timers = savedTimers
         self.selectedTimerIndex = savedIndex
     }
 
+    // MARK: - Persistence
     func saveTimers() {
         store.save(timers: timers, selectedIndex: selectedTimerIndex)
     }
 
+    // MARK: - Timer Control
     func start() {
         guard !isRunning,
               timers.indices.contains(selectedTimerIndex),
@@ -91,7 +86,6 @@ class MainViewModel: ObservableObject {
         playTapFeedback()
     }
 
-
     func pause(fromUser: Bool) {
         isRunning = false
         timer?.invalidate()
@@ -106,13 +100,11 @@ class MainViewModel: ObservableObject {
         guard timers.indices.contains(selectedTimerIndex) else { return }
         pause(fromUser: false)
 
-        if let lastSet = lastUserSetTime {
-            timers[selectedTimerIndex].currentTime = lastSet
-        } else {
-            timers[selectedTimerIndex].currentTime = timers[selectedTimerIndex].totalTime
-        }
+        let resetTime = lastUserSetTime ?? timers[selectedTimerIndex].totalTime
+        timers[selectedTimerIndex].currentTime = resetTime
     }
 
+    // MARK: - Interaction
     func setUserProgress(to percentage: Double) {
         guard timers.indices.contains(selectedTimerIndex) else { return }
         let clamped = min(max(percentage, 0.0), 1.0)
@@ -164,6 +156,12 @@ class MainViewModel: ObservableObject {
         previousAngle = angle
     }
 
+    func endDragging() {
+        isDragging = false
+        previousSnappedMinutes = nil
+    }
+
+    // MARK: - Feedback
     private func playEndFeedback() {
         feedbackGenerator.impactOccurred()
         AudioServicesPlaySystemSound(1322)
@@ -176,11 +174,6 @@ class MainViewModel: ObservableObject {
     private func playSnapFeedback() {
         feedbackGenerator.impactOccurred()
         AudioServicesPlaySystemSound(1104)
-    }
-
-    func endDragging() {
-        isDragging = false
-        previousSnappedMinutes = nil
     }
 }
 
