@@ -26,6 +26,7 @@ class MainViewModel: ObservableObject {
 
     @Published var isRunning: Bool = false
     @Published var isDragging: Bool = false
+    @Published var isSwitchMode: Bool = false
 
     // MARK: - Internal State
     private var timer: Timer?

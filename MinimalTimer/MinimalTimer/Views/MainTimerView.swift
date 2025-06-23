@@ -25,7 +25,6 @@ struct MainTimerView: View {
                     RemainingTimeView(viewModel: viewModel)
                     Spacer()
                 }
-
                 PausedStatusText(isRunning: viewModel.isRunning, diameter: diameter)
             }
         }
