@@ -4,6 +4,38 @@
 //
 //  Created by KoJeongseok on 5/13/25.
 //
+import SwiftUI
+struct TimerCarouselView: View {
+    // MARK: - Properties
+    @ObservedObject var viewModel: MainViewModel
+    let diameter: CGFloat
+
+    // MARK: - Body
+    var body: some View {
+        TabView(selection: $viewModel.selectedTimerIndex) {
+            ForEach(Array(viewModel.timers.enumerated()), id: \.offset) { index, timer in
+                TimerDisplayView(
+                    timer: timer,
+                    progress: 1.0,
+                    diameter: diameter,
+                    isRunning: viewModel.isRunning,
+                    isDragging: viewModel.isDragging,
+                    isSwitchMode: viewModel.isSwitchMode,
+                    onSingleTap: {
+                        viewModel.selectTimer(at: index)
+                    }, onDoubleTap: nil,
+                    onDrag: nil,
+                    onDragEnd: nil
+                )
+                .tag(index)
+                .padding(.horizontal, 32)
+            }
+        }
+        .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
+    }
+}
+
+
 #if false
 import SwiftUI
 

@@ -162,6 +162,11 @@ class MainViewModel: ObservableObject {
         previousSnappedMinutes = nil
     }
 
+    func selectTimer(at index: Int) {
+        guard timers.indices.contains(index) else { return }
+        selectedTimerIndex = index
+    }
+
     // MARK: - Feedback
     private func playEndFeedback() {
         feedbackGenerator.impactOccurred()
