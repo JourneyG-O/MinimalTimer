@@ -29,25 +29,32 @@ extension MainTimerView {
 
         var body: some View {
             ZStack {
-                if let timer = viewModel.currentTimer {
-                    TimerContentView(viewModel: viewModel,timer: timer, progress: viewModel.progress, diameter: diameter)
-                }
-
-                TimerInteractionView(
-                    isSwitchMode: true,
-                    diameter: diameter,
-                    onSingleTap: {
-                        viewModel.isRunning ? viewModel.pause(fromUser: true) : viewModel.start()
-                    }, onDoubleTap: {
-                        withAnimation(.easeInOut(duration: 0.25)) {
-                            viewModel.reset()
+                if viewModel.isSwitchMode {
+                    TimerCarouselView(
+                        viewModel: viewModel,
+                        diameter: diameter
+                    )
+                } else if let timer = viewModel.currentTimer {
+                    TimerDisplayView(
+                        timer: timer,
+                        progress: viewModel.progress,
+                        diameter: diameter,
+                        isRunning: viewModel.isRunning,
+                        isDragging: viewModel.isDragging,
+                        isSwitchMode: viewModel.isSwitchMode,
+                        onSingleTap: {
+                            viewModel.isRunning ? viewModel.pause(fromUser: true) : viewModel.start()
+                        }, onDoubleTap: {
+                            withAnimation(.easeInOut(duration: 0.25)) {
+                                viewModel.reset()
+                            }
+                        }, onDrag: { angle in
+                            viewModel.setUserProgress(from: angle)
+                        }, onDragEnd: {
+                            viewModel.endDragging()
                         }
-                    }, onDrag: { angle in
-                        viewModel.setUserProgress(from: angle)
-                    }, onDragEnd: {
-                        viewModel.endDragging()
-                    }
-                )
+                    )
+                }
             }
         }
     }
