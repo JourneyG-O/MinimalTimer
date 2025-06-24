@@ -8,47 +8,49 @@
 import SwiftUI
 
 struct TimerInteractionView: View {
-    let isInteractive: Bool
+    // MARK: - Configuration
+    let isSwitchMode: Bool
     let diameter: CGFloat
+
+    // MARK: - Actions
     let onSingleTap: (() -> Void)?
     let onDoubleTap: (() -> Void)?
     let onDrag: ((Double) -> Void)?
     let onDragEnd: (() -> Void)?
 
+    // MARK: - Body
     var body: some View {
+        Circle()
+            .fill(Color.clear)
+            .frame(width: diameter, height: diameter)
+            .contentShape(Circle())
+            .gesture(isSwitchMode ? nil : dragGesture)
+            .onTapGesture(count: 2, perform: doubleTapHandler)
+            .onTapGesture(perform: singleTapHandler)
+    }
 
-        if isInteractive {
-            Circle()
-                .fill(Color.clear)
-                .frame(width: diameter, height: diameter)
-                .contentShape(Circle())
-                .gesture(
-                    DragGesture()
-                        .onChanged { value in
-                            let location = value.location
-                            let centerPoint = CGPoint(x: diameter / 2, y: diameter / 2)
-                            let angle = centerPoint.angle(to: location)
-                            onDrag?(angle)
-                        }
-                        .onEnded { _ in
-                            onDragEnd?()
-                        }
-                )
-                .onTapGesture(count: 1) {
-                    onSingleTap?()
-                }
-                .onTapGesture(count: 2) {
-                    onDoubleTap?()
-                }
-        } else {
-            Circle()
-                .fill(Color.black)
-                .frame(width: diameter, height: diameter)
-                .contentShape(Circle())
-                .onTapGesture {
-                    onSingleTap?()
-                }
-        }
+    // MARK: - Drag Gesture
+    private var dragGesture: some Gesture {
+        DragGesture()
+            .onChanged { value in
+                let location = value.location
+                let centerPoint = CGPoint(x: diameter / 2, y: diameter / 2)
+                let angle = centerPoint.angle(to: location)
+                onDrag?(angle)
+            }
+            .onEnded { _ in
+                onDragEnd?()
+            }
+    }
+
+    // MARK: - Tap Handlers
+    private func singleTapHandler() {
+        onSingleTap?()
+    }
+
+    private func doubleTapHandler() {
+        guard !isSwitchMode else { return }
+        onDoubleTap?()
     }
 }
 

@@ -34,7 +34,7 @@ extension MainTimerView {
                 }
 
                 TimerInteractionView(
-                    isInteractive: true,
+                    isSwitchMode: true,
                     diameter: diameter,
                     onSingleTap: {
                         viewModel.isRunning ? viewModel.pause(fromUser: true) : viewModel.start()
