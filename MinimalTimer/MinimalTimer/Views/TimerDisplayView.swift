@@ -36,9 +36,9 @@ struct TimerDisplayView: View {
                 isSwitchMode: isSwitchMode,
                 diameter: diameter,
                 onSingleTap: onSingleTap,
-                onDoubleTap: isSwitchMode ? onDoubleTap : nil,
-                onDrag: isSwitchMode ? onDrag : nil,
-                onDragEnd: isSwitchMode ? onDragEnd : nil
+                onDoubleTap: !isSwitchMode ? onDoubleTap : nil,
+                onDrag: !isSwitchMode ? onDrag : nil,
+                onDragEnd: !isSwitchMode ? onDragEnd : nil
             )
         }
     }
