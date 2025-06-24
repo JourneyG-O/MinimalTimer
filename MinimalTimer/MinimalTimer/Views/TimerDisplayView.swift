@@ -29,7 +29,7 @@ struct TimerDisplayView: View {
                 diameter: diameter,
                 isRunning: isRunning,
                 isDragging: isDragging,
-                isPreviewMode: !isSwitchMode
+                isSwitchMode: !isSwitchMode
             )
 
             TimerInteractionView(
