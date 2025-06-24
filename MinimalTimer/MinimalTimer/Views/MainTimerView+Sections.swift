@@ -44,7 +44,8 @@ extension MainTimerView {
                         isSwitchMode: viewModel.isSwitchMode,
                         onSingleTap: {
                             viewModel.isRunning ? viewModel.pause(fromUser: true) : viewModel.start()
-                        }, onDoubleTap: {
+                        },
+                        onDoubleTap: {
                             withAnimation(.easeInOut(duration: 0.25)) {
                                 viewModel.reset()
                             }

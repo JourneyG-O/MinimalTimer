@@ -23,7 +23,7 @@ struct TimerDisplayView: View {
     // MARK: - Body
     var body: some View {
         ZStack {
-            NewTimerContentView(
+            TimerContentView(
                 timer: timer,
                 progress: progress,
                 diameter: diameter,
