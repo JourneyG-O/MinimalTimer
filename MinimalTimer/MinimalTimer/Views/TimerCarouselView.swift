@@ -33,6 +33,7 @@ struct TimerCarouselView: View {
                         isSwitchMode: viewModel.isSwitchMode,
                         onSingleTap: {
                             viewModel.selectTimer(at: index)
+                            viewModel.isSwitchMode = false
                         }, onDoubleTap: nil,
                         onDrag: nil,
                         onDragEnd: nil
