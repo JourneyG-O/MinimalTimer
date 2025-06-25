@@ -26,7 +26,7 @@ struct TimerCarouselView: View {
                 ForEach(Array(viewModel.timers.enumerated()), id: \.offset) { index, timer in
                     TimerDisplayView(
                         timer: timer,
-                        progress: 1.0,
+                        progress: timer.totalTime > 0 ? CGFloat(timer.currentTime / timer.totalTime) : 0,
                         diameter: itemWidth,
                         isRunning: viewModel.isRunning,
                         isDragging: viewModel.isDragging,
