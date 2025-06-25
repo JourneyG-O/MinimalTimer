@@ -167,6 +167,10 @@ class MainViewModel: ObservableObject {
         selectedTimerIndex = index
     }
 
+    func toggleSwitchMode() {
+        isSwitchMode.toggle()
+    }
+
     // MARK: - Feedback
     private func playEndFeedback() {
         feedbackGenerator.impactOccurred()

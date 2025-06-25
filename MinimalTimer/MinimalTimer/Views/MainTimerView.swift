@@ -16,6 +16,13 @@ struct MainTimerView: View {
 
             ZStack {
                 Color.smoke.ignoresSafeArea()
+                    .gesture(
+                        LongPressGesture(minimumDuration: 0.6)
+                            .onEnded { _ in
+                                viewModel.toggleSwitchMode()
+                            }
+
+                    )
                 VStack {
                     Spacer()
                     TitleView(title: viewModel.currentTimer?.title)
