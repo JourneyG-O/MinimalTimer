@@ -14,7 +14,7 @@ struct TimerDisplayView: View {
     let diameter: CGFloat
     let isRunning: Bool
     let isDragging: Bool
-    let isSwitchMode: Bool
+    let interactionMode: InteractionMode
     let onSingleTap: (() -> Void)?
     let onDoubleTap: (() -> Void)?
     let onDrag: ((Double) -> Void)?
@@ -29,16 +29,16 @@ struct TimerDisplayView: View {
                 diameter: diameter,
                 isRunning: isRunning,
                 isDragging: isDragging,
-                isSwitchMode: isSwitchMode
+                interactionMode: interactionMode
             )
 
             TimerInteractionView(
-                isSwitchMode: isSwitchMode,
+                interactionMode: interactionMode,
                 diameter: diameter,
                 onSingleTap: onSingleTap,
-                onDoubleTap: !isSwitchMode ? onDoubleTap : nil,
-                onDrag: !isSwitchMode ? onDrag : nil,
-                onDragEnd: !isSwitchMode ? onDragEnd : nil
+                onDoubleTap: interactionMode == .normal ? onDoubleTap : nil,
+                onDrag: interactionMode == .normal ? onDrag : nil,
+                onDragEnd: interactionMode == .normal ? onDragEnd : nil
             )
         }
     }

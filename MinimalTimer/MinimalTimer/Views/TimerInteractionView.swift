@@ -9,7 +9,7 @@ import SwiftUI
 
 struct TimerInteractionView: View {
     // MARK: - Configuration
-    let isSwitchMode: Bool
+    let interactionMode: InteractionMode
     let diameter: CGFloat
 
     // MARK: - Actions
@@ -24,7 +24,7 @@ struct TimerInteractionView: View {
             .fill(Color.clear)
             .frame(width: diameter, height: diameter)
             .contentShape(Circle())
-            .gesture(isSwitchMode ? nil : dragGesture)
+            .gesture(interactionMode == .normal ? dragGesture : nil)
             .onTapGesture(count: 2, perform: doubleTapHandler)
             .onTapGesture(perform: singleTapHandler)
     }
@@ -49,7 +49,7 @@ struct TimerInteractionView: View {
     }
 
     private func doubleTapHandler() {
-        guard !isSwitchMode else { return }
+        guard interactionMode == .normal else { return }
         onDoubleTap?()
     }
 }

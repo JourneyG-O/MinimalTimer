@@ -14,7 +14,7 @@ struct TimerContentView: View {
     let diameter: CGFloat
     let isRunning: Bool
     let isDragging: Bool
-    let isSwitchMode: Bool
+    let interactionMode: InteractionMode
 
     // MARK: - Body
     var body: some View {
@@ -34,14 +34,14 @@ struct TimerContentView: View {
                         .shadow(.inner(color: .gray.opacity(0.6), radius: 6, x: 6, y: 6))
                 )
                 .frame(width: diameter, height: diameter)
-                .animation(isSwitchMode ? nil : .easeInOut(duration: 0.25), value: isRunning)
+                .animation(interactionMode == .normal ? .easeInOut(duration: 0.25) : nil, value: isRunning)
 
             PieShape(progress: progress)
-                .fill(isSwitchMode ? timer.color.opacity(0.3) : (isRunning ? timer.color.opacity(0.6) : timer.color.opacity(0.3)))
-                .animation(isSwitchMode ? nil : .easeInOut(duration: 0.25), value: isRunning)
+                .fill(interactionMode == .normal ? (isRunning ? timer.color.opacity(0.6) : timer.color.opacity(0.3)) : timer.color.opacity(0.3))
+                .animation(interactionMode == .normal ? .easeInOut(duration: 0.25) : nil, value: isRunning)
                 .frame(width: diameter, height: diameter)
 
-            if !isSwitchMode && isDragging {
+            if interactionMode == .normal && isDragging {
                 TickMarksView(
                     diameter: diameter,
                     totalMinutes: Int(timer.totalTime) / 60

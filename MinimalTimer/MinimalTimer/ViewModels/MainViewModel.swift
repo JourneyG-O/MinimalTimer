@@ -8,11 +8,17 @@
 import AudioToolbox
 import SwiftUI
 
+enum InteractionMode {
+    case normal
+    case switching
+}
+
 class MainViewModel: ObservableObject {
     // MARK: - Dependencies
     private let store = TimerStore()
 
     // MARK: - Published Properties
+    @Published var interactionMode: InteractionMode = .normal
     @Published var timers: [TimerModel] = [] {
         didSet {
             saveTimers()
@@ -26,7 +32,6 @@ class MainViewModel: ObservableObject {
 
     @Published var isRunning: Bool = false
     @Published var isDragging: Bool = false
-    @Published var isSwitchMode: Bool = false
 
     // MARK: - Internal State
     private var timer: Timer?
@@ -39,6 +44,12 @@ class MainViewModel: ObservableObject {
     private let feedbackGenerator = UIImpactFeedbackGenerator(style: .light)
 
     // MARK: - Computed Properties
+
+    // (임시 제공, 나중에 삭제)
+//    var isSwitchMode: Bool {
+//        interactionMode == .switching
+//    }
+
     var progress: CGFloat {
         guard let timer = currentTimer, timer.totalTime > 0 else { return 0 }
         return CGFloat(timer.currentTime / timer.totalTime)
@@ -167,8 +178,14 @@ class MainViewModel: ObservableObject {
         selectedTimerIndex = index
     }
 
-    func toggleSwitchMode() {
-        isSwitchMode.toggle()
+
+    // MARK: - Interaction Mode Control
+    func enterSwitchMode() {
+        interactionMode = .switching
+    }
+
+    func exitSwitchMode() {
+        interactionMode = .normal
     }
 
     // MARK: - Feedback

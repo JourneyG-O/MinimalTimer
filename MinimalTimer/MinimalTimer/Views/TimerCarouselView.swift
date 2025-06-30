@@ -21,7 +21,7 @@ struct TimerCarouselView: View {
 
     // MARK: - Body
     var body: some View {
-        ScrollView(.horizontal, showsIndicators: false) {
+        ScrollView(.horizontal, showsIndicators: true) {
             LazyHStack(spacing: 20) {
                 ForEach(Array(viewModel.timers.enumerated()), id: \.offset) { index, timer in
                     TimerDisplayView(
@@ -30,15 +30,14 @@ struct TimerCarouselView: View {
                         diameter: itemWidth,
                         isRunning: viewModel.isRunning,
                         isDragging: viewModel.isDragging,
-                        isSwitchMode: viewModel.isSwitchMode,
+                        interactionMode: viewModel.interactionMode,
                         onSingleTap: {
                             viewModel.selectTimer(at: index)
-                            viewModel.isSwitchMode = false
+                            viewModel.exitSwitchMode()
                         }, onDoubleTap: nil,
                         onDrag: nil,
                         onDragEnd: nil
                     )
-//                    .frame(width: itemWidth, height: itemWidth)
                     .scrollTransition { content, phase in
                         content
                             .scaleEffect(phase.isIdentity ? 1 : 0.8)
@@ -47,8 +46,9 @@ struct TimerCarouselView: View {
                 }
             }
             .padding(.horizontal, sideMargin)
-        }.scrollTargetLayout()
-            .scrollTargetBehavior(.viewAligned)
+        }
+        .scrollTargetLayout()
+        .scrollTargetBehavior(.viewAligned)
     }
 }
 
@@ -62,52 +62,9 @@ struct TimerCarouselView: View {
                 TimerModel(title: "15분", totalTime: 900, currentTime: 450, color: .red)
             ]
             vm.selectedTimerIndex = 0
-            vm.isSwitchMode = true
+            vm.enterSwitchMode()
             return vm
         }(),
         diameter: 260
     )
 }
-
-
-#if false
-import SwiftUI
-
-struct TimerCarouselView: View {
-    @ObservedObject var viewModel: MainViewModel
-
-    var body: some View {
-        let itemWidth: CGFloat = 260
-        let spacing: CGFloat = 16
-        let sideMargin = (UIScreen.main.bounds.width - itemWidth) / 2
-
-        ScrollView(.horizontal, showsIndicators: false) {
-            LazyHStack(spacing: spacing) {
-                ForEach(Array(viewModel.timers.enumerated()), id: \.offset) { index, timer in
-                    TimerContentView(
-                        timer: timer,
-                        progress: 1.0,
-                        isInteractive: false,
-                        onSingleTap: {
-                            withAnimation {
-                                viewModel.selectedTimerIndex = index
-                                viewModel.interactionMode = .normal
-                            }
-                        },
-                        onDoubleTap: nil,
-                        onDrag: nil
-                    )
-                    .frame(width: itemWidth)
-                    .scrollTransition { content, phase in
-                        content
-                            .scaleEffect(phase.isIdentity ? 1.0 : 0.85)
-                            .opacity(phase.isIdentity ? 1.0 : 0.6)
-                    }
-                }
-            }
-            .padding(.horizontal, sideMargin)
-        }.scrollTargetLayout()
-            .scrollTargetBehavior(.viewAligned)
-    }
-}
-#endif

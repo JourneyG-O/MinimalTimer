@@ -29,7 +29,7 @@ extension MainTimerView {
 
         var body: some View {
             ZStack {
-                if viewModel.isSwitchMode {
+                if viewModel.interactionMode == .switching {
                     TimerCarouselView(
                         viewModel: viewModel,
                         diameter: diameter
@@ -41,7 +41,7 @@ extension MainTimerView {
                         diameter: diameter,
                         isRunning: viewModel.isRunning,
                         isDragging: viewModel.isDragging,
-                        isSwitchMode: viewModel.isSwitchMode,
+                        interactionMode: viewModel.interactionMode,
                         onSingleTap: {
                             viewModel.isRunning ? viewModel.pause(fromUser: true) : viewModel.start()
                         },

@@ -19,7 +19,7 @@ struct MainTimerView: View {
                     .gesture(
                         LongPressGesture(minimumDuration: 0.6)
                             .onEnded { _ in
-                                viewModel.toggleSwitchMode()
+                                viewModel.interactionMode = .switching
                             }
 
                     )
