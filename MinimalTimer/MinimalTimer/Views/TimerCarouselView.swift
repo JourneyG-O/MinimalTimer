@@ -16,27 +16,35 @@ struct TimerCarouselView: View {
     }
 
     private var sideMargin: CGFloat {
-        (UIScreen.main.bounds.width - itemWidth) / 2
+        viewModel.interactionMode == .switching ?  diameter / 16 : diameter / 8
     }
 
     // MARK: - Body
     var body: some View {
         ScrollView(.horizontal, showsIndicators: true) {
-            LazyHStack(spacing: 20) {
+            LazyHStack() {
                 ForEach(Array(viewModel.timers.enumerated()), id: \.offset) { index, timer in
                     TimerDisplayView(
                         timer: timer,
                         progress: timer.totalTime > 0 ? CGFloat(timer.currentTime / timer.totalTime) : 0,
-                        diameter: itemWidth,
+                        diameter: diameter,
                         isRunning: viewModel.isRunning,
                         isDragging: viewModel.isDragging,
                         interactionMode: viewModel.interactionMode,
-                        onSingleTap: {
+                        onSingleTap: viewModel.interactionMode == .switching
+                        ? {
                             viewModel.selectTimer(at: index)
                             viewModel.exitSwitchMode()
-                        }, onDoubleTap: nil,
-                        onDrag: nil,
-                        onDragEnd: nil
+                        }
+                        : viewModel.startOrPauseTimer,
+                        onDoubleTap: viewModel.interactionMode == .switching ? nil : viewModel.reset,
+                        onDrag: viewModel.interactionMode == .switching
+                        ? nil
+                        :
+                        { angle in
+                            viewModel.setUserProgress(from: angle)
+                        },
+                        onDragEnd: viewModel.interactionMode == .switching ? nil : viewModel.endDragging
                     )
                     .scrollTransition { content, phase in
                         content
@@ -47,6 +55,7 @@ struct TimerCarouselView: View {
             }
             .padding(.horizontal, sideMargin)
         }
+        .scrollDisabled(viewModel.interactionMode == .normal)
         .scrollTargetLayout()
         .scrollTargetBehavior(.viewAligned)
     }
@@ -65,6 +74,6 @@ struct TimerCarouselView: View {
             vm.enterSwitchMode()
             return vm
         }(),
-        diameter: 260
+        diameter: UIScreen.main.bounds.width * 0.8
     )
 }

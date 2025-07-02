@@ -29,33 +29,10 @@ extension MainTimerView {
 
         var body: some View {
             ZStack {
-                if viewModel.interactionMode == .switching {
-                    TimerCarouselView(
-                        viewModel: viewModel,
-                        diameter: diameter
-                    )
-                } else if let timer = viewModel.currentTimer {
-                    TimerDisplayView(
-                        timer: timer,
-                        progress: viewModel.progress,
-                        diameter: diameter,
-                        isRunning: viewModel.isRunning,
-                        isDragging: viewModel.isDragging,
-                        interactionMode: viewModel.interactionMode,
-                        onSingleTap: {
-                            viewModel.isRunning ? viewModel.pause(fromUser: true) : viewModel.start()
-                        },
-                        onDoubleTap: {
-                            withAnimation(.easeInOut(duration: 0.25)) {
-                                viewModel.reset()
-                            }
-                        }, onDrag: { angle in
-                            viewModel.setUserProgress(from: angle)
-                        }, onDragEnd: {
-                            viewModel.endDragging()
-                        }
-                    )
-                }
+                TimerCarouselView(
+                    viewModel: viewModel,
+                    diameter: diameter
+                )
             }
         }
     }

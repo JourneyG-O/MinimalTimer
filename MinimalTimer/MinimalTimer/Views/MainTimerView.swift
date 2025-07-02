@@ -19,15 +19,18 @@ struct MainTimerView: View {
                     .gesture(
                         LongPressGesture(minimumDuration: 0.6)
                             .onEnded { _ in
-                                viewModel.interactionMode = .switching
+                                viewModel.enterSwitchMode()
                             }
-
                     )
                 VStack {
                     Spacer()
                     TitleView(title: viewModel.currentTimer?.title)
                     Spacer()
-                    TimerDisplaySection(viewModel: viewModel, diameter: diameter)
+                    TimerCarouselView(
+                        viewModel: viewModel,
+                        diameter: diameter
+                    )
+                    .frame(width: width, height: diameter)
                     Spacer()
                     RemainingTimeView(viewModel: viewModel)
                     Spacer()

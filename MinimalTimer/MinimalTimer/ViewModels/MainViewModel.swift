@@ -44,12 +44,6 @@ class MainViewModel: ObservableObject {
     private let feedbackGenerator = UIImpactFeedbackGenerator(style: .light)
 
     // MARK: - Computed Properties
-
-    // (임시 제공, 나중에 삭제)
-//    var isSwitchMode: Bool {
-//        interactionMode == .switching
-//    }
-
     var progress: CGFloat {
         guard let timer = currentTimer, timer.totalTime > 0 else { return 0 }
         return CGFloat(timer.currentTime / timer.totalTime)
@@ -106,6 +100,10 @@ class MainViewModel: ObservableObject {
         if fromUser {
             playTapFeedback()
         }
+    }
+
+    func startOrPauseTimer() {
+        isRunning ? pause(fromUser: true) : start()
     }
 
     func reset() {

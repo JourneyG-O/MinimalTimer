@@ -16,16 +16,22 @@ struct TimerContentView: View {
     let isDragging: Bool
     let interactionMode: InteractionMode
 
+    // MARK: - Constants
+        let offsetValue: CGFloat = 4
+
+    // MARK: - Computed Properties
+    var timerDiameter: CGFloat { diameter - 8 }
+
     // MARK: - Body
     var body: some View {
         ZStack {
             Circle()
                 .fill(Color.clear)
-                .frame(width: diameter + 8, height: diameter + 8)
+                .frame(width: offsetValue, height: offsetValue)
 
             Circle()
                 .fill(Color.white.opacity(0.7))
-                .frame(width: diameter, height: diameter)
+                .frame(width: timerDiameter, height: timerDiameter)
                 .offset(x: 4, y: 4)
 
             Circle()
@@ -33,17 +39,17 @@ struct TimerContentView: View {
                     Color.smoke
                         .shadow(.inner(color: .gray.opacity(0.6), radius: 6, x: 6, y: 6))
                 )
-                .frame(width: diameter, height: diameter)
+                .frame(width: timerDiameter, height: timerDiameter)
                 .animation(interactionMode == .normal ? .easeInOut(duration: 0.25) : nil, value: isRunning)
 
             PieShape(progress: progress)
                 .fill(interactionMode == .normal ? (isRunning ? timer.color.opacity(0.6) : timer.color.opacity(0.3)) : timer.color.opacity(0.3))
                 .animation(interactionMode == .normal ? .easeInOut(duration: 0.25) : nil, value: isRunning)
-                .frame(width: diameter, height: diameter)
+                .frame(width: timerDiameter, height: timerDiameter)
 
             if interactionMode == .normal && isDragging {
                 TickMarksView(
-                    diameter: diameter,
+                    diameter: timerDiameter,
                     totalMinutes: Int(timer.totalTime) / 60
                 )
             }
