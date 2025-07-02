@@ -31,6 +31,7 @@ struct TimerDisplayView: View {
                 isDragging: isDragging,
                 interactionMode: interactionMode
             )
+            .frame(width: diameter, height: diameter)
 
             TimerInteractionView(
                 interactionMode: interactionMode,
@@ -40,6 +41,7 @@ struct TimerDisplayView: View {
                 onDrag: interactionMode == .normal ? onDrag : nil,
                 onDragEnd: interactionMode == .normal ? onDragEnd : nil
             )
+            .frame(width: diameter, height: diameter)
         }
     }
 }

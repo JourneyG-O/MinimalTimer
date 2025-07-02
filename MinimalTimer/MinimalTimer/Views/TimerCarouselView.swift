@@ -11,13 +11,14 @@ struct TimerCarouselView: View {
     let diameter: CGFloat
 
     // MARK: - Computed Properties
-    private var itemWidth: CGFloat {
-        diameter * 0.65
+    private var sideMargin: CGFloat {
+        diameter / 8
     }
 
-    private var sideMargin: CGFloat {
-        viewModel.interactionMode == .switching ?  diameter / 16 : diameter / 8
+    private var spacing: CGFloat {
+        viewModel.interactionMode == .switching ? 20 : sideMargin
     }
+
 
     // MARK: - Body
     var body: some View {

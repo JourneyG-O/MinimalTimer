@@ -17,7 +17,7 @@ struct TimerContentView: View {
     let interactionMode: InteractionMode
 
     // MARK: - Constants
-        let offsetValue: CGFloat = 4
+    let offsetValue: CGFloat = 4
 
     // MARK: - Computed Properties
     var timerDiameter: CGFloat { diameter - 8 }
