@@ -16,11 +16,14 @@ struct TimerCarouselView: View {
     // MARK: - Privated Properties
     private let sideTimerScale: CGFloat = 0.8
     private let sideTimerOpacity: Double = 0.7
-    private let timerSpacing: CGFloat = 250
 
     // MARK: - Computed Properties
     private var timerDiameter: CGFloat {
         viewModel.interactionMode == .switching ? diameter * 0.8 : diameter
+    }
+
+    private var timerSpacing: CGFloat {
+        timerDiameter
     }
 
 
