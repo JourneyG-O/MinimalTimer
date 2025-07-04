@@ -29,10 +29,7 @@ extension MainTimerView {
 
         var body: some View {
             ZStack {
-                TimerCarouselView(
-                    viewModel: viewModel,
-                    diameter: diameter
-                )
+                TimerCarouselView(viewModel: viewModel, diameter: diameter)
             }
         }
     }

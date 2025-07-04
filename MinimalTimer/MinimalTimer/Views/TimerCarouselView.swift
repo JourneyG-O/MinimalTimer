@@ -8,27 +8,31 @@ import SwiftUI
 struct TimerCarouselView: View {
     // MARK: - Properties
     @ObservedObject var viewModel: MainViewModel
+
+    @State private var dragOffset: CGFloat = 0
+
     let diameter: CGFloat
 
-    // MARK: - Computed Properties
-    private var sideMargin: CGFloat {
-        diameter / 8
-    }
+    // MARK: - Privated Properties
+    private let sideTimerScale: CGFloat = 0.8
+    private let sideTimerOpacity: Double = 0.7
+    private let timerSpacing: CGFloat = 250
 
-    private var spacing: CGFloat {
-        viewModel.interactionMode == .switching ? 20 : sideMargin
+    // MARK: - Computed Properties
+    private var timerDiameter: CGFloat {
+        viewModel.interactionMode == .switching ? diameter * 0.8 : diameter
     }
 
 
     // MARK: - Body
     var body: some View {
-        ScrollView(.horizontal, showsIndicators: true) {
-            LazyHStack() {
-                ForEach(Array(viewModel.timers.enumerated()), id: \.offset) { index, timer in
+        GeometryReader { geometry in
+            ZStack {
+                ForEach(Array(viewModel.timers.enumerated()), id: \.element.id) { index, timer in
                     TimerDisplayView(
                         timer: timer,
                         progress: timer.totalTime > 0 ? CGFloat(timer.currentTime / timer.totalTime) : 0,
-                        diameter: diameter,
+                        diameter: timerDiameter,
                         isRunning: viewModel.isRunning,
                         isDragging: viewModel.isDragging,
                         interactionMode: viewModel.interactionMode,
@@ -47,19 +51,93 @@ struct TimerCarouselView: View {
                         },
                         onDragEnd: viewModel.interactionMode == .switching ? nil : viewModel.endDragging
                     )
-                    .scrollTransition { content, phase in
-                        content
-                            .scaleEffect(phase.isIdentity ? 1 : 0.8)
-                            .opacity(phase.isIdentity ? 1.0 : 0.6)
-                    }
+                    .frame(width: timerDiameter, height: timerDiameter)
+                    .scaleEffect(scaleForTimer(at: index))
+                    .opacity(opacityForCard(at: index))
+                    .offset(x: offsetForTimer(at: index))
+                    .zIndex(zIndexForTimer(at: index))
+                    .layoutPriority(index == viewModel.selectedTimerIndex ? 1 : 0)
+                    .animation(.spring(response: 0.5, dampingFraction: 0.8), value: viewModel.interactionMode == .switching)
+                    .animation(.spring(response: 0.5, dampingFraction: 0.8), value: viewModel.selectedTimerIndex)
+
                 }
             }
-            .padding(.horizontal, sideMargin)
+            .frame(width: geometry.size.width, height: diameter)
+            .offset(x: dragOffset)
+            .drawingGroup()
+            .gesture(
+                DragGesture()
+                    .onChanged { value in
+                        if viewModel.interactionMode == .switching {
+                            dragOffset = value.translation.width
+                        }
+                    }
+                    .onEnded { value in
+                        if viewModel.interactionMode == .switching {
+                            let threshold: CGFloat = 80
+                            withAnimation(.interactiveSpring(response: 0.3, dampingFraction: 0.7)) {
+                                if value.translation.width > threshold && viewModel.selectedTimerIndex > 0 {
+                                    viewModel.selectedTimerIndex -= 1
+                                } else if value.translation.width < -threshold && viewModel.selectedTimerIndex < viewModel.timers.count - 1 {
+                                    viewModel.selectedTimerIndex += 1
+                                }
+                                dragOffset = 0
+                            }
+                        }
+                    }
+            )
         }
-        .scrollDisabled(viewModel.interactionMode == .normal)
-        .scrollTargetLayout()
-        .scrollTargetBehavior(.viewAligned)
     }
+
+    private func scaleForTimer(at index: Int) -> CGFloat {
+        if viewModel.interactionMode == .normal {
+            return index == viewModel.selectedTimerIndex ? 1.0 : 0.0
+        }
+
+        let distance = abs(index - viewModel.selectedTimerIndex)
+        if distance == 0 {
+            return 1.0
+        } else if distance == 1 {
+            return sideTimerScale
+        } else if distance == 2 {
+            return 0.7
+        } else {
+            return 0.0
+        }
+    }
+
+    private func opacityForCard(at index: Int) -> Double {
+        if viewModel.interactionMode == .normal {
+            return index == viewModel.selectedTimerIndex ? 1.0 : 0.0
+        }
+
+        let distance = abs(index - viewModel.selectedTimerIndex)
+        if distance == 0 {
+            return 1.0
+        } else if distance == 1 {
+            return sideTimerOpacity
+        } else if distance == 2 {
+            return 0.4
+        } else {
+            return 0.0
+        }
+    }
+
+    private func offsetForTimer(at index: Int) -> CGFloat {
+        if viewModel.interactionMode == .normal {
+            return 0
+        }
+
+        let difference = CGFloat(index - viewModel.selectedTimerIndex)
+        return (difference * timerSpacing)
+    }
+
+    private func zIndexForTimer(at index: Int) -> Double {
+        let distance = abs(index - viewModel.selectedTimerIndex)
+        return Double(viewModel.timers.count - distance)
+    }
+
+
 }
 
 #Preview {
