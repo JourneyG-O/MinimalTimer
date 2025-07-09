@@ -20,6 +20,35 @@ extension MainTimerView {
     }
 }
 
+// MARK: - Total Duration Text
+
+extension MainTimerView {
+    struct TotalDurationText: View {
+        let totalTime: TimeInterval
+        let diameter: CGFloat
+        let isVisible: Bool
+
+        var body: some View {
+            Text(formatTime(totalTime))
+                .font(.body)
+                .opacity(isVisible ? 1 : 0)
+                .animation(.easeInOut(duration: 0.3), value: isVisible)
+                .offset(y: -diameter / 2)
+        }
+
+        func formatTime(_ timeInterval: TimeInterval) -> String {
+            let minutes = Int(timeInterval) / 60
+            let seconds = Int(timeInterval) % 60
+            if seconds == 0 {
+                return "\(minutes)m"
+            } else {
+                return "\(minutes)m \(seconds)s"
+            }
+        }
+    }
+}
+
+
 // MARK: - Timer Display Section
 
 extension MainTimerView {
