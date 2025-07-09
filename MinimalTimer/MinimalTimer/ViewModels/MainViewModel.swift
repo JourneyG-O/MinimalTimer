@@ -179,7 +179,10 @@ class MainViewModel: ObservableObject {
 
     // MARK: - Interaction Mode Control
     func enterSwitchMode() {
-        interactionMode = .switching
+        pause(fromUser: false)
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+            self.interactionMode = .switching
+        }
     }
 
     func exitSwitchMode() {
