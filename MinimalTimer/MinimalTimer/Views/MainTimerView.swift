@@ -25,6 +25,7 @@ struct MainTimerView: View {
                 VStack {
                     Spacer()
                     TitleView(title: viewModel.currentTimer?.title)
+                        .opacity(viewModel.interactionMode == .switching ? 1 : 0)
                     Spacer()
                     Color.clear
                         .frame(height: diameter)
@@ -42,30 +43,6 @@ struct MainTimerView: View {
                 PausedStatusText(isRunning: viewModel.isRunning, diameter: diameter)
 
             }
-
-//            ZStack {
-//                Color.smoke.ignoresSafeArea()
-//                    .gesture(
-//                        LongPressGesture(minimumDuration: 0.6)
-//                            .onEnded { _ in
-//                                viewModel.enterSwitchMode()
-//                            }
-//                    )
-//                VStack {
-//                    Spacer()
-//                    TitleView(title: viewModel.currentTimer?.title)
-//                    Spacer()
-//                    TimerCarouselView(
-//                        viewModel: viewModel,
-//                        diameter: diameter
-//                    )
-//                    .frame(width: width, height: diameter)
-//                    Spacer()
-//                    RemainingTimeView(viewModel: viewModel)
-//                    Spacer()
-//                }
-//                PausedStatusText(isRunning: viewModel.isRunning, diameter: diameter)
-//            }
         }
     }
 }
