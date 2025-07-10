@@ -23,12 +23,6 @@ struct MainTimerView: View {
                             }
                     )
 
-                TotalDurationText(
-                    totalTime: viewModel.currentTimer?.totalTime ?? 0,
-                    diameter: diameter,
-                    isVisible: viewModel.interactionMode == .switching
-                )
-
                 VStack {
                     Spacer()
                     TitleView(title: viewModel.currentTimer?.title)
