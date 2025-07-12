@@ -17,6 +17,7 @@ struct TimerInteractionView: View {
     let onDoubleTap: (() -> Void)?
     let onDrag: ((Double) -> Void)?
     let onDragEnd: (() -> Void)?
+    let onLongPress: (() -> Void)?
 
     // MARK: - Body
     var body: some View {
@@ -24,14 +25,19 @@ struct TimerInteractionView: View {
             .fill(Color.clear)
             .frame(width: diameter, height: diameter)
             .contentShape(Circle())
-            .gesture(interactionMode == .normal ? dragGesture : nil)
+            .gesture(combinedGesture)
             .onTapGesture(count: 2, perform: doubleTapHandler)
             .onTapGesture(perform: singleTapHandler)
     }
 
-    // MARK: - Drag Gesture
-    private var dragGesture: some Gesture {
-        DragGesture()
+    // MARK: - Gesture Combination
+    private var combinedGesture: some Gesture {
+        let longPress = LongPressGesture(minimumDuration: 0.6)
+            .onEnded { _ in
+                onLongPress?()
+            }
+
+        let drag = DragGesture()
             .onChanged { value in
                 let location = value.location
                 let centerPoint = CGPoint(x: diameter / 2, y: diameter / 2)
@@ -41,6 +47,8 @@ struct TimerInteractionView: View {
             .onEnded { _ in
                 onDragEnd?()
             }
+
+        return longPress.exclusively(before: drag)
     }
 
     // MARK: - Tap Handlers

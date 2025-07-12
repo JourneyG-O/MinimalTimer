@@ -176,6 +176,10 @@ class MainViewModel: ObservableObject {
         selectedTimerIndex = index
     }
 
+    func beginEditingTimer(at index: Int) {
+        print("편집 시작")
+    }
+
 
     // MARK: - Interaction Mode Control
     func enterSwitchMode() {

@@ -46,13 +46,14 @@ struct TimerCarouselView: View {
                         }
                         : viewModel.startOrPauseTimer,
                         onDoubleTap: viewModel.interactionMode == .switching ? nil : viewModel.reset,
-                        onDrag: viewModel.interactionMode == .switching
-                        ? nil
-                        :
-                        { angle in
+                        onDrag: viewModel.interactionMode == .switching ? nil : { angle in
                             viewModel.setUserProgress(from: angle)
                         },
-                        onDragEnd: viewModel.interactionMode == .switching ? nil : viewModel.endDragging
+                        onDragEnd: viewModel.interactionMode == .switching ? nil : viewModel.endDragging,
+                        onLongPress: viewModel.interactionMode == .switching ? {                        
+                            viewModel.beginEditingTimer(at: index)
+                        }
+                        : nil
                     )
                     .frame(width: timerDiameter, height: timerDiameter)
                     .scaleEffect(scaleForTimer(at: index))
