@@ -57,7 +57,6 @@ struct TimerInteractionView: View {
     }
 
     private func doubleTapHandler() {
-        guard interactionMode == .normal else { return }
         onDoubleTap?()
     }
 }
