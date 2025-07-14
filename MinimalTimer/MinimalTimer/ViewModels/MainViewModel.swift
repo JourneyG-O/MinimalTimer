@@ -189,6 +189,10 @@ class MainViewModel: ObservableObject {
         interactionMode = .normal
     }
 
+    func presentAddTimerView() {
+        print("presentAddTimerView가 호출 됨")
+    }
+
     // MARK: - Feedback
     private func playEndFeedback() {
         feedbackGenerator.impactOccurred()

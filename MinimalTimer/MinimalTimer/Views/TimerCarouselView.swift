@@ -26,42 +26,59 @@ struct TimerCarouselView: View {
         timerDiameter
     }
 
+    private var showAddButton: Bool {
+        viewModel.interactionMode == .switching
+    }
+
 
     // MARK: - Body
     var body: some View {
         GeometryReader { geometry in
             ZStack {
-                ForEach(Array(viewModel.timers.enumerated()), id: \.element.id) { index, timer in
-                    TimerDisplayView(
-                        timer: timer,
-                        progress: timer.totalTime > 0 ? CGFloat(timer.currentTime / timer.totalTime) : 0,
-                        diameter: timerDiameter,
-                        isRunning: viewModel.isRunning,
-                        isDragging: viewModel.isDragging,
-                        interactionMode: viewModel.interactionMode,
-                        onSingleTap: viewModel.interactionMode == .switching
-                        ? {
-                            viewModel.selectTimer(at: index)
-                            viewModel.exitSwitchMode()
-                        }
-                        : viewModel.startOrPauseTimer,
-                        onDoubleTap: viewModel.interactionMode == .switching ? nil : viewModel.reset,
-                        onDrag: viewModel.interactionMode == .switching
-                        ? nil
-                        :
-                        { angle in
-                            viewModel.setUserProgress(from: angle)
-                        },
-                        onDragEnd: viewModel.interactionMode == .switching ? nil : viewModel.endDragging
-                    )
-                    .frame(width: timerDiameter, height: timerDiameter)
-                    .scaleEffect(scaleForTimer(at: index))
-                    .opacity(opacityForCard(at: index))
-                    .offset(x: offsetForTimer(at: index))
-                    .zIndex(zIndexForTimer(at: index))
-                    .layoutPriority(index == viewModel.selectedTimerIndex ? 1 : 0)
-                    .animation(.spring(response: 0.5, dampingFraction: 0.8), value: viewModel.interactionMode == .switching)
-                    .animation(.spring(response: 0.5, dampingFraction: 0.8), value: viewModel.selectedTimerIndex)
+                ForEach(0..<(viewModel.timers.count + (showAddButton ? 1 : 0)), id: \.self) { index in
+                    if index < viewModel.timers.count {
+                        let timer = viewModel.timers[index]
+
+                        TimerDisplayView(
+                            timer: timer,
+                            progress: timer.totalTime > 0 ? CGFloat(timer.currentTime / timer.totalTime) : 0,
+                            diameter: timerDiameter,
+                            isRunning: viewModel.isRunning,
+                            isDragging: viewModel.isDragging,
+                            interactionMode: viewModel.interactionMode,
+                            onSingleTap: viewModel.interactionMode == .switching
+                            ? {
+                                viewModel.selectTimer(at: index)
+                                viewModel.exitSwitchMode()
+                            }
+                            : viewModel.startOrPauseTimer,
+                            onDoubleTap: viewModel.interactionMode == .switching ? nil : viewModel.reset,
+                            onDrag: viewModel.interactionMode == .switching
+                            ? nil
+                            :
+                            { angle in
+                                viewModel.setUserProgress(from: angle)
+                            },
+                            onDragEnd: viewModel.interactionMode == .switching ? nil : viewModel.endDragging
+                        )
+                        .frame(width: timerDiameter, height: timerDiameter)
+                        .scaleEffect(scaleForTimer(at: index))
+                        .opacity(opacityForCard(at: index))
+                        .offset(x: offsetForTimer(at: index))
+                        .zIndex(zIndexForTimer(at: index))
+                        .layoutPriority(index == viewModel.selectedTimerIndex ? 1 : 0)
+                        .animation(.spring(response: 0.5, dampingFraction: 0.8), value: viewModel.interactionMode == .switching)
+                        .animation(.spring(response: 0.5, dampingFraction: 0.8), value: viewModel.selectedTimerIndex)
+                    } else {
+                        AddTimerCardView(diameter: timerDiameter)
+                            .frame(width: timerDiameter, height: timerDiameter)
+                            .scaleEffect(scaleForTimer(at: index))
+                            .offset(x: offsetForTimer(at: index))
+                            .zIndex(zIndexForTimer(at: index))
+                            .onTapGesture {
+                                viewModel.presentAddTimerView()
+                            }
+                    }
 
                 }
             }
@@ -81,7 +98,7 @@ struct TimerCarouselView: View {
                             withAnimation(.interactiveSpring(response: 0.3, dampingFraction: 0.7)) {
                                 if value.translation.width > threshold && viewModel.selectedTimerIndex > 0 {
                                     viewModel.selectedTimerIndex -= 1
-                                } else if value.translation.width < -threshold && viewModel.selectedTimerIndex < viewModel.timers.count - 1 {
+                                } else if value.translation.width < -threshold && viewModel.selectedTimerIndex < viewModel.timers.count {
                                     viewModel.selectedTimerIndex += 1
                                 }
                                 dragOffset = 0
