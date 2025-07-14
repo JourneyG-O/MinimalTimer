@@ -19,7 +19,6 @@ struct TimerDisplayView: View {
     let onDoubleTap: (() -> Void)?
     let onDrag: ((Double) -> Void)?
     let onDragEnd: (() -> Void)?
-    let onLongPress: (() -> Void)?
 
     // MARK: - Body
     var body: some View {
@@ -40,8 +39,7 @@ struct TimerDisplayView: View {
                 onSingleTap: onSingleTap,
                 onDoubleTap: interactionMode == .normal ? onDoubleTap : nil,
                 onDrag: interactionMode == .normal ? onDrag : nil,
-                onDragEnd: interactionMode == .normal ? onDragEnd : nil,
-                onLongPress: onLongPress
+                onDragEnd: interactionMode == .normal ? onDragEnd : nil
             )
             .frame(width: diameter, height: diameter)
         }
