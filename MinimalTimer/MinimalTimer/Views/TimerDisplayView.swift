@@ -38,9 +38,9 @@ struct TimerDisplayView: View {
                 interactionMode: interactionMode,
                 diameter: diameter,
                 onSingleTap: onSingleTap,
-                onDoubleTap: onDoubleTap,
-                onDrag: onDrag,
-                onDragEnd: onDragEnd,
+                onDoubleTap: interactionMode == .normal ? onDoubleTap : nil,
+                onDrag: interactionMode == .normal ? onDrag : nil,
+                onDragEnd: interactionMode == .normal ? onDragEnd : nil,
                 onLongPress: onLongPress
             )
             .frame(width: diameter, height: diameter)
