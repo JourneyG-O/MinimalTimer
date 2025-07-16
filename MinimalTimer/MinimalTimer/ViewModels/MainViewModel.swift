@@ -73,6 +73,7 @@ class MainViewModel: ObservableObject {
               timers[selectedTimerIndex].currentTime > 0 else { return }
 
         isRunning = true
+        UIApplication.shared.isIdleTimerDisabled = true
 
         timer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { [weak self] _ in
             guard let self = self else { return }
@@ -94,6 +95,7 @@ class MainViewModel: ObservableObject {
 
     func pause(fromUser: Bool) {
         isRunning = false
+        UIApplication.shared.isIdleTimerDisabled = false
         timer?.invalidate()
         timer = nil
 
