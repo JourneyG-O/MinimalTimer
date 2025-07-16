@@ -15,7 +15,7 @@ struct MainTimerView: View {
             let diameter = width * 0.8
 
             ZStack {
-                Color.smoke.ignoresSafeArea()
+                Color(.systemBackground)
                     .gesture(
                         LongPressGesture(minimumDuration: 0.6)
                             .onEnded { _ in
