@@ -88,6 +88,7 @@ class MainViewModel: ObservableObject {
             if self.timers[self.selectedTimerIndex].currentTime <= 0 {
                 self.pause(fromUser: false)
                 self.playEndFeedback()
+                self.reset()
             }
         }
         playTapFeedback()
