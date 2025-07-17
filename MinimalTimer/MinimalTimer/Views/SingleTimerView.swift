@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct TimerDisplayView: View {
+struct SingleTimerView: View {
     // MARK: - Properties
     let timer: TimerModel
     let progress: CGFloat
@@ -23,7 +23,7 @@ struct TimerDisplayView: View {
     // MARK: - Body
     var body: some View {
         ZStack {
-            TimerContentView(
+            TimerPieView(
                 timer: timer,
                 progress: progress,
                 diameter: diameter,
@@ -33,7 +33,7 @@ struct TimerDisplayView: View {
             )
             .frame(width: diameter, height: diameter)
 
-            TimerInteractionView(
+            TimerDialView(
                 interactionMode: interactionMode,
                 diameter: diameter,
                 onSingleTap: onSingleTap,

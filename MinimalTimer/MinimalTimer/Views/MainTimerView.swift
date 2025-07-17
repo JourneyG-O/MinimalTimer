@@ -35,13 +35,13 @@ struct MainTimerView: View {
                     Spacer()
                 }
 
-                TimerCarouselView(
+                TimerPagerView(
                     viewModel: viewModel,
                     diameter: diameter
                 )
                 .frame(width: width, height: diameter)
 
-                PausedStatusText(isRunning: viewModel.isRunning, diameter: diameter)
+                PausedStatusView(isRunning: viewModel.isRunning, diameter: diameter)
             }
         }
     }

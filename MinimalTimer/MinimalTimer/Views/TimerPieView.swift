@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct TimerContentView: View {
+struct TimerPieView: View {
     // MARK: - Properties
     let timer: TimerModel
     let progress: CGFloat

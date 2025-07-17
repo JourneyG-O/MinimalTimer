@@ -5,7 +5,7 @@
 //  Created by KoJeongseok on 5/13/25.
 //
 import SwiftUI
-struct TimerCarouselView: View {
+struct TimerPagerView: View {
     // MARK: - Properties
     @ObservedObject var viewModel: MainViewModel
 
@@ -39,7 +39,7 @@ struct TimerCarouselView: View {
                     if index < viewModel.timers.count {
                         let timer = viewModel.timers[index]
 
-                        TimerDisplayView(
+                        SingleTimerView(
                             timer: timer,
                             progress: timer.totalTime > 0 ? CGFloat(timer.currentTime / timer.totalTime) : 0,
                             diameter: timerDiameter,
@@ -161,7 +161,7 @@ struct TimerCarouselView: View {
 }
 
 #Preview {
-    TimerCarouselView(
+    TimerPagerView(
         viewModel: {
             let vm = MainViewModel()
             vm.timers = [

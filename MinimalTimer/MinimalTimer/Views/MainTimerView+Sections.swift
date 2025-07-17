@@ -29,7 +29,7 @@ extension MainTimerView {
 
         var body: some View {
             ZStack {
-                TimerCarouselView(viewModel: viewModel, diameter: diameter)
+                TimerPagerView(viewModel: viewModel, diameter: diameter)
             }
         }
     }
@@ -38,7 +38,7 @@ extension MainTimerView {
 // MARK: - Paused Status Text
 
 extension MainTimerView {
-    struct PausedStatusText: View {
+    struct PausedStatusView: View {
         let isRunning: Bool
         let diameter: CGFloat
 

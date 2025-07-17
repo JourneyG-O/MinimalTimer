@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct TimerInteractionView: View {
+struct TimerDialView: View {
     // MARK: - Configuration
     let interactionMode: InteractionMode
     let diameter: CGFloat
