@@ -1,178 +1,71 @@
 //
-//  TimerCarouselView.swift
+//  NewTimerPagerView.swift
 //  MinimalTimer
 //
-//  Created by KoJeongseok on 5/13/25.
+//  Created by KoJeongseok on 7/21/25.
 //
-import SwiftUI
-struct TimerPagerView: View {
-    // MARK: - Properties
-    @ObservedObject var viewModel: MainViewModel
 
-    @State private var dragOffset: CGFloat = 0
+import SwiftUI
+
+struct TimerPagerView: View {
+    @ObservedObject var viewModel: MainViewModel
 
     let diameter: CGFloat
 
-    // MARK: - Privated Properties
-    private let sideTimerScale: CGFloat = 0.8
-    private let sideTimerOpacity: Double = 0.7
+    private var timers: [TimerModel] { viewModel.timers }
+    private var interactionMode: InteractionMode { viewModel.interactionMode }
+    private var currentTimerDiameter: CGFloat { interactionMode == .normal ? diameter : diameter * 0.8 }
 
-    // MARK: - Computed Properties
-    private var timerDiameter: CGFloat {
-        viewModel.interactionMode == .switching ? diameter * 0.8 : diameter
-    }
-
-    private var timerSpacing: CGFloat {
-        timerDiameter
-    }
-
-    private var showAddButton: Bool {
-        viewModel.interactionMode == .switching
-    }
-
-
-    // MARK: - Body
     var body: some View {
-        GeometryReader { geometry in
-            ZStack {
-                ForEach(0..<(viewModel.timers.count + (showAddButton ? 1 : 0)), id: \.self) { index in
-                    if index < viewModel.timers.count {
-                        let timer = viewModel.timers[index]
+        TabView(selection: $viewModel.selectedTimerIndex) {
+            ForEach(0..<(viewModel.timers.count + 1), id: \.self) { index in
+                if index < timers.count {
+                    let timer = timers[index]
+                    let progress = timer.totalTime > 0 ? CGFloat(timer.currentTime / timer.totalTime) : 0
+                    let currentIsRunning = viewModel.isRunning
+                    let currentIsDragging = viewModel.isDragging
+                    let currentInteractionMode = interactionMode
 
-                        SingleTimerView(
-                            timer: timer,
-                            progress: timer.totalTime > 0 ? CGFloat(timer.currentTime / timer.totalTime) : 0,
-                            diameter: timerDiameter,
-                            isRunning: viewModel.isRunning,
-                            isDragging: viewModel.isDragging,
-                            interactionMode: viewModel.interactionMode,
-                            onSingleTap: viewModel.interactionMode == .switching
-                            ? {
-                                viewModel.selectTimer(at: index)
-                                viewModel.exitSwitchMode()
-                            }
-                            : viewModel.startOrPauseTimer,
-                            onDoubleTap: viewModel.interactionMode == .switching ? nil : viewModel.reset,
-                            onDrag: viewModel.interactionMode == .switching
-                            ? nil
-                            :
-                            { angle in
-                                viewModel.setUserProgress(from: angle)
-                            },
-                            onDragEnd: viewModel.interactionMode == .switching ? nil : viewModel.endDragging
-                        )
-                        .frame(width: timerDiameter, height: timerDiameter)
-                        .scaleEffect(scaleForTimer(at: index))
-                        .opacity(opacityForCard(at: index))
-                        .offset(x: offsetForTimer(at: index))
-                        .zIndex(zIndexForTimer(at: index))
-                        .layoutPriority(index == viewModel.selectedTimerIndex ? 1 : 0)
-                        .animation(.spring(response: 0.5, dampingFraction: 0.8), value: viewModel.interactionMode == .switching)
-                        .animation(.spring(response: 0.5, dampingFraction: 0.8), value: viewModel.selectedTimerIndex)
-                    } else {
-                        AddTimerCardView(diameter: timerDiameter)
-                            .frame(width: timerDiameter, height: timerDiameter)
-                            .scaleEffect(scaleForTimer(at: index))
-                            .offset(x: offsetForTimer(at: index))
-                            .zIndex(zIndexForTimer(at: index))
-                            .onTapGesture {
-                                viewModel.presentAddTimerView()
-                            }
+                    let singleTapAction: () -> Void = {
+                        if currentInteractionMode == .switching {
+                            viewModel.selectTimer(at: index)
+                            viewModel.exitSwitchMode()
+                        } else {
+                            viewModel.startOrPauseTimer()
+                        }
                     }
 
+                    let doubleTapAction: (() -> Void)? = currentInteractionMode == .switching ? nil : viewModel.reset
+
+                    let dragAction: ((Double) -> Void)? = currentInteractionMode == .switching ? nil : { angle in
+                        viewModel.setUserProgress(from: angle)
+                    }
+
+                    let dragEndAction: (() -> Void)? = currentInteractionMode == .switching ? nil : viewModel.endDragging
+
+                    SingleTimerView(
+                        timer: timer,
+                        progress: progress,
+                        diameter: currentTimerDiameter,
+                        isRunning: currentIsRunning,
+                        isDragging: currentIsDragging,
+                        interactionMode: currentInteractionMode,
+                        onSingleTap: singleTapAction,
+                        onDoubleTap: doubleTapAction,
+                        onDrag: dragAction,
+                        onDragEnd: dragEndAction
+                    )
+                    .frame(width: currentTimerDiameter, height: currentTimerDiameter)
+                    .tag(index)
+                } else {
+                    AddTimerCardView(diameter: currentTimerDiameter)
+                        .onTapGesture {
+                            viewModel.presentAddTimerView()
+                        }
+                        .tag(index)
                 }
             }
-            .frame(width: geometry.size.width, height: diameter)
-            .offset(x: dragOffset)
-            .drawingGroup()
-            .gesture(
-                DragGesture()
-                    .onChanged { value in
-                        if viewModel.interactionMode == .switching {
-                            dragOffset = value.translation.width
-                        }
-                    }
-                    .onEnded { value in
-                        if viewModel.interactionMode == .switching {
-                            let threshold: CGFloat = 80
-                            withAnimation(.interactiveSpring(response: 0.3, dampingFraction: 0.7)) {
-                                if value.translation.width > threshold && viewModel.selectedTimerIndex > 0 {
-                                    viewModel.selectedTimerIndex -= 1
-                                } else if value.translation.width < -threshold && viewModel.selectedTimerIndex < viewModel.timers.count {
-                                    viewModel.selectedTimerIndex += 1
-                                }
-                                dragOffset = 0
-                            }
-                        }
-                    }
-            )
         }
+        .tabViewStyle(.page(indexDisplayMode: .never))
     }
-
-    private func scaleForTimer(at index: Int) -> CGFloat {
-        if viewModel.interactionMode == .normal {
-            return index == viewModel.selectedTimerIndex ? 1.0 : 0.0
-        }
-
-        let distance = abs(index - viewModel.selectedTimerIndex)
-        if distance == 0 {
-            return 1.0
-        } else if distance == 1 {
-            return sideTimerScale
-        } else if distance == 2 {
-            return 0.7
-        } else {
-            return 0.0
-        }
-    }
-
-    private func opacityForCard(at index: Int) -> Double {
-        if viewModel.interactionMode == .normal {
-            return index == viewModel.selectedTimerIndex ? 1.0 : 0.0
-        }
-
-        let distance = abs(index - viewModel.selectedTimerIndex)
-        if distance == 0 {
-            return 1.0
-        } else if distance == 1 {
-            return sideTimerOpacity
-        } else if distance == 2 {
-            return 0.4
-        } else {
-            return 0.0
-        }
-    }
-
-    private func offsetForTimer(at index: Int) -> CGFloat {
-        if viewModel.interactionMode == .normal {
-            return 0
-        }
-
-        let difference = CGFloat(index - viewModel.selectedTimerIndex)
-        return (difference * timerSpacing)
-    }
-
-    private func zIndexForTimer(at index: Int) -> Double {
-        let distance = abs(index - viewModel.selectedTimerIndex)
-        return Double(viewModel.timers.count - distance)
-    }
-
-
-}
-
-#Preview {
-    TimerPagerView(
-        viewModel: {
-            let vm = MainViewModel()
-            vm.timers = [
-                TimerModel(title: "60분", totalTime: 3600, currentTime: 1800, color: .yellow),
-                TimerModel(title: "30분", totalTime: 1800, currentTime: 900, color: .blue),
-                TimerModel(title: "15분", totalTime: 900, currentTime: 450, color: .red)
-            ]
-            vm.selectedTimerIndex = 0
-            vm.enterSwitchMode()
-            return vm
-        }(),
-        diameter: UIScreen.main.bounds.width * 0.8
-    )
 }

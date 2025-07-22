@@ -28,19 +28,17 @@ struct MainTimerView: View {
                     TitleView(title: viewModel.currentTimer?.title)
                         .opacity(viewModel.interactionMode == .switching ? 1 : 0)
                     Spacer()
-                    Color.clear
-                        .frame(height: diameter)
+
+                    TimerPagerView(
+                        viewModel: viewModel,
+                        diameter: diameter
+                    )
+                    .frame(width: width, height: diameter)
+
                     Spacer()
                     RemainingTimeView(viewModel: viewModel)
                     Spacer()
                 }
-
-                TimerPagerView(
-                    viewModel: viewModel,
-                    diameter: diameter
-                )
-                .frame(width: width, height: diameter)
-
                 PausedStatusView(isRunning: viewModel.isRunning, diameter: diameter)
             }
         }

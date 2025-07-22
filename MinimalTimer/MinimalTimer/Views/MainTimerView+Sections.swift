@@ -20,21 +20,6 @@ extension MainTimerView {
     }
 }
 
-// MARK: - Timer Display Section
-
-extension MainTimerView {
-    struct TimerDisplaySection: View {
-        @ObservedObject var viewModel: MainViewModel
-        let diameter: CGFloat
-
-        var body: some View {
-            ZStack {
-                TimerPagerView(viewModel: viewModel, diameter: diameter)
-            }
-        }
-    }
-}
-
 // MARK: - Paused Status Text
 
 extension MainTimerView {
