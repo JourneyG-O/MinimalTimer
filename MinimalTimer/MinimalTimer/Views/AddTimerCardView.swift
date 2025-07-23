@@ -8,16 +8,21 @@
 import SwiftUI
 
 struct AddTimerCardView: View {
-    let diameter: CGFloat
-
     var body: some View {
-        ZStack {
-            Circle()
-                .fill(Color.gray.opacity(0.15))
-            Image(systemName: "plus")
-                .font(.system(size: diameter * 0.3, weight: .bold))
-                .foregroundColor(.gray)
+        GeometryReader { geometry in
+            let size = geometry.size
+            let minSide = min(size.width, size.height)
+
+            ZStack {
+                Circle()
+                    .fill(Color.gray.opacity(0.15))
+
+                Image(systemName: "plus")
+                    .font(.system(size: minSide * 0.3, weight: .bold))
+                    .foregroundColor(.gray)
+            }
+            .frame(width: size.width, height: size.height)
         }
-        .frame(width: diameter, height: diameter)
+        .aspectRatio(1, contentMode: .fit)
     }
 }

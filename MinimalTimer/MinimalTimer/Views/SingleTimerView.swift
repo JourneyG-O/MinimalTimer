@@ -11,7 +11,6 @@ struct SingleTimerView: View {
     // MARK: - Properties
     let timer: TimerModel
     let progress: CGFloat
-    let diameter: CGFloat
     let isRunning: Bool
     let isDragging: Bool
     let interactionMode: InteractionMode
@@ -22,26 +21,30 @@ struct SingleTimerView: View {
 
     // MARK: - Body
     var body: some View {
-        ZStack {
-            TimerPieView(
-                timer: timer,
-                progress: progress,
-                diameter: diameter,
-                isRunning: isRunning,
-                isDragging: isDragging,
-                interactionMode: interactionMode
-            )
-            .frame(width: diameter, height: diameter)
+        GeometryReader { geometry in
+            let width = geometry.size.width
+            let height = geometry.size.height
 
-            TimerDialView(
-                interactionMode: interactionMode,
-                diameter: diameter,
-                onSingleTap: onSingleTap,
-                onDoubleTap: interactionMode == .normal ? onDoubleTap : nil,
-                onDrag: interactionMode == .normal ? onDrag : nil,
-                onDragEnd: interactionMode == .normal ? onDragEnd : nil
-            )
-            .frame(width: diameter, height: diameter)
+            ZStack {
+                TimerPieView(
+                    timer: timer,
+                    progress: progress,
+                    isRunning: isRunning,
+                    isDragging: isDragging,
+                    interactionMode: interactionMode
+                )
+                .frame(width: width, height: height)
+
+                TimerDialView(
+                    interactionMode: interactionMode,
+                    onSingleTap: onSingleTap,
+                    onDoubleTap: interactionMode == .normal ? onDoubleTap : nil,
+                    onDrag: interactionMode == .normal ? onDrag : nil,
+                    onDragEnd: interactionMode == .normal ? onDragEnd : nil
+                )
+                .frame(width: width, height: height)
+            }
         }
+
     }
 }

@@ -11,7 +11,6 @@ struct TimerPieView: View {
     // MARK: - Properties
     let timer: TimerModel
     let progress: CGFloat
-    let diameter: CGFloat
     let isRunning: Bool
     let isDragging: Bool
     let interactionMode: InteractionMode
@@ -27,17 +26,21 @@ struct TimerPieView: View {
 
     // MARK: - Body
     var body: some View {
-        ZStack {
-            PieShape(progress: progress)
-                .fill(fillColor)
-                .frame(width: diameter, height: diameter)
+        GeometryReader { geometry in
+            let width = geometry.size.width
+            let height = geometry.size.height
 
-            if interactionMode == .normal && isDragging {
-                TickMarksView(
-                    diameter: diameter,
-                    totalMinutes: Int(timer.totalTime) / 60
-                )
+            ZStack {
+                PieShape(progress: progress)
+                    .fill(fillColor)
+                    .frame(width: width, height: height)
+
+                if interactionMode == .normal && isDragging {
+                    TickMarksView(totalMinutes: Int(timer.totalTime) / 60)
+                    .frame(width: width, height: height)
+                }
             }
         }
+
     }
 }

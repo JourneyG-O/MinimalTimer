@@ -11,8 +11,7 @@ struct MainTimerView: View {
 
     var body: some View {
         GeometryReader { geometry in
-            let width = geometry.size.width
-            let diameter = width * 0.8
+            let minSide = min(geometry.size.width, geometry.size.height)
 
             ZStack {
                 Color(.systemBackground)
@@ -29,17 +28,13 @@ struct MainTimerView: View {
                         .opacity(viewModel.interactionMode == .switching ? 1 : 0)
                     Spacer()
 
-                    TimerPagerView(
-                        viewModel: viewModel,
-                        diameter: diameter
-                    )
-                    .frame(width: width, height: diameter)
+                    TimerPagerView(viewModel: viewModel)
+                        .frame(width: minSide, height: minSide)
 
                     Spacer()
                     RemainingTimeView(viewModel: viewModel)
                     Spacer()
                 }
-                PausedStatusView(isRunning: viewModel.isRunning, diameter: diameter)
             }
         }
     }

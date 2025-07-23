@@ -10,7 +10,6 @@ import SwiftUI
 struct TimerDialView: View {
     // MARK: - Configuration
     let interactionMode: InteractionMode
-    let diameter: CGFloat
 
     // MARK: - Actions
     let onSingleTap: (() -> Void)?
@@ -20,27 +19,30 @@ struct TimerDialView: View {
 
     // MARK: - Body
     var body: some View {
-        Circle()
-            .fill(Color.clear)
-            .frame(width: diameter, height: diameter)
-            .contentShape(Circle())
-            .gesture(interactionMode == .normal ? dragGesture : nil)
-            .onTapGesture(count: 2, perform: doubleTapHandler)
-            .onTapGesture(perform: singleTapHandler)
-    }
+        GeometryReader { geometry in
+            let width = geometry.size.width
+            let height = geometry.size.height
+            let centerPoint = CGPoint(x: width / 2, y: height / 2)
 
-    // MARK: - Drag Gesture
-    private var dragGesture: some Gesture {
-        DragGesture()
-            .onChanged { value in
-                let location = value.location
-                let centerPoint = CGPoint(x: diameter / 2, y: diameter / 2)
-                let angle = centerPoint.angle(to: location)
-                onDrag?(angle)
-            }
-            .onEnded { _ in
-                onDragEnd?()
-            }
+            let dragGesture = DragGesture()
+                .onChanged { value in
+                    let location = value.location
+                    let angle = centerPoint.angle(to: location)
+                    onDrag?(angle)
+                }
+                .onEnded { _ in
+                    onDragEnd?()
+                }
+
+            Circle()
+                .fill(Color.clear)
+                .frame(width: width, height: height)
+                .contentShape(Circle())
+                .gesture(interactionMode == .normal ? dragGesture : nil)
+                .onTapGesture(count: 2, perform: doubleTapHandler)
+                .onTapGesture(perform: singleTapHandler)
+        }
+
     }
 
     // MARK: - Tap Handlers
