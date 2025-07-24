@@ -60,6 +60,7 @@ class MainViewModel: ObservableObject {
         self.timers = savedTimers
         self.selectedTimerIndex = savedIndex
         self.interactionMode = .normal
+        updatePreviousAngle()
     }
 
     // MARK: - Persistence
@@ -170,6 +171,12 @@ class MainViewModel: ObservableObject {
         previousAngle = angle
     }
 
+    func updatePreviousAngle() {
+        guard let timer = currentTimer, timer.totalTime > 0 else { return }
+        let progress = timer.currentTime / timer.totalTime
+        previousAngle = progress * 360
+    }
+
     func endDragging() {
         isDragging = false
         previousSnappedMinutes = nil
@@ -178,6 +185,7 @@ class MainViewModel: ObservableObject {
     func selectTimer(at index: Int) {
         guard timers.indices.contains(index) else { return }
         selectedTimerIndex = index
+        updatePreviousAngle()
     }
 
 
