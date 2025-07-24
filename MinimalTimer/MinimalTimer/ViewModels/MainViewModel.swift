@@ -59,6 +59,7 @@ class MainViewModel: ObservableObject {
         let (savedTimers, savedIndex) = store.load()
         self.timers = savedTimers
         self.selectedTimerIndex = savedIndex
+        self.interactionMode = .normal
     }
 
     // MARK: - Persistence
@@ -184,12 +185,18 @@ class MainViewModel: ObservableObject {
     func enterSwitchMode() {
         pause(fromUser: false)
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-            self.interactionMode = .switching
+            withAnimation(.easeInOut(duration: 0.1)) {
+                self.interactionMode = .switching
+            }
         }
     }
 
     func exitSwitchMode() {
-        interactionMode = .normal
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+            withAnimation(.easeInOut(duration: 0.1)) {
+                self.interactionMode = .normal
+            }
+        }
     }
 
     func presentAddTimerView() {

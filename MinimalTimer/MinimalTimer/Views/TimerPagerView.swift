@@ -61,6 +61,7 @@ struct TimerPagerView: View {
                                 onDragEnd: dragEndAction
                             )
                             .frame(width: timerWidth, height: timerHeight)
+                            .animation(.easeInOut(duration: 0.3), value: interactionMode)
                             .tag(index)
                         } else {
                             AddTimerCardView()
