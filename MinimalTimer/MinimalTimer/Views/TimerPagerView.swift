@@ -28,20 +28,10 @@ struct TimerPagerView: View {
                         if index < timers.count {
                             let timer = timers[index]
 
-                            SingleTimerView(
-                                timer: timer,
-                                progress: viewModel.progress,
-                                isRunning: viewModel.isRunning,
-                                isDragging: viewModel.isRunning,
-                                interactionMode: viewModel.interactionMode,
-                                onSingleTap: {
-                                    viewModel.selectTimer(at: index)
-                                    viewModel.exitSwitchMode()
-                                },
-                                onDoubleTap: nil,
-                                onDrag: nil,
-                                onDragEnd: nil
-                            )
+                            PreviewTimerView(color: timer.color) {
+                                viewModel.selectTimer(at: index)
+                                viewModel.exitSwitchMode()
+                            }
                             .frame(width: timerWidth, height: timerHeight)
                             .tag(index)
                         } else {
@@ -56,12 +46,9 @@ struct TimerPagerView: View {
                 }
                 .tabViewStyle(.page(indexDisplayMode: .never))
 
-
-
                 HStack {
                     Spacer()
 
-                    // 왼쪽 화살표
                     Button(action: {
                         viewModel.selectedTimerIndex = max(0, viewModel.selectedTimerIndex - 1)
                     }) {
@@ -73,13 +60,11 @@ struct TimerPagerView: View {
 
                     Spacer()
 
-                    // 타이머 공간 확보용 Spacer
                     Color.clear
                         .frame(width: timerWidth)
 
                     Spacer()
 
-                    // 오른쪽 화살표
                     Button(action: {
                         if !isLastPage {
                             viewModel.selectedTimerIndex += 1
