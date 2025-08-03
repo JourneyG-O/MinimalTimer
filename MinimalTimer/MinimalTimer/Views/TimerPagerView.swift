@@ -19,6 +19,9 @@ struct TimerPagerView: View {
             let timerWidth = geometry.size.width * scale
             let timerHeight = geometry.size.height * scale
 
+            let isFirstPage = viewModel.selectedTimerIndex == 0
+            let isLastPage = viewModel.selectedTimerIndex == viewModel.timers.count
+
             ZStack {
                 TabView(selection: $viewModel.selectedTimerIndex) {
                     ForEach(0..<(viewModel.timers.count + 1), id: \.self) { index in
@@ -52,6 +55,44 @@ struct TimerPagerView: View {
                     }
                 }
                 .tabViewStyle(.page(indexDisplayMode: .never))
+
+
+
+                HStack {
+                    Spacer()
+
+                    // 왼쪽 화살표
+                    Button(action: {
+                        viewModel.selectedTimerIndex = max(0, viewModel.selectedTimerIndex - 1)
+                    }) {
+                        Image(systemName: "chevron.backward")
+                            .font(.largeTitle)
+                            .foregroundStyle(isFirstPage ? .gray.opacity(0.3) : .primary)
+                    }
+                    .disabled(isFirstPage)
+
+                    Spacer()
+
+                    // 타이머 공간 확보용 Spacer
+                    Color.clear
+                        .frame(width: timerWidth)
+
+                    Spacer()
+
+                    // 오른쪽 화살표
+                    Button(action: {
+                        if !isLastPage {
+                            viewModel.selectedTimerIndex += 1
+                        }
+                    }) {
+                        Image(systemName: "chevron.forward")
+                            .font(.largeTitle)
+                            .foregroundStyle(isLastPage ? .gray.opacity(0.3) : .primary)
+                    }
+                    .disabled(isLastPage)
+
+                    Spacer()
+                }
             }
         }
 
