@@ -27,7 +27,7 @@ struct TimerPagerView: View {
                     ForEach(0..<(viewModel.timers.count + 1), id: \.self) { index in
                         if index < timers.count {
                             let timer = timers[index]
-                            let progress = timer.totalTime > 0 ? CGFloat(timer.currentTime / timer.totalTime) : 0
+                            let progress = viewModel.progress
                             let currentIsRunning = viewModel.isRunning
                             let currentIsDragging = viewModel.isDragging
                             let currentInteractionMode = interactionMode

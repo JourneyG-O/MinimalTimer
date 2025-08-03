@@ -38,9 +38,6 @@ class MainViewModel: ObservableObject {
     private var lastUserSetTime: TimeInterval?
     private var previousSnappedMinutes: Int?
     private var previousAngle: Double = 0.0
-    private var maxMode: Bool = false
-    private var minMode: Bool = false
-
     private let feedbackGenerator = UIImpactFeedbackGenerator(style: .light)
 
     // MARK: - Computed Properties
