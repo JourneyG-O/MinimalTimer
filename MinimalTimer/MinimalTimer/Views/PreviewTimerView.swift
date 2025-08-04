@@ -9,17 +9,25 @@ import SwiftUI
 
 struct PreviewTimerView: View {
     let color: Color
-//    let totalTime: TimeInterval
+    let totalTime: TimeInterval
     let onTap: () -> Void
 
     var body: some View {
-        Circle()
-            .fill(color)
-            .overlay(
-                Circle()
-                    .stroke(Color.primary.opacity(0.2), lineWidth: 2)
-            )
-            .onTapGesture(perform: onTap)
+        ZStack {
+            Circle()
+                .fill(color)
+
+            Text(formatTime(totalTime))
+                .font(.system(size: 40, weight: .bold, design: .rounded))
+                .foregroundStyle(.white)
+        }
+        .onTapGesture(perform: onTap)
+    }
+
+    private func formatTime(_ timeInterval: TimeInterval) -> String {
+        let minutes = Int(timeInterval) / 60
+        let seconds = Int(timeInterval) % 60
+        return String(format: "%02d:%02d", minutes, seconds)
     }
 }
 
