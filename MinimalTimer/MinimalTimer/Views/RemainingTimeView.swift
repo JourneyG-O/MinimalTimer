@@ -10,18 +10,10 @@ struct RemainingTimeView: View {
     @ObservedObject var viewModel: MainViewModel
 
     var body: some View {
-        Text(formatTime(displayedTime))
+        Text(formatTime(viewModel.currentTimer?.currentTime ?? 0))
             .font(.system(size: 60, weight: .bold, design: .rounded))
             .opacity(viewModel.isRunning ? 1.0 : 0.5)
             .animation(.easeInOut(duration: 0.3), value: viewModel.isRunning)
-    }
-
-    private var displayedTime: TimeInterval {
-        if viewModel.interactionMode == .switching {
-            return viewModel.currentTimer?.totalTime ?? 0
-        } else {
-            return viewModel.currentTimer?.currentTime ?? 0
-        }
     }
 
     private func formatTime(_ timeInterval: TimeInterval) -> String {
