@@ -19,7 +19,6 @@ struct PreviewTimerView: View {
 
             Text(formatTime(totalTime))
                 .font(.system(size: 40, weight: .bold, design: .rounded))
-                .opacity(0.5)
         }
         .onTapGesture(perform: onTap)
     }
