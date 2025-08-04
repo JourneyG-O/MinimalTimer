@@ -208,8 +208,8 @@ class MainViewModel: ObservableObject {
         print("presentAddTimerView가 호출 됨")
     }
 
-    func beginEditingTimer(at: Int) {
-        print("beginEditingTimer가 호출 됨")
+    func presentEditTimerView(at: Int) {
+        print("pressentEditTimerView가 호출 됨")
     }
 
     // MARK: - Feedback

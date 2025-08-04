@@ -21,7 +21,7 @@ struct MainTimerView: View {
                     Spacer()
                     timerDisplaySection(in: geometry)
                     Spacer()
-                    RemainingTimeView(viewModel: viewModel)
+                    bottomInformationSection()
                     Spacer()
                 }
             }
@@ -83,6 +83,19 @@ struct MainTimerView: View {
             }
         }
         .animation(.easeInOut(duration: 0.3), value: viewModel.interactionMode)
+    }
+
+    // MARK: - Bottom Information Section
+
+    @ViewBuilder
+    private func bottomInformationSection() -> some View {
+        if viewModel.interactionMode == .normal {
+            RemainingTimeView(viewModel: viewModel)
+        } else {
+            EditButtonView {
+                viewModel.presentEditTimerView(at: viewModel.selectedTimerIndex)
+            }
+        }
     }
 }
 

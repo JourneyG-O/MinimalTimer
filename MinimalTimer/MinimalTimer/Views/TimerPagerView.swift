@@ -18,7 +18,6 @@ struct TimerPagerView: View {
         GeometryReader { geometry in
             let timerWidth = geometry.size.width * scale
             let timerHeight = geometry.size.height * scale
-
             let isFirstPage = viewModel.selectedTimerIndex == 0
             let isLastPage = viewModel.selectedTimerIndex == viewModel.timers.count
 
