@@ -19,20 +19,3 @@ extension MainTimerView {
         }
     }
 }
-
-// MARK: - Paused Status Text
-
-//extension MainTimerView {
-//    struct PausedStatusView: View {
-//        let isRunning: Bool
-//        let diameter: CGFloat
-//
-//        var body: some View {
-//            Text("Paused")
-//                .font(.body)
-//                .opacity(isRunning ? 0 : 1)
-//                .animation(.easeInOut(duration: 0.3), value: isRunning)
-//                .offset(y: diameter / 2 + 20)
-//        }
-//    }
-//}
