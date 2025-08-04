@@ -44,7 +44,10 @@ struct MainTimerView: View {
     // MARK: - Title
 
     private var titleSection: some View {
-        TitleView(title: viewModel.currentTimer?.title)
+        let isAddTimer = viewModel.selectedTimerIndex == viewModel.timers.count
+        let title = isAddTimer ? "타이머 추가" : viewModel.currentTimer?.title
+
+        return TitleView(title: title)
             .opacity(viewModel.interactionMode == .switching ? 1 : 0)
     }
 
