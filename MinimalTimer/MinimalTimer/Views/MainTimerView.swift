@@ -94,7 +94,7 @@ struct MainTimerView: View {
     private func bottomInformationSection() -> some View {
         if viewModel.interactionMode == .normal {
             RemainingTimeView(viewModel: viewModel)
-        } else {
+        } else if viewModel.selectedTimerIndex != viewModel.timers.count {
             EditButtonView {
                 viewModel.presentEditTimerView(at: viewModel.selectedTimerIndex)
             }
