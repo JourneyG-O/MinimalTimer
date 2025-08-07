@@ -14,8 +14,6 @@ struct EditButtonView: View {
         Button(action: action) {
             Image(systemName: "gearshape.fill")
                 .font(.system(size: 28))
-                .padding()
-                .background(Circle().fill(Color(.secondarySystemBackground)))
         }
         .buttonStyle(PlainButtonStyle())
     }
