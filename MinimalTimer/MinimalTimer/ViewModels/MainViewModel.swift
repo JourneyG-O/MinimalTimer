@@ -57,7 +57,15 @@ class MainViewModel: ObservableObject {
         self.timers = savedTimers
         self.selectedTimerIndex = savedIndex
         self.interactionMode = .normal
+        validateSelectedTimerIndex()
         updatePreviousAngle()
+    }
+
+    // MARK: - Index Validation
+    private func validateSelectedTimerIndex() {
+        if selectedTimerIndex >= timers.count {
+            selectedTimerIndex = max(timers.count - 1, 0)
+        }
     }
 
     // MARK: - Persistence
