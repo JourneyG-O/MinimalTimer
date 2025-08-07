@@ -14,6 +14,10 @@ struct TimerModelDTO: Codable {
     var totalTime: TimeInterval
     var currentTime: TimeInterval
     var colorHex: String
+    var isTickAlwaysVisible: Bool
+    var isVibrationEnabled: Bool
+    var isSoundEnaved: Bool
+    var isRepeatEnaved: Bool
 }
 
 extension TimerModel {
@@ -23,7 +27,11 @@ extension TimerModel {
             title: title,
             totalTime: totalTime,
             currentTime: currentTime,
-            colorHex: color.toHex()
+            colorHex: color.toHex(),
+            isTickAlwaysVisible: isTickAlwaysVisible,
+            isVibrationEnabled: isVibrationEnabled,
+            isSoundEnaved: isSoundEnaved,
+            isRepeatEnaved: isRepeatEnaved
         )
     }
 }
@@ -35,7 +43,11 @@ extension TimerModelDTO {
             title: title,
             totalTime: totalTime,
             currentTime: currentTime,
-            color: Color(hex: colorHex)
+            color: Color(hex: colorHex),
+            isTickAlwaysVisible: isTickAlwaysVisible,
+            isVibrationEnabled: isVibrationEnabled,
+            isSoundEnaved: isSoundEnaved,
+            isRepeatEnaved: isRepeatEnaved
         )
     }
 }
