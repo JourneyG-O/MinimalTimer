@@ -22,8 +22,8 @@ class TimerEditViewModel: ObservableObject {
         self.totalTime = timer.totalTime
         self.isTickAlwaysVisivle = timer.isTickAlwaysVisible
         self.isVibrationEnabled = timer.isVibrationEnabled
-        self.isSoundEnabled = timer.isSoundEnaved
-        self.isRepeatEnabled = timer.isRepeatEnaved
+        self.isSoundEnabled = timer.isSoundEnabled
+        self.isRepeatEnabled = timer.isRepeatEnabled
         self.isEditing = true
     }
 

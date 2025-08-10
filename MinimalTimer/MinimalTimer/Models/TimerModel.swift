@@ -15,8 +15,8 @@ struct TimerModel: Identifiable {
     var color: Color
     var isTickAlwaysVisible: Bool
     var isVibrationEnabled: Bool
-    var isSoundEnaved: Bool
-    var isRepeatEnaved: Bool
+    var isSoundEnabled: Bool
+    var isRepeatEnabled: Bool
 
     init(
         id: UUID = UUID(), // ← 기본값 설정
@@ -37,7 +37,7 @@ struct TimerModel: Identifiable {
         self.color = color
         self.isTickAlwaysVisible = isTickAlwaysVisible
         self.isVibrationEnabled = isVibrationEnabled
-        self.isSoundEnaved = isSoundEnaved
-        self.isRepeatEnaved = isRepeatEnaved
+        self.isSoundEnabled = isSoundEnaved
+        self.isRepeatEnabled = isRepeatEnaved
     }
 }
