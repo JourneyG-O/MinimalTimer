@@ -1,0 +1,73 @@
+//
+//  TimerEditViewModel.swift
+//  MinimalTimer
+//
+//  Created by KoJeongseok on 8/7/25.
+//
+
+import SwiftUI
+
+// MARK: - Draft
+// 타이머 편집/생성 화면에 쓰는 임시 상태(폼 데이터): 원본 TimerModel을 건드리지 않고 안전하게 저장, 화면 닫을 때 저장 안 하면 원본 그대로 유지
+struct TimerDraft: Equatable {
+    var title: String = ""
+    var color: Color = .red
+    var totalSeconds: Int = 0
+    var isTickAlwaysVisible: Bool = false
+    var isVibrationEnabled: Bool = true
+    var isSoundEnabled: Bool = true
+    var isRepeatEnabled: Bool = false
+}
+
+// MARK: - ViewModel
+final class TimerEditViewModel: ObservableObject {
+    enum Mode: Equatable {
+        case create
+        case edit(index: Int)
+    }
+
+    @Published var draft: TimerDraft
+    let mode: Mode
+
+    // 저장은 상위(MainViewModel)에서 주입
+    private let saveAction: (Mode, TimerDraft) -> Void
+
+    init(mode: Mode,
+         initial: TimerDraft = .init(),
+         saveAction: @escaping (Mode, TimerDraft) -> Void) {
+        self.mode = mode
+        self.draft = initial
+        self.saveAction = saveAction
+    }
+
+    var isSavable: Bool {
+        !draft.title.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty &&
+        draft.totalSeconds > 0
+    }
+
+    func setTime(byMinutes m: Int) {
+        let sec = max(0, min(m, 120)) * 60
+        draft.totalSeconds = sec
+    }
+
+    func save() {
+        guard isSavable else { return }
+        saveAction(mode, draft)
+    }
+}
+
+// MARK: - UI Helpers
+extension TimerEditViewModel {
+    var actionTitle: String {
+        switch mode {
+        case .create: "생성"
+        case .edit: "저장"
+        }
+    }
+    var navTitle: String {
+        switch mode {
+        case .create: "타이머 생성"
+        case .edit: "타이머 편집"
+        }
+    }
+}
