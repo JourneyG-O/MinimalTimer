@@ -13,7 +13,7 @@ enum InteractionMode {
     case switching
 }
 
-class MainViewModel: ObservableObject {
+final class MainViewModel: ObservableObject {
     // MARK: - Dependencies
     private let store = TimerStore()
 
@@ -32,6 +32,17 @@ class MainViewModel: ObservableObject {
 
     @Published var isRunning: Bool = false
     @Published var isDragging: Bool = false
+
+    // 편집/생성 화면 라우팅 상태
+    @Published var route: Route? = nil
+
+    // 화면 라우트
+    enum Route: Identifiable, Equatable {
+        var id: String { String(describing: self) }
+        case add
+        case edit(index: Int)
+    }
+
 
     // MARK: - Internal State
     private var timer: Timer?
@@ -214,10 +225,13 @@ class MainViewModel: ObservableObject {
 
     func presentAddTimerView() {
         print("presentAddTimerView가 호출 됨")
+        route = .add
     }
 
-    func presentEditTimerView(at: Int) {
+    func presentEditTimerView(at index: Int) {
         print("pressentEditTimerView가 호출 됨")
+        guard timers.indices.contains(index) else { return }
+        route = .edit(index: index)
     }
 
     // MARK: - Feedback
@@ -250,5 +264,6 @@ extension MainViewModel {
         }
 
         store.save(timers: timers, selectedIndex: selectedTimerIndex)
+        route = nil
     }
 }

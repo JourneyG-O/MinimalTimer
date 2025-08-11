@@ -26,6 +26,33 @@ struct MainTimerView: View {
                 }
             }
         }
+        // 편집/생성 시트
+        .sheet(item: $viewModel.route) { route in
+            switch route {
+            case .add:
+                NavigationView {
+                    TimerEditView(
+                        vm: .init(
+                        mode: .create,
+                        initial: .init(),
+                        saveAction: viewModel.handleSave
+                        )
+                    )
+                }
+                case .edit(let index):
+                // 기존 모델 -> Draft로 초기화
+                let initial = TimerDraft(model: viewModel.timers[index])
+                NavigationView {
+                    TimerEditView(
+                        vm: .init(
+                            mode: .edit(index: index),
+                            initial: initial,
+                            saveAction: viewModel.handleSave
+                        )
+                    )
+                }
+            }
+        }
     }
 
     // MARK: - Background
