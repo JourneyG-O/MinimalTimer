@@ -46,8 +46,8 @@ extension TimerModelDTO {
             color: Color(hex: colorHex),
             isTickAlwaysVisible: isTickAlwaysVisible,
             isVibrationEnabled: isVibrationEnabled,
-            isSoundEnaved: isSoundEnabled,
-            isRepeatEnaved: isRepeatEnabled
+            isSoundEnabled: isSoundEnabled,
+            isRepeatEnabled: isRepeatEnabled
         )
     }
 }
