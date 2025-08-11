@@ -236,3 +236,19 @@ class MainViewModel: ObservableObject {
     }
 }
 
+extension MainViewModel {
+    func handleSave(mode: TimerEditViewModel.Mode, draft: TimerDraft) {
+        switch mode {
+        case .create:
+            let newTimer = TimerModel(from: draft)
+            timers.append(newTimer)
+            selectedTimerIndex = timers.count - 1
+
+        case .edit(let index):
+            guard timers.indices.contains(index) else { return }
+            timers[index].apply(draft)
+        }
+
+        store.save(timers: timers, selectedIndex: selectedTimerIndex)
+    }
+}
