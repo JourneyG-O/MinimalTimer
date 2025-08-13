@@ -24,12 +24,12 @@ struct TimerEditView: View {
             ZStack {
                 Circle()
                     .fill(vm.draft.color)
-                    .frame(width: 200, height: 200)
+                    .frame(width: 150, height: 150)
 
                 if vm.draft.isTickAlwaysVisible {
                     Circle()
                         .stroke(Color.white.opacity(0.3), lineWidth: 2)
-                        .frame(width: 200, height: 200)
+                        .frame(width: 150, height: 150)
                         .overlay(
                             ForEach(0..<12, id: \.self) { tick in
                                 Rectangle()
@@ -126,7 +126,7 @@ struct TimerEditView: View {
                 }
             }
             .frame(maxHeight: 450)
-            .scrollContentBackground(.hidden)
+            .scrollContentBackground(.visible)
 
             // MARK: - Bottom Button
             Button(action: { vm.save() }) {
@@ -142,6 +142,7 @@ struct TimerEditView: View {
             .disabled(!vm.isSavable)
         }
         .navigationTitle(vm.navTitle)
+        .navigationBarTitleDisplayMode(.inline)
     }
 
     private func formattedTime(_ sec: Int) -> String {
