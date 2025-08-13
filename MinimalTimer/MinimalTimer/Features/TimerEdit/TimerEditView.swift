@@ -12,6 +12,8 @@ struct TimerEditView: View {
     // MARK: - ViewModel (Draft 기반)
     @ObservedObject var vm: TimerEditViewModel
 
+    @FocusState private var isTitleFocused: Bool
+
     // MARK: - Color Options
     private let availableColors: [Color] = [
         .red, .orange, .yellow, .green, .mint, .blue, .indigo, .purple,
@@ -53,6 +55,8 @@ struct TimerEditView: View {
                 // title
                 Section(header: Text("Title")) {
                     TextField("Enter timer title", text: $vm.draft.title)
+                        .focused($isTitleFocused)
+                        .submitLabel(.done)
                 }
 
                 // Color grid
@@ -143,6 +147,11 @@ struct TimerEditView: View {
         }
         .navigationTitle(vm.navTitle)
         .navigationBarTitleDisplayMode(.inline)
+        .simultaneousGesture(
+            TapGesture().onEnded { isTitleFocused = false }
+        )
+        // 키보드가 올라와도 레이아웃(특히 하단 버튼)을 밀어올리지 않음
+        .ignoresSafeArea(.keyboard)
     }
 
     private func formattedTime(_ sec: Int) -> String {
