@@ -14,82 +14,129 @@ struct TimerEditView: View {
 
     // MARK: - Color Options
     private let availableColors: [Color] = [
-        .red, .orange, .yellow, .green, .mint, .teal,
-        .blue, .indigo, .purple, .pink, .brown, .gray
+        .red, .orange, .yellow, .green, .mint, .blue, .indigo, .purple,
+        .pink, .brown, .gray, .black
     ]
 
     var body: some View {
-        VStack(spacing: 16) {
-            // MARK: - Preview Circle
+        VStack(spacing: 20) {
+            // MARK: - Top Preview (200 * 200 + tick overlay)
             ZStack {
                 Circle()
                     .fill(vm.draft.color)
-                    .frame(width: 120, height: 120)
-
-                Text(formattedTime(vm.draft.totalSeconds))
-                    .font(.title)
-                    .bold()
+                    .frame(width: 200, height: 200)
 
                 if vm.draft.isTickAlwaysVisible {
                     Circle()
-                        .strokeBorder(.white.opacity(0.3), lineWidth: 2)
-                        .frame(width: 130, height: 130)
+                        .stroke(Color.white.opacity(0.3), lineWidth: 2)
+                        .frame(width: 200, height: 200)
+                        .overlay(
+                            ForEach(0..<12, id: \.self) { tick in
+                                Rectangle()
+                                    .fill(Color.white.opacity(0.6))
+                                    .frame(width: 2, height: 10)
+                                    .offset(y: -100)
+                                    .rotationEffect(.degrees(Double(tick) / 12.0 * 360.0))
+
+                            }
+                        )
                 }
+
+                Text(formattedTime(vm.draft.totalSeconds))
+                    .font(.system(size: 32, weight: .bold, design: .rounded))
+                    .foregroundColor(.white)
             }
             .padding(.top)
 
-            // MARK: - Form
+            // MARK: - Form Section (Title / Color / Time wheel / Options)
             Form {
-                Section(header: Text("기본 정보")) {
-                    TextField("타이머 이름", text: $vm.draft.title)
+                // title
+                Section(header: Text("Title")) {
+                    TextField("Enter timer title", text: $vm.draft.title)
                 }
 
-                Section(header: Text("색상 선택")) {
-                    LazyVGrid(columns: Array(repeating: .init(.flexible()), count: 6), spacing: 12) {
-                        ForEach(availableColors.indices, id: \.self) { i in
-                            let color = availableColors[i]
+                // Color grid
+                Section(header: Text("Color")) {
+                    LazyVGrid(columns: Array(repeating: .init(.flexible()), count: 6)) {
+                        ForEach(availableColors, id: \.self) { color in
                             Circle()
                                 .fill(color)
                                 .frame(width: 32, height: 32)
                                 .overlay(
                                     Circle()
-                                        .stroke(Color.primary, lineWidth: vm.draft.color == color ? 3 : 0)
+                                        .stroke(Color.primary, lineWidth: vm.draft.color == color ? 2 : 0)
                                 )
                                 .onTapGesture { vm.draft.color = color }
+                                .accessibilityLabel(Text(color == vm.draft.color ? "Selected color" : "Color option"))
+                                .accessibilityAddTraits(color == vm.draft.color ? .isSelected : [])
                         }
                     }
                     .padding(.vertical, 4)
                 }
 
-                Section(header: Text("시간 설정")) {
-                    Stepper(
-                        value: Binding(
-                            get: { vm.draft.totalSeconds / 120},
-                            set: { vm.setTime(byMinutes: $0) }
-                        ),
-                        in: 0...60, step: 1
-                    ) {
-                        Text(formattedTime(vm.draft.totalSeconds))
+                // Time
+                Section(header: Text("Time")) {
+                    HStack {
+                        // minutes binding maps to draft.totalSeconds (clamped to 0...120)
+                        Picker("Minutes", selection: Binding<Int>(
+                            get: { vm.draft.totalSeconds / 60 },
+                            set: { newMinutes in
+                                let m = max(0, min(newMinutes, Constants.Time.maxMinutes))
+                                let s = vm.draft.totalSeconds % 60
+                                vm.draft.totalSeconds = m * 60 + s
+                            }
+                        )) {
+                            ForEach(0...Constants.Time.maxMinutes, id: \.self) { m in
+                                Text("\(m) 분")
+                            }
+                        }
+
+                        // seconds binding maps to draft.totalSeconds (0...59)
+                        Picker("Seconds", selection: Binding<Int>(
+                            get: { vm.draft.totalSeconds % 60 },
+                            set: { newSeconds in
+                                let s = max(0, min(newSeconds, 59))
+                                let m = vm.draft.totalSeconds / 60
+                                vm.draft.totalSeconds = m * 60 + s
+                            }
+                        )) {
+                            ForEach(0..<60, id: \.self) { s in
+                                Text("\(s) 초")
+                            }
+                        }
                     }
+                    .pickerStyle(.wheel)
+                    .frame(height: 100)
                 }
 
-                Section(header: Text("추가 옵션")) {
-                    Toggle("눈금 항상 표시", isOn: $vm.draft.isTickAlwaysVisible)
-                    Toggle("진동", isOn: $vm.draft.isVibrationEnabled)
-                    Toggle("소리", isOn: $vm.draft.isSoundEnabled)
-                    Toggle("반복", isOn: $vm.draft.isRepeatEnabled)
+                // Options
+                Section(header: Text("Options")) {
+                    Toggle(isOn: $vm.draft.isTickAlwaysVisible) {
+                        Label("Show Ticks", systemImage: "dial.min")
+                    }
+                    Toggle(isOn: $vm.draft.isVibrationEnabled) {
+                        Label("Vibration", systemImage: "waveform.path")
+                    }
+                    Toggle(isOn: $vm.draft.isSoundEnabled) {
+                        Label("Sound", systemImage: "speaker.wave.2")
+                    }
+                    Toggle(isOn: $vm.draft.isRepeatEnabled) {
+                        Label("Repeat", systemImage: "repeat")
+                    }
                 }
             }
+            .frame(maxHeight: 450)
+            .scrollContentBackground(.hidden)
 
             // MARK: - Bottom Button
             Button(action: { vm.save() }) {
                 Text(vm.actionTitle)
-                    .font(.headline)
+                    .font(.title3.bold())
                     .frame(maxWidth: .infinity)
                     .padding()
-                    .background(vm.isSavable ? Color.accentColor : Color.gray.opacity(0.4))
+                    .background(vm.isSavable ? vm.draft.color : Color.gray.opacity(0.4))
                     .foregroundColor(.white)
-                    .cornerRadius(12)
+                    .clipShape(Capsule())
                     .padding(.horizontal)
             }
             .disabled(!vm.isSavable)
