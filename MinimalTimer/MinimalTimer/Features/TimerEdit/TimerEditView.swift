@@ -87,7 +87,15 @@ struct TimerEditView: View {
                             set: { newMinutes in
                                 let m = max(0, min(newMinutes, Constants.Time.maxMinutes))
                                 let s = vm.draft.totalSeconds % 60
-                                vm.draft.totalSeconds = m * 60 + s
+                                let maxTotal = Constants.Time.maxMinutes * 60
+                                if m >= Constants.Time.maxMinutes && s > 0 {
+                                    // 120분에서 초가 남아있으면, 초를 애니메이션으로 0으로 스냅
+                                    withAnimation(.easeInOut(duration: 0.15)) {
+                                        vm.draft.totalSeconds = maxTotal // 120:00
+                                    }
+                                } else {
+                                    vm.draft.totalSeconds = m * 60 + s
+                                }
                             }
                         )) {
                             ForEach(0...Constants.Time.maxMinutes, id: \.self) { m in
@@ -99,18 +107,34 @@ struct TimerEditView: View {
                         Picker("Seconds", selection: Binding<Int>(
                             get: { vm.draft.totalSeconds % 60 },
                             set: { newSeconds in
-                                let s = max(0, min(newSeconds, 59))
                                 let m = vm.draft.totalSeconds / 60
-                                vm.draft.totalSeconds = m * 60 + s
+                                // 분이 최대면 초는 0으로 고정 (UI도 비활성화됨)
+                                let sCap = (m >= Constants.Time.maxMinutes) ? 0 : min(max(0, newSeconds), 59)
+                                let maxTotal = Constants.Time.maxMinutes * 60
+                                let total = m * 60 + sCap
+                                vm.draft.totalSeconds = min(total, maxTotal)
                             }
                         )) {
                             ForEach(0..<60, id: \.self) { s in
                                 Text("\(s) 초")
                             }
                         }
+                        // 분==120 "그리고" 초==0일 때만 비활성화 → 스냅 애니메이션 방해 X
+                        .disabled((vm.draft.totalSeconds / 60) >= Constants.Time.maxMinutes
+                                  && (vm.draft.totalSeconds % 60) == 0)
+                        .opacity(((vm.draft.totalSeconds / 60) >= Constants.Time.maxMinutes
+                                  && (vm.draft.totalSeconds % 60) == 0) ? 0.4 : 1.0)
                     }
                     .pickerStyle(.wheel)
                     .frame(height: 100)
+                    // 분이 최대(120)로 바뀌는 순간 초가 > 0이면 0으로 애니메이션 스냅
+                    .onChange(of: vm.draft.totalSeconds / 60) { newMinutes, _ in
+                        let s = vm.draft.totalSeconds % 60
+                        guard newMinutes >= Constants.Time.maxMinutes, s > 0 else { return }
+                        withAnimation(.easeInOut(duration: 0.15)) {
+                            vm.draft.totalSeconds = Constants.Time.maxMinutes * 60 // 120:00으로 고정
+                        }
+                    }
                 }
 
                 // Options
