@@ -164,9 +164,7 @@ struct TimerEditView: View {
         .navigationBarTitleDisplayMode(.inline)
         .navigationBarItems(
             leading:
-                Button(action: {
-                    // 닫기 액션 (예: dismiss())
-                }) {
+                Button(action: { dismiss() }) {
                     Image(systemName: "xmark")
                         .foregroundColor(.white)
                         .padding(8)
