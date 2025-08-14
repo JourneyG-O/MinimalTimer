@@ -9,10 +9,9 @@ import SwiftUI
 
 struct TimerEditView: View {
 
-    // MARK: - ViewModel (Draft 기반)
     @ObservedObject var vm: TimerEditViewModel
-
     @FocusState private var isTitleFocused: Bool
+    @Environment(\.dismiss) private var dismiss
 
     // MARK: - Color Options
     private let availableColors: [Color] = [
@@ -160,22 +159,30 @@ struct TimerEditView: View {
             }
             .frame(maxHeight: 450)
             .scrollContentBackground(.visible)
-
-            // MARK: - Bottom Button
-            Button(action: { vm.save() }) {
-                Text(vm.actionTitle)
-                    .font(.title3.bold())
-                    .frame(maxWidth: .infinity)
-                    .padding()
-                    .background(vm.isSavable ? vm.draft.color : Color.gray.opacity(0.4))
-                    .foregroundColor(.white)
-                    .clipShape(Capsule())
-                    .padding(.horizontal)
-            }
-            .disabled(!vm.isSavable)
         }
         .navigationTitle(vm.navTitle)
         .navigationBarTitleDisplayMode(.inline)
+        .navigationBarItems(
+            leading:
+                Button(action: {
+                    // 닫기 액션 (예: dismiss())
+                }) {
+                    Image(systemName: "xmark")
+                        .foregroundColor(.white)
+                        .padding(8)
+                        .background(Color.black.opacity(0.3), in: Circle())
+                },
+            trailing:
+                Button(action: {
+                    vm.save()
+                }) {
+                    Image(systemName: "checkmark")
+                        .foregroundColor(.white)
+                        .padding(8)
+                        .background(vm.draft.color, in: Circle())
+                }
+                .disabled(!vm.isSavable)
+        )
         .simultaneousGesture(
             TapGesture().onEnded { isTitleFocused = false }
         )
