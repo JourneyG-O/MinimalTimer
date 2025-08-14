@@ -20,25 +20,30 @@ struct TimerEditView: View {
         .pink, .brown, .gray, .black
     ]
 
+    // MARK: - Preview/Tick layout
+    private let previewSize: CGFloat = 150
+    private let tickCount: Int = 12
+    private let tickLength: CGFloat = 10
+
     var body: some View {
         VStack(spacing: 20) {
             // MARK: - Top Preview (200 * 200 + tick overlay)
             ZStack {
                 Circle()
                     .fill(vm.draft.color)
-                    .frame(width: 150, height: 150)
+                    .frame(width: previewSize, height: previewSize)
 
                 if vm.draft.isTickAlwaysVisible {
                     Circle()
                         .stroke(Color.white.opacity(0.3), lineWidth: 2)
-                        .frame(width: 150, height: 150)
+                        .frame(width: previewSize, height: previewSize)
                         .overlay(
-                            ForEach(0..<12, id: \.self) { tick in
+                            ForEach(0..<tickCount, id: \.self) { tick in
                                 Rectangle()
                                     .fill(Color.white.opacity(0.6))
-                                    .frame(width: 2, height: 10)
-                                    .offset(y: -100)
-                                    .rotationEffect(.degrees(Double(tick) / 12.0 * 360.0))
+                                    .frame(width: 2, height: tickLength)
+                                    .offset(y: -(previewSize / 2 - tickLength / 2))
+                                    .rotationEffect(.degrees(Double(tick) / Double(tickCount) * 360.0))
 
                             }
                         )
