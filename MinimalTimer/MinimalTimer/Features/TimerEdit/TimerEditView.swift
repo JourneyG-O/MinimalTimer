@@ -21,40 +21,14 @@ struct TimerEditView: View {
 
     // MARK: - Preview/Tick layout
     private let previewSize: CGFloat = 150
+    private let previewHeaderHeight: CGFloat = 220   // 프리뷰 컨테이너(배경 포함) 높이
+    private let previewCornerRadius: CGFloat = 16    // 프리뷰 배경 모서리
     private let tickCount: Int = 12
     private let tickLength: CGFloat = 10
 
     var body: some View {
-        VStack(spacing: 20) {
-            // MARK: - Top Preview (200 * 200 + tick overlay)
-            ZStack {
-                Circle()
-                    .fill(vm.draft.color)
-                    .frame(width: previewSize, height: previewSize)
-
-                if vm.draft.isTickAlwaysVisible {
-                    Circle()
-                        .stroke(Color.white.opacity(0.3), lineWidth: 2)
-                        .frame(width: previewSize, height: previewSize)
-                        .overlay(
-                            ForEach(0..<tickCount, id: \.self) { tick in
-                                Rectangle()
-                                    .fill(Color.white.opacity(0.6))
-                                    .frame(width: 2, height: tickLength)
-                                    .offset(y: -(previewSize / 2 - tickLength / 2))
-                                    .rotationEffect(.degrees(Double(tick) / Double(tickCount) * 360.0))
-
-                            }
-                        )
-                }
-
-                Text(formattedTime(vm.draft.totalSeconds))
-                    .font(.system(size: 32, weight: .bold, design: .rounded))
-                    .foregroundColor(.white)
-            }
-            .padding(.top)
-
-            // MARK: - Form Section (Title / Color / Time wheel / Options)
+        ZStack(alignment: .top) {
+            // MARK: - 1) Base Form (화면 전체, 배경 숨김)
             Form {
                 // title
                 Section(header: Text("Title")) {
@@ -131,7 +105,7 @@ struct TimerEditView: View {
                     }
                     .pickerStyle(.wheel)
                     .frame(height: 100)
-                    // 분이 최대(120)로 바뀌는 순간 초가 > 0이면 0으로 애니메이션 스냅
+                    // iOS 17 권장 시그니처: (new, old)
                     .onChange(of: vm.draft.totalSeconds / 60) { newMinutes, _ in
                         let s = vm.draft.totalSeconds % 60
                         guard newMinutes >= Constants.Time.maxMinutes, s > 0 else { return }
@@ -157,8 +131,51 @@ struct TimerEditView: View {
                     }
                 }
             }
-            .frame(maxHeight: 450)
-            .scrollContentBackground(.visible)
+            .scrollContentBackground(.hidden)
+            .background(Color(.systemBackground))
+            // 프리뷰 높이만큼 컨텐츠 시작점 아래로 띄우기 → 이 영역도 스크롤에 포함
+            .safeAreaInset(edge: .top, spacing: 0) {
+                Color.clear.frame(height: previewHeaderHeight)
+            }
+
+            // MARK: - 2) Overlay Preview Header (유리 배경 + 프리뷰 내용)
+            ZStack {
+                // 유리(머티리얼) 배경 — 사각형 컨테이너
+                RoundedRectangle(cornerRadius: previewCornerRadius, style: .continuous)
+                    .fill(.ultraThinMaterial)
+                    .ignoresSafeArea(edges: .top) // 상단 안전영역까지 배경 확장(디자인 취향에 따라 제거 가능)
+
+                // 프리뷰 콘텐츠: 원 + 눈금 + 텍스트
+                ZStack {
+                    Circle()
+                        .fill(vm.draft.color)
+                        .frame(width: previewSize, height: previewSize)
+                        // Circle 자체의 드롭 섀도우(유지)
+                        .shadow(color: .black.opacity(0.18), radius: 16, x: 0, y: 10)
+                        .shadow(color: .black.opacity(0.26), radius: 4,  x: 0, y: 2)
+
+                    if vm.draft.isTickAlwaysVisible {
+                        Circle()
+                            .stroke(Color.white.opacity(0.3), lineWidth: 2)
+                            .frame(width: previewSize, height: previewSize)
+                            .overlay(
+                                ForEach(0..<tickCount, id: \.self) { tick in
+                                    Rectangle()
+                                        .fill(Color.white.opacity(0.6))
+                                        .frame(width: 2, height: tickLength)
+                                        .offset(y: -(previewSize / 2 - tickLength / 2))
+                                        .rotationEffect(.degrees(Double(tick) / Double(tickCount) * 360.0))
+                                }
+                            )
+                    }
+
+                    Text(formattedTime(vm.draft.totalSeconds))
+                        .font(.system(size: 32, weight: .bold, design: .rounded))
+                        .foregroundColor(.white)
+                }
+            }
+            .frame(height: previewHeaderHeight)
+            .padding(.horizontal, 16)
         }
         .navigationTitle(vm.navTitle)
         .navigationBarTitleDisplayMode(.inline)
@@ -181,10 +198,13 @@ struct TimerEditView: View {
                 }
                 .disabled(!vm.isSavable)
         )
+        // 바깥 탭 시 키보드 내리기
         .simultaneousGesture(
             TapGesture().onEnded { isTitleFocused = false }
         )
-        // 키보드가 올라와도 레이아웃(특히 하단 버튼)을 밀어올리지 않음
+        // 아래로 스와이프해도 닫히지 않도록 (필요시 유지)
+        // .interactiveDismissDisabled(true)
+        // 키보드가 올라와도 레이아웃 밀어올리지 않음
         .ignoresSafeArea(.keyboard)
     }
 

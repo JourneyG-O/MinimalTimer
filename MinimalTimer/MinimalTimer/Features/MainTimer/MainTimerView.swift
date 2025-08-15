@@ -7,7 +7,7 @@
 import SwiftUI
 
 struct MainTimerView: View {
-    @ObservedObject var viewModel: MainViewModel
+    @ObservedObject var vm: MainViewModel
 
     var body: some View {
         GeometryReader { geometry in
@@ -27,7 +27,7 @@ struct MainTimerView: View {
             }
         }
         // 편집/생성 시트
-        .sheet(item: $viewModel.route) { route in
+        .fullScreenCover(item: $vm.route) { route in
             switch route {
             case .add:
                 NavigationView {
@@ -35,19 +35,19 @@ struct MainTimerView: View {
                         vm: .init(
                         mode: .create,
                         initial: .init(),
-                        saveAction: viewModel.handleSave
+                        saveAction: vm.handleSave
                         )
                     )
                 }
                 case .edit(let index):
                 // 기존 모델 -> Draft로 초기화
-                let initial = TimerDraft(model: viewModel.timers[index])
+                let initial = TimerDraft(model: vm.timers[index])
                 NavigationView {
                     TimerEditView(
                         vm: .init(
                             mode: .edit(index: index),
                             initial: initial,
-                            saveAction: viewModel.handleSave
+                            saveAction: vm.handleSave
                         )
                     )
                 }
@@ -64,18 +64,18 @@ struct MainTimerView: View {
     private var backgroundLongPressGesture: some Gesture {
         LongPressGesture(minimumDuration: 0.6)
             .onEnded { _ in
-                viewModel.enterSwitchMode()
+                vm.enterSwitchMode()
             }
     }
 
     // MARK: - Title
 
     private var titleSection: some View {
-        let isAddTimer = viewModel.selectedTimerIndex == viewModel.timers.count
-        let title = isAddTimer ? "타이머 추가" : viewModel.currentTimer?.title
+        let isAddTimer = vm.selectedTimerIndex == vm.timers.count
+        let title = isAddTimer ? "타이머 추가" : vm.currentTimer?.title
 
         return TitleView(title: title)
-            .opacity(viewModel.interactionMode == .switching ? 1 : 0)
+            .opacity(vm.interactionMode == .switching ? 1 : 0)
     }
 
     // MARK: - Timer Display
@@ -84,52 +84,52 @@ struct MainTimerView: View {
         let minSide = min(geometry.size.width, geometry.size.height)
         let timerSide = minSide * 0.8
         let dragAction: (Double) -> Void = { angle in
-            viewModel.setUserProgress(from: angle)
+            vm.setUserProgress(from: angle)
         }
 
         return ZStack {
-            if viewModel.interactionMode == .normal {
-                if let timer = viewModel.currentTimer {
+            if vm.interactionMode == .normal {
+                if let timer = vm.currentTimer {
                     SingleTimerView(
                         timer: timer,
-                        progress: viewModel.progress,
-                        isRunning: viewModel.isRunning,
-                        isDragging: viewModel.isDragging,
-                        interactionMode: viewModel.interactionMode,
-                        onSingleTap: viewModel.startOrPauseTimer,
-                        onDoubleTap: viewModel.reset,
+                        progress: vm.progress,
+                        isRunning: vm.isRunning,
+                        isDragging: vm.isDragging,
+                        interactionMode: vm.interactionMode,
+                        onSingleTap: vm.startOrPauseTimer,
+                        onDoubleTap: vm.reset,
                         onDrag: dragAction,
-                        onDragEnd: viewModel.endDragging
+                        onDragEnd: vm.endDragging
                     )
                     .frame(width: timerSide, height: timerSide)
                     .transition(.scale.combined(with: .opacity))
                 }
             }
 
-            if viewModel.interactionMode == .switching {
-                TimerPagerView(viewModel: viewModel)
+            if vm.interactionMode == .switching {
+                TimerPagerView(viewModel: vm)
                     .frame(width: minSide, height: minSide)
                     .transition(.scale.combined(with: .opacity))
             }
         }
-        .animation(.easeInOut(duration: 0.3), value: viewModel.interactionMode)
+        .animation(.easeInOut(duration: 0.3), value: vm.interactionMode)
     }
 
     // MARK: - Bottom Information Section
 
     @ViewBuilder
     private func bottomInformationSection() -> some View {
-        if viewModel.interactionMode == .normal {
-            RemainingTimeView(viewModel: viewModel)
+        if vm.interactionMode == .normal {
+            RemainingTimeView(viewModel: vm)
         } else {
             EditButtonView {
-                viewModel.presentEditTimerView(at: viewModel.selectedTimerIndex)
+                vm.presentEditTimerView(at: vm.selectedTimerIndex)
             }
-            .opacity(viewModel.selectedTimerIndex != viewModel.timers.count ? 1 : 0)
+            .opacity(vm.selectedTimerIndex != vm.timers.count ? 1 : 0)
         }
     }
 }
 
 #Preview {
-    MainTimerView(viewModel: .init())
+    MainTimerView(vm: .init())
 }

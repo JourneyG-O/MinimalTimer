@@ -11,7 +11,7 @@ import SwiftUI
 struct MinimalTimerApp: App {
     var body: some Scene {
         WindowGroup {
-            MainTimerView(viewModel: .init())
+            MainTimerView(vm: .init())
         }
     }
 }
