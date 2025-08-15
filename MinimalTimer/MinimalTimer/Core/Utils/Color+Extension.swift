@@ -37,3 +37,9 @@ enum CustomColor: String, CaseIterable, Hashable, Codable {
         }
     }
 }
+
+extension Color {
+    static func invertedForeground(for scheme: ColorScheme) -> Color {
+        scheme == .light ? .white : .black
+    }
+}

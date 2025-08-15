@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct PreviewTimerView: View {
+    
     let color: Color
     let totalTime: TimeInterval
     let onTap: () -> Void
@@ -18,6 +19,7 @@ struct PreviewTimerView: View {
                 .fill(color)
 
             Text(formatTime(totalTime))
+                .foregroundColor(Color(.systemBackground))
                 .font(.system(size: 40, weight: .bold, design: .rounded))
         }
         .onTapGesture(perform: onTap)

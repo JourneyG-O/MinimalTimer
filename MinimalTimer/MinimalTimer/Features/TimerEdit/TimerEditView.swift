@@ -153,7 +153,7 @@ struct TimerEditView: View {
 
                     if vm.draft.isTickAlwaysVisible {
                         Circle()
-                            .stroke(contrastColor(for: vm.draft.color.toColor).opacity(0.3), lineWidth: 2)
+                            .stroke(Color(.systemBackground).opacity(0.3), lineWidth: 2)
                             .frame(width: previewSize, height: previewSize)
                             .overlay(
                                 ForEach(0..<tickCount, id: \.self) { tick in
@@ -168,7 +168,7 @@ struct TimerEditView: View {
 
                     Text(formattedTime(vm.draft.totalSeconds))
                         .font(.system(size: 32, weight: .bold, design: .rounded))
-                        .foregroundColor(contrastColor(for: vm.draft.color.toColor))
+                        .foregroundColor(Color(.systemBackground))
                 }
             }
             .frame(height: previewHeaderHeight)
@@ -191,7 +191,7 @@ struct TimerEditView: View {
                     vm.save()
                 }) {
                     Image(systemName: "checkmark")
-                        .foregroundColor(contrastColor(for: vm.draft.color.toColor))
+                        .foregroundColor(Color(.systemBackground))
                         .padding(8)
                         .background(vm.draft.color.toColor, in: Circle())
                 }
@@ -211,25 +211,6 @@ struct TimerEditView: View {
         let minutes = sec / 60
         let seconds = sec % 60
         return String(format: "%02d:%02d", minutes, seconds)
-    }
-
-    // MARK: - Contrast Helpers
-    /// 배경 색이 밝으면 검정, 어두우면 흰색 반환
-    private func contrastColor(for color: Color) -> Color {
-        isLight(color) ? .black : .white
-    }
-
-    /// 색의 상대 휘도 기반 밝기 판정
-    private func isLight(_ color: Color) -> Bool {
-        let ui = UIColor(color)
-        var r: CGFloat = 0, g: CGFloat = 0, b: CGFloat = 0, a: CGFloat = 0
-        if ui.getRed(&r, green: &g, blue: &b, alpha: &a) {
-            // sRGB 상대 휘도
-            let luminance = 0.2126 * r + 0.7152 * g + 0.0722 * b
-            return luminance > 0.6
-        }
-        // 변환 실패 시 기본값: 어두운 색으로 간주하지 않음
-        return false
     }
 }
 
