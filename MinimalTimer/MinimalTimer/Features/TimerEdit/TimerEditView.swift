@@ -25,6 +25,7 @@ struct TimerEditView: View {
     private let previewCornerRadius: CGFloat = 16    // 프리뷰 배경 모서리
     private let tickCount: Int = 12
     private let tickLength: CGFloat = 10
+    private let previewPading: CGFloat = 16
 
     var body: some View {
         ZStack(alignment: .top) {
@@ -150,7 +151,6 @@ struct TimerEditView: View {
                     Circle()
                         .fill(vm.draft.color)
                         .frame(width: previewSize, height: previewSize)
-                        // Circle 자체의 드롭 섀도우(유지)
                         .shadow(color: .black.opacity(0.18), radius: 16, x: 0, y: 10)
                         .shadow(color: .black.opacity(0.26), radius: 4,  x: 0, y: 2)
 
@@ -175,10 +175,12 @@ struct TimerEditView: View {
                 }
             }
             .frame(height: previewHeaderHeight)
-            .padding(.horizontal, 16)
+            .padding(.top, previewPading)
+            .padding(.horizontal, previewPading)
         }
         .navigationTitle(vm.navTitle)
         .navigationBarTitleDisplayMode(.inline)
+        .toolbarBackground(.hidden, for: .navigationBar)
         .navigationBarItems(
             leading:
                 Button(action: { dismiss() }) {
