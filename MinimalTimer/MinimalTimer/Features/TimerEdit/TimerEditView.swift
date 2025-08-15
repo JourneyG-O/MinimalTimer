@@ -153,7 +153,7 @@ struct TimerEditView: View {
 
                     if vm.draft.isTickAlwaysVisible {
                         Circle()
-                            .stroke(Color.white.opacity(0.3), lineWidth: 2)
+                            .stroke(contrastColor(for: vm.draft.color.toColor).opacity(0.3), lineWidth: 2)
                             .frame(width: previewSize, height: previewSize)
                             .overlay(
                                 ForEach(0..<tickCount, id: \.self) { tick in
