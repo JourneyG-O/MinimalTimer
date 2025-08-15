@@ -25,7 +25,7 @@ struct TimerEditView: View {
     private let previewCornerRadius: CGFloat = 16    // 프리뷰 배경 모서리
     private let tickCount: Int = 12
     private let tickLength: CGFloat = 10
-    private let previewPading: CGFloat = 16
+    private let previewPadding: CGFloat = 16
 
     var body: some View {
         ZStack(alignment: .top) {
@@ -175,8 +175,8 @@ struct TimerEditView: View {
                 }
             }
             .frame(height: previewHeaderHeight)
-            .padding(.top, previewPading)
-            .padding(.horizontal, previewPading)
+            .padding(.top, previewPadding)
+            .padding(.horizontal, previewPadding)
         }
         .navigationTitle(vm.navTitle)
         .navigationBarTitleDisplayMode(.inline)
