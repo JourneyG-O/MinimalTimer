@@ -12,7 +12,7 @@ struct TimerModel: Identifiable {
     var title: String
     var totalTime: TimeInterval
     var currentTime: TimeInterval
-    var color: Color
+    var color: CustomColor
     var isTickAlwaysVisible: Bool
     var isVibrationEnabled: Bool
     var isSoundEnabled: Bool
@@ -23,7 +23,7 @@ struct TimerModel: Identifiable {
         title: String,
         totalTime: TimeInterval,
         currentTime: TimeInterval,
-        color: Color,
+        color: CustomColor,
         isTickAlwaysVisible: Bool = false,
         isVibrationEnabled: Bool = true,
         isSoundEnabled: Bool = true,

@@ -14,10 +14,7 @@ struct TimerEditView: View {
     @Environment(\.dismiss) private var dismiss
 
     // MARK: - Color Options
-    private let availableColors: [Color] = [
-        .red, .orange, .yellow, .green, .mint, .blue, .indigo, .purple,
-        .pink, .brown, .gray, Color(UIColor.label)
-    ]
+    private let availableColors = CustomColor.allCases
 
     // MARK: - Preview/Tick layout
     private let previewSize: CGFloat = 150
@@ -41,17 +38,17 @@ struct TimerEditView: View {
                 // Color grid
                 Section(header: Text("Color")) {
                     LazyVGrid(columns: Array(repeating: .init(.flexible()), count: 6)) {
-                        ForEach(availableColors, id: \.self) { color in
+                        ForEach(availableColors, id: \.self) { customColor in
                             Circle()
-                                .fill(color)
+                                .fill(customColor.toColor)
                                 .frame(width: 32, height: 32)
                                 .overlay(
                                     Circle()
-                                        .stroke(Color.primary, lineWidth: vm.draft.color == color ? 2 : 0)
+                                        .stroke(Color.primary, lineWidth: vm.draft.color == customColor ? 2 : 0)
                                 )
-                                .onTapGesture { vm.draft.color = color }
-                                .accessibilityLabel(Text(color == vm.draft.color ? "Selected color" : "Color option"))
-                                .accessibilityAddTraits(color == vm.draft.color ? .isSelected : [])
+                                .onTapGesture { vm.draft.color = customColor }
+                                .accessibilityLabel(Text(customColor == vm.draft.color ? "Selected color" : "Color option"))
+                                .accessibilityAddTraits(customColor == vm.draft.color ? .isSelected : [])
                         }
                     }
                     .padding(.vertical, 4)
@@ -149,7 +146,7 @@ struct TimerEditView: View {
                 // 프리뷰 콘텐츠: 원 + 눈금 + 텍스트
                 ZStack {
                     Circle()
-                        .fill(vm.draft.color)
+                        .fill(vm.draft.color.toColor)
                         .frame(width: previewSize, height: previewSize)
                         .shadow(color: .black.opacity(0.18), radius: 16, x: 0, y: 10)
                         .shadow(color: .black.opacity(0.26), radius: 4,  x: 0, y: 2)
@@ -171,7 +168,7 @@ struct TimerEditView: View {
 
                     Text(formattedTime(vm.draft.totalSeconds))
                         .font(.system(size: 32, weight: .bold, design: .rounded))
-                        .foregroundColor(contrastColor(for: vm.draft.color))
+                        .foregroundColor(contrastColor(for: vm.draft.color.toColor))
                 }
             }
             .frame(height: previewHeaderHeight)
@@ -194,9 +191,9 @@ struct TimerEditView: View {
                     vm.save()
                 }) {
                     Image(systemName: "checkmark")
-                        .foregroundColor(contrastColor(for: vm.draft.color))
+                        .foregroundColor(contrastColor(for: vm.draft.color.toColor))
                         .padding(8)
-                        .background(vm.draft.color, in: Circle())
+                        .background(vm.draft.color.toColor, in: Circle())
                 }
                 .disabled(!vm.isSavable)
         )

@@ -13,7 +13,7 @@ struct TimerModelDTO: Codable {
     var title: String
     var totalTime: TimeInterval
     var currentTime: TimeInterval
-    var colorHex: String
+    var color: String
     var isTickAlwaysVisible: Bool
     var isVibrationEnabled: Bool
     var isSoundEnabled: Bool
@@ -27,7 +27,7 @@ extension TimerModel {
             title: title,
             totalTime: totalTime,
             currentTime: currentTime,
-            colorHex: color.toHex(),
+            color: self.color.rawValue,
             isTickAlwaysVisible: isTickAlwaysVisible,
             isVibrationEnabled: isVibrationEnabled,
             isSoundEnabled: isSoundEnabled,
@@ -43,7 +43,7 @@ extension TimerModelDTO {
             title: title,
             totalTime: totalTime,
             currentTime: currentTime,
-            color: Color(hex: colorHex),
+            color: CustomColor(rawValue: self.color) ?? .red,
             isTickAlwaysVisible: isTickAlwaysVisible,
             isVibrationEnabled: isVibrationEnabled,
             isSoundEnabled: isSoundEnabled,
@@ -82,9 +82,9 @@ class TimerStore {
 
     static var defaultTimers: [TimerModel] {
         return [
-            TimerModel(title: "표준 타이머", totalTime: 60 * 60, currentTime: 60 * 60, color: .yellow),
-            TimerModel(title: "긴 타이머", totalTime: 120 * 60, currentTime: 120 * 60, color: .blue),
-            TimerModel(title: "짧은 타이머", totalTime: 5 * 60, currentTime: 5 * 60, color: .red)
+            TimerModel(title: "표준 타이머", totalTime: 60 * 60, currentTime: 60 * 60, color: CustomColor.yellow),
+            TimerModel(title: "긴 타이머", totalTime: 120 * 60, currentTime: 120 * 60, color: CustomColor.blue),
+            TimerModel(title: "짧은 타이머", totalTime: 5 * 60, currentTime: 5 * 60, color: CustomColor.red)
         ]
     }
 }

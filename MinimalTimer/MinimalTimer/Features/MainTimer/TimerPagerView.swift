@@ -27,7 +27,7 @@ struct TimerPagerView: View {
                         if index < timers.count {
                             let timer = timers[index]
 
-                            PreviewTimerView(color: timer.color, totalTime: timer.totalTime) {
+                            PreviewTimerView(color: timer.color.toColor, totalTime: timer.totalTime) {
                                 viewModel.selectTimer(at: index)
                                 viewModel.exitSwitchMode()
                             }

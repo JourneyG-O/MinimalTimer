@@ -18,9 +18,9 @@ struct TimerPieView: View {
     // MARK: - Computed Properties
     private var fillColor: Color {
         if interactionMode == .normal && !isRunning && !isDragging {
-            return timer.color.opacity(0.6)
+            return timer.color.toColor.opacity(0.6)
         } else {
-            return timer.color
+            return timer.color.toColor
         }
     }
 
