@@ -180,7 +180,6 @@ struct TimerEditView: View {
                 // 유리(머티리얼) 배경 — 사각형 컨테이너
                 RoundedRectangle(cornerRadius: previewCornerRadius, style: .continuous)
                     .fill(.ultraThinMaterial)
-                    .ignoresSafeArea(edges: .top) // 상단 안전영역까지 배경 확장(디자인 취향에 따라 제거 가능)
 
                 // 프리뷰 콘텐츠: 원 + 눈금 + 텍스트
                 ZStack {
@@ -216,7 +215,7 @@ struct TimerEditView: View {
         }
         .navigationTitle(vm.navTitle)
         .navigationBarTitleDisplayMode(.inline)
-        .toolbarBackground(.hidden, for: .navigationBar)
+        .toolbarBackground(Color(.systemBackground), for: .navigationBar)
         .navigationBarItems(
             leading:
                 Button(action: { dismiss() }) {
