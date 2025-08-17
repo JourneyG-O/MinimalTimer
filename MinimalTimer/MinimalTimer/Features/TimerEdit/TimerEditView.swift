@@ -13,6 +13,10 @@ struct TimerEditView: View {
     @FocusState private var isTitleFocused: Bool
     @Environment(\.dismiss) private var dismiss
 
+    // MARK: - Local validation flags
+    @State private var titleError: Bool = false
+    @State private var timeError: Bool = false
+
     // MARK: - Color Options
     private let availableColors = CustomColor.allCases
 
@@ -30,10 +34,20 @@ struct TimerEditView: View {
             // MARK: - 1) Base Form (화면 전체, 배경 숨김)
             Form {
                 // title
-                Section(header: Text("Title")) {
+                Section(
+                    header:
+                        Text(titleError ? "TITLE * 필수 항목" : "TITLE")
+                        .foregroundStyle(titleError ? Color.red : Color.secondary)
+                        .textCase(nil)
+
+                ) {
                     TextField("Enter timer title", text: $vm.draft.title)
                         .focused($isTitleFocused)
                         .submitLabel(.done)
+                        // 타이틀 채우면 에러 해제
+                        .onChange(of: vm.draft.title) {
+                            titleError = false
+                        }
                 }
 
                 // Color grid
@@ -56,7 +70,12 @@ struct TimerEditView: View {
                 }
 
                 // Time
-                Section(header: Text("Time")) {
+                Section(
+                    header:
+                        Text(timeError ? "TIME * 필수 항목" : "TIME")
+                        .foregroundStyle(timeError ? Color.red : Color.secondary)
+                        .textCase(nil)
+                ) {
                     HStack {
                         // minutes binding maps to draft.totalSeconds (clamped to 0...120)
                         Picker("Minutes", selection: Binding<Int>(
@@ -104,13 +123,15 @@ struct TimerEditView: View {
                     }
                     .pickerStyle(.wheel)
                     .frame(height: 100)
-                    // iOS 17 권장 시그니처: (new, old)
                     .onChange(of: vm.draft.totalSeconds / 60) { newMinutes, _ in
                         let s = vm.draft.totalSeconds % 60
                         guard newMinutes >= Constants.Time.maxMinutes, s > 0 else { return }
                         withAnimation(.easeInOut(duration: 0.15)) {
                             vm.draft.totalSeconds = Constants.Time.maxMinutes * 60 // 120:00으로 고정
                         }
+                    }
+                    .onChange(of: vm.draft.totalSeconds) { newValue, _ in
+                        if newValue > 0 { timeError = false }
                     }
                 }
 
@@ -189,14 +210,14 @@ struct TimerEditView: View {
                 },
             trailing:
                 Button(action: {
-                    vm.save()
+                    handleCheckTap()
                 }) {
                     Image(systemName: "checkmark")
                         .foregroundColor(Color(.systemBackground))
                         .padding(8)
                         .background(vm.draft.color.toColor, in: Circle())
+                        .opacity(vm.isSavable ? 1 : 0.45)
                 }
-                .disabled(!vm.isSavable)
         )
         // 바깥 탭 시 키보드 내리기
         .simultaneousGesture(
@@ -212,6 +233,18 @@ struct TimerEditView: View {
         let minutes = sec / 60
         let seconds = sec % 60
         return String(format: "%02d:%02d", minutes, seconds)
+    }
+
+    // MARK: - Validation & Save
+    private func handleCheckTap() {
+        let isTitleEmpty = vm.draft.title.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+        let isTimeZero = vm.draft.totalSeconds <= 0
+
+        if isTitleEmpty { titleError = true }
+        if isTimeZero { timeError = true }
+
+        guard !isTitleEmpty, !isTimeZero else { return }
+        vm.save()
     }
 }
 
