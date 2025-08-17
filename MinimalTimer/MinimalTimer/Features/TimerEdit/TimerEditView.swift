@@ -23,6 +23,7 @@ struct TimerEditView: View {
     private let tickCount: Int = 12
     private let tickLength: CGFloat = 10
     private let previewPadding: CGFloat = 16
+    private let formTopExtraSpacing: CGFloat = 36
 
     var body: some View {
         ZStack(alignment: .top) {
@@ -133,7 +134,7 @@ struct TimerEditView: View {
             .background(Color(.systemBackground))
             // 프리뷰 높이만큼 컨텐츠 시작점 아래로 띄우기 → 이 영역도 스크롤에 포함
             .safeAreaInset(edge: .top, spacing: 0) {
-                Color.clear.frame(height: previewHeaderHeight)
+                Color.clear.frame(height: previewHeaderHeight + formTopExtraSpacing)
             }
 
             // MARK: - 2) Overlay Preview Header (유리 배경 + 프리뷰 내용)
