@@ -243,7 +243,11 @@ struct TimerEditView: View {
         if isTitleEmpty { titleError = true }
         if isTimeZero { timeError = true }
 
-        guard !isTitleEmpty, !isTimeZero else { return }
+        guard !isTitleEmpty, !isTimeZero else {
+            let generator = UINotificationFeedbackGenerator()
+            generator.notificationOccurred(.error)
+            return
+        }
         vm.save()
     }
 }
