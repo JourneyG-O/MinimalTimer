@@ -84,6 +84,16 @@ final class MainViewModel: ObservableObject {
         store.save(timers: timers, selectedIndex: selectedTimerIndex)
     }
 
+    func deleteTimer(at index: Int) {
+        guard timers.indices.contains(index) else { return }
+        timers.remove(at: index)
+        if selectedTimerIndex >= timers.count {
+            selectedTimerIndex = max(timers.count - 1, 0)
+        }
+        saveTimers()
+        route = nil
+    }
+
     // MARK: - Timer Control
     func start() {
         guard !isRunning,

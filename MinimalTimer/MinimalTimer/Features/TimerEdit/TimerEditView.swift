@@ -150,6 +150,23 @@ struct TimerEditView: View {
                         Label("Repeat", systemImage: "repeat")
                     }
                 }
+
+                // 편집 모드에서만 노출 삭제 버튼
+                if case .edit = vm.mode {
+                    Section {
+                        Button(role: .destructive) {
+                            vm.deleteIfEditing()
+                            // 삭제 후 닫기
+                            dismiss()
+                        } label: {
+                            Image(systemName: "trash.fill")
+                                .font(.system(size: 24))
+                                .foregroundColor(.red)
+                                .frame(maxWidth: .infinity)
+                        }
+                        .buttonStyle(.borderless)
+                    }
+                }
             }
             .scrollContentBackground(.hidden)
             .background(Color(.systemBackground))

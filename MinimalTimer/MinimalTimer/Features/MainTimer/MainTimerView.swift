@@ -33,13 +33,13 @@ struct MainTimerView: View {
                 NavigationView {
                     TimerEditView(
                         vm: .init(
-                        mode: .create,
-                        initial: .init(),
-                        saveAction: vm.handleSave
+                            mode: .create,
+                            initial: .init(),
+                            saveAction: vm.handleSave
                         )
                     )
                 }
-                case .edit(let index):
+            case .edit(let index):
                 // 기존 모델 -> Draft로 초기화
                 let initial = TimerDraft(model: vm.timers[index])
                 NavigationView {
@@ -47,7 +47,10 @@ struct MainTimerView: View {
                         vm: .init(
                             mode: .edit(index: index),
                             initial: initial,
-                            saveAction: vm.handleSave
+                            saveAction: vm.handleSave,
+                            deleteAction: { idx in
+                                vm.deleteTimer(at: idx)
+                            }
                         )
                     )
                 }

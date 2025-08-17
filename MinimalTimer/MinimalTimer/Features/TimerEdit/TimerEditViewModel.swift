@@ -32,12 +32,17 @@ final class TimerEditViewModel: ObservableObject {
     // 저장은 상위(MainViewModel)에서 주입
     private let saveAction: (Mode, TimerDraft) -> Void
 
+    // 삭제는 편집 모드에서만 사용
+    private let deleteAction: ((Int) -> Void)?
+
     init(mode: Mode,
          initial: TimerDraft = .init(),
-         saveAction: @escaping (Mode, TimerDraft) -> Void) {
+         saveAction: @escaping (Mode, TimerDraft) -> Void,
+         deleteAction: ((Int) -> Void)? = nil) {
         self.mode = mode
         self.draft = initial
         self.saveAction = saveAction
+        self.deleteAction = deleteAction
     }
 
     var isSavable: Bool {
@@ -53,6 +58,17 @@ final class TimerEditViewModel: ObservableObject {
     func save() {
         guard isSavable else { return }
         saveAction(mode, draft)
+    }
+
+    func deleteIfEditing() {
+        guard case let .edit(index) = mode else { return }
+        deleteAction?(index)
+    }
+
+    func performDelete() {
+        if case let .edit(index) = mode {
+            deleteAction?(index)
+        }
     }
 }
 
