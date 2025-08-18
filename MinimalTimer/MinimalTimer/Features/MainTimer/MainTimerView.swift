@@ -111,7 +111,7 @@ struct MainTimerView: View {
             }
 
             if vm.interactionMode == .switching {
-                TimerPagerView(viewModel: vm)
+                TimerPagerView(vm: vm)
                     .frame(width: minSide, height: minSide)
                     .transition(.scale.combined(with: .opacity))
             }
