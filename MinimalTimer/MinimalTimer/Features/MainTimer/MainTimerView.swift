@@ -8,6 +8,7 @@ import SwiftUI
 
 struct MainTimerView: View {
     @ObservedObject var vm: MainViewModel
+    @Namespace private var animationNamespace
 
     var body: some View {
         GeometryReader { geometry in
@@ -15,17 +16,17 @@ struct MainTimerView: View {
                 backgroundLayer
                     .gesture(backgroundLongPressGesture)
 
-                VStack {
-                    Spacer()
-                    titleSection
-                    Spacer()
-                    timerDisplaySection(in: geometry)
-                    Spacer()
-                    bottomInformationSection()
-                    Spacer()
+                if vm.interactionMode == .normal {
+//                    NormalView()
+                }
+
+                if vm.interactionMode == .switching {
+//                    SwitchingView()
                 }
             }
+            .animation(.easeInOut(duration: 0.35), value: vm.interactionMode)
         }
+        
         // 편집/생성 시트
         .fullScreenCover(item: $vm.route) { route in
             switch route {
