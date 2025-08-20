@@ -8,34 +8,36 @@
 import SwiftUI
 struct NormalView: View {
     @ObservedObject var vm: MainViewModel
-    let geometry: GeometryProxy
     let ns: Namespace.ID
 
     var body: some View {
-        VStack {
-            Spacer()
-//            TitleView(title: vm.currentTimer?.title)
-//                .opacity(vm.showTitle ? 1 : 0) 추후에 기능 추가
-            Spacer()
-            if let timer = vm.currentTimer {
-                SingleTimerView(
-                    timer: timer,
-                    progress: vm.progress,
-                    isRunning: vm.isRunning,
-                    isDragging: vm.isDragging,
-                    interactionMode: vm.interactionMode,
-                    onSingleTap: vm.startOrPauseTimer,
-                    onDoubleTap: vm.reset,
-                    onDrag: { angle in vm.setUserProgress(from: angle) },
-                    onDragEnd: vm.endDragging
-                )
-                .matchedGeometryEffect(id: "TIMER_CIRCLE", in: ns)
-                .frame(width: min(geometry.size.width, geometry.size.height) * 0.8,
-                       height: min(geometry.size.width, geometry.size.height) * 0.8)
+        GeometryReader { geometry in
+            VStack {
+                Spacer()
+    //            TitleView(title: vm.currentTimer?.title)
+    //                .opacity(vm.showTitle ? 1 : 0) 추후에 기능 추가
+                Spacer()
+                if let timer = vm.currentTimer {
+                    SingleTimerView(
+                        timer: timer,
+                        progress: vm.progress,
+                        isRunning: vm.isRunning,
+                        isDragging: vm.isDragging,
+                        interactionMode: vm.interactionMode,
+                        onSingleTap: vm.startOrPauseTimer,
+                        onDoubleTap: vm.reset,
+                        onDrag: { angle in vm.setUserProgress(from: angle) },
+                        onDragEnd: vm.endDragging
+                    )
+                    .matchedGeometryEffect(id: "TIMER_CIRCLE", in: ns)
+                    .frame(width: min(geometry.size.width, geometry.size.height) * 0.8,
+                           height: min(geometry.size.width, geometry.size.height) * 0.8)
+                }
+                Spacer()
+                RemainingTimeView(viewModel: vm)
+                Spacer()
             }
-            Spacer()
-            RemainingTimeView(viewModel: vm)
-            Spacer()
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
         }
     }
 }

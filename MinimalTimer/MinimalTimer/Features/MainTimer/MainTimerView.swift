@@ -17,11 +17,13 @@ struct MainTimerView: View {
                     .gesture(backgroundLongPressGesture)
 
                 if vm.interactionMode == .normal {
-//                    NormalView()
+                    NormalView(vm: vm, ns: animationNamespace)
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
                 }
 
                 if vm.interactionMode == .switching {
-//                    SwitchingView()
+                    SwitchingView(vm: vm, ns: animationNamespace)
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
                 }
             }
             .animation(.easeInOut(duration: 0.35), value: vm.interactionMode)

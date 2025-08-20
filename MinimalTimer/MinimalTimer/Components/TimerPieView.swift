@@ -26,21 +26,15 @@ struct TimerPieView: View {
 
     // MARK: - Body
     var body: some View {
-        GeometryReader { geometry in
-            let width = geometry.size.width
-            let height = geometry.size.height
+        ZStack {
+            PieShape(progress: progress)
+                .fill(fillColor)
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
 
-            ZStack {
-                PieShape(progress: progress)
-                    .fill(fillColor)
-                    .frame(width: width, height: height)
-
-                if interactionMode == .normal && isDragging {
-                    TickMarksView(totalMinutes: Int(timer.totalTime) / 60)
-                    .frame(width: width, height: height)
-                }
+            if interactionMode == .normal && isDragging {
+                TickMarksView(totalMinutes: Int(timer.totalTime) / 60)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
             }
         }
-
     }
 }

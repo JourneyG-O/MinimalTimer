@@ -21,30 +21,24 @@ struct SingleTimerView: View {
 
     // MARK: - Body
     var body: some View {
-        GeometryReader { geometry in
-            let width = geometry.size.width
-            let height = geometry.size.height
+        ZStack {
+            TimerPieView(
+                timer: timer,
+                progress: progress,
+                isRunning: isRunning,
+                isDragging: isDragging,
+                interactionMode: interactionMode
+            )
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
 
-            ZStack {
-                TimerPieView(
-                    timer: timer,
-                    progress: progress,
-                    isRunning: isRunning,
-                    isDragging: isDragging,
-                    interactionMode: interactionMode
-                )
-                .frame(width: width, height: height)
-
-                TimerDialView(
-                    interactionMode: interactionMode,
-                    onSingleTap: onSingleTap,
-                    onDoubleTap: interactionMode == .normal ? onDoubleTap : nil,
-                    onDrag: interactionMode == .normal ? onDrag : nil,
-                    onDragEnd: interactionMode == .normal ? onDragEnd : nil
-                )
-                .frame(width: width, height: height)
-            }
+            TimerDialView(
+                interactionMode: interactionMode,
+                onSingleTap: onSingleTap,
+                onDoubleTap: interactionMode == .normal ? onDoubleTap : nil,
+                onDrag: interactionMode == .normal ? onDrag : nil,
+                onDragEnd: interactionMode == .normal ? onDragEnd : nil
+            )
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
         }
-
     }
 }

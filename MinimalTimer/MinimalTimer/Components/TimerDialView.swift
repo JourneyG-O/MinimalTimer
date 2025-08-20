@@ -37,6 +37,7 @@ struct TimerDialView: View {
             Circle()
                 .fill(Color.clear)
                 .frame(width: width, height: height)
+                .position(x: centerPoint.x, y: centerPoint.y)
                 .contentShape(Circle())
                 .gesture(interactionMode == .normal ? dragGesture : nil)
                 .onTapGesture(count: 2, perform: doubleTapHandler)
