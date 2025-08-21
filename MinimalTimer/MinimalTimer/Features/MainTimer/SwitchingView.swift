@@ -4,44 +4,72 @@
 //
 //  Created by KoJeongseok on 8/18/25.
 //
-
 import SwiftUI
 
 struct SwitchingView: View {
     @ObservedObject var vm: MainViewModel
     let ns: Namespace.ID
 
-    var body: some View {
-        ZStack {
-            TimerPagerView(vm: vm)
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
+    private enum Constants {
+        static let editButtonHeight: CGFloat = 48
+        static let editButtonHorizontalPadding: CGFloat = 50
+        static let floatingButtonSize: CGFloat = 48
+        static let bottomPadding: CGFloat = 24
+        static let trailingPadding: CGFloat = 20
+        static let editFont: Font = .headline
+        static let addFont: Font = .headline
+    }
 
-            VStack {
-                Spacer()
-                HStack(spacing: 12) {
+    var body: some View {
+        if let timer = vm.currentTimer {
+            ZStack {
+                TimerPagerView(vm: vm)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+
+                // 중앙 Edit 버튼
+                VStack {
+                    Spacer()
                     Button {
                         vm.presentEditTimerView(at: vm.selectedTimerIndex)
                     } label: {
-                        Label("Edit", systemImage: "pencil")
-                            .font(.headline)
-                            .padding(.horizontal, 16).padding(.vertical, 10)
+                        Text("EDIT")
+                            .font(Constants.editFont)
+                            .foregroundColor(Color(.systemBackground))
+                            .frame(height: Constants.editButtonHeight)
+                            .padding(.horizontal, Constants.editButtonHorizontalPadding)
+                            .background(timer.color.toColor, in: Capsule())
                     }
+                    .accessibilityLabel("Edit Timer")
+                    .padding(.bottom, Constants.bottomPadding)
+                }
+                .frame(maxWidth: .infinity)
+                .ignoresSafeArea(.keyboard, edges: .bottom)
+                .transition(.move(edge: .bottom).combined(with: .opacity))
 
-                    Button {
-                        vm.presentAddTimerView()
-                    } label: {
-                        Image(systemName: "plus")
-                            .font(.headline)
-                            .frame(width: 44, height: 44)
-                            .background(Circle().fill(.primary.opacity(0.12)))
+                // 우측 + 버튼
+                VStack {
+                    Spacer()
+                    HStack {
+                        Spacer()
+                        Button {
+                            vm.presentAddTimerView()
+                        } label: {
+                            Image(systemName: "plus")
+                                .foregroundColor(Color(.systemBackground))
+                                .font(Constants.addFont)
+                                .frame(width: Constants.floatingButtonSize, height: Constants.floatingButtonSize)
+                                .background(timer.color.toColor, in: Circle())
+                        }
+                        .accessibilityLabel("Add Timer")
+                        .padding(.trailing, Constants.trailingPadding)
+                        .padding(.bottom, Constants.bottomPadding)
                     }
                 }
-                .padding(.horizontal, 20)
-                .padding(.vertical, 10)
-                .background(.ultraThinMaterial, in: Capsule())
-                .padding(.bottom, 16)
+                .ignoresSafeArea(.keyboard, edges: .bottom)
+                .transition(.move(edge: .bottom).combined(with: .opacity))
+                .allowsHitTesting(true)
             }
-            .allowsHitTesting(true)
+            .animation(.spring(response: 0.28, dampingFraction: 0.9), value: vm.interactionMode)
         }
     }
 }
