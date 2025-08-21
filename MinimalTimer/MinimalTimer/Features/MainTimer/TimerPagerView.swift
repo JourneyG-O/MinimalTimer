@@ -17,8 +17,6 @@ struct TimerPagerView: View {
         GeometryReader { geometry in
             let timerWidth = geometry.size.width * scale
             let timerHeight = geometry.size.height * scale
-            let isFirstPage = vm.selectedTimerIndex == 0
-            let isLastPage = vm.selectedTimerIndex == vm.timers.count
 
             ZStack {
                 TabView(selection: $vm.selectedTimerIndex) {
