@@ -8,27 +8,31 @@
 import SwiftUI
 
 struct PreviewTimerView: View {
-    
     let color: Color
     let totalTime: TimeInterval
-    let onTap: () -> Void
+    let title: String
+    let onSelected: () -> Void
 
     var body: some View {
         ZStack {
             Circle()
                 .fill(color)
 
-            Text(formatTime(totalTime))
-                .foregroundColor(Color(.systemBackground))
-                .font(.system(size: 40, weight: .bold, design: .rounded))
-        }
-        .onTapGesture(perform: onTap)
-    }
+            VStack(spacing: 8) {
+                Text(title)
+                    .foregroundColor(Color(.systemBackground))
+                    .font(.system(size: 30, weight: .semibold, design: .rounded))
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.8)
 
-    private func formatTime(_ timeInterval: TimeInterval) -> String {
-        let minutes = Int(timeInterval) / 60
-        let seconds = Int(timeInterval) % 60
-        return String(format: "%02d:%02d", minutes, seconds)
+                Text(totalTime.mmss)
+                    .foregroundColor(Color(.systemBackground))
+                    .font(.system(size: 40, weight: .bold, design: .rounded))
+            }
+
+
+        }
+        .onTapGesture(perform: onSelected)
     }
 }
 

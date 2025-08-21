@@ -10,15 +10,10 @@ struct RemainingTimeView: View {
     @ObservedObject var viewModel: MainViewModel
 
     var body: some View {
-        Text(formatTime(viewModel.currentTimer?.currentTime ?? 0))
+        Text((viewModel.currentTimer?.currentTime ?? 0).mmss)
             .font(.system(size: 60, weight: .bold, design: .rounded))
+            .monospacedDigit()
             .opacity(viewModel.isRunning ? 1.0 : 0.5)
             .animation(.easeInOut(duration: 0.3), value: viewModel.isRunning)
-    }
-
-    private func formatTime(_ timeInterval: TimeInterval) -> String {
-        let minutes = Int(timeInterval) / 60
-        let seconds = Int(timeInterval) % 60
-        return String(format: "%02d:%02d", minutes, seconds)
     }
 }
