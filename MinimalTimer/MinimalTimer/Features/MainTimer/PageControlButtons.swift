@@ -1,0 +1,50 @@
+//
+//  PageControlButtons.swift
+//  MinimalTimer
+//
+//  Created by KoJeongseok on 8/21/25.
+//
+import SwiftUI
+
+struct PageControlButtons: View {
+    @ObservedObject var vm: MainViewModel
+    let timerWidth: CGFloat
+
+    // 연산 프로퍼티로 분리하여 body를 간결하게 만듭니다.
+    private var isFirstPage: Bool { vm.selectedTimerIndex == 0 }
+    private var isLastPage: Bool { vm.selectedTimerIndex == vm.timers.count }
+
+    var body: some View {
+        HStack {
+            Spacer()
+
+            Button(action: {
+                vm.selectedTimerIndex = max(0, vm.selectedTimerIndex - 1)
+            }) {
+                Image(systemName: "chevron.backward")
+                    .font(.largeTitle)
+                    .foregroundStyle(isFirstPage ? .gray.opacity(0.3) : .primary)
+            }
+            .disabled(isFirstPage)
+
+            Spacer()
+
+            Color.clear
+                .frame(width: timerWidth)
+
+            Spacer()
+
+            Button(action: {
+                // disabled 모디파이어가 있으므로 if 조건문은 제거합니다.
+                vm.selectedTimerIndex += 1
+            }) {
+                Image(systemName: "chevron.forward")
+                    .font(.largeTitle)
+                    .foregroundStyle(isLastPage ? .gray.opacity(0.3) : .primary)
+            }
+            .disabled(isLastPage)
+
+            Spacer()
+        }
+    }
+}

@@ -12,7 +12,6 @@ struct TimerPagerView: View {
 
     private var timers: [TimerModel] { vm.timers }
     private let scale: CGFloat = 0.6
-    private let pausedStatusOffset: CGFloat = 20
 
     var body: some View {
         GeometryReader { geometry in
@@ -45,40 +44,10 @@ struct TimerPagerView: View {
                 }
                 .tabViewStyle(.page(indexDisplayMode: .never))
 
-                HStack {
-                    Spacer()
 
-                    Button(action: {
-                        vm.selectedTimerIndex = max(0, vm.selectedTimerIndex - 1)
-                    }) {
-                        Image(systemName: "chevron.backward")
-                            .font(.largeTitle)
-                            .foregroundStyle(isFirstPage ? .gray.opacity(0.3) : .primary)
-                    }
-                    .disabled(isFirstPage)
-
-                    Spacer()
-
-                    Color.clear
-                        .frame(width: timerWidth)
-
-                    Spacer()
-
-                    Button(action: {
-                        if !isLastPage {
-                            vm.selectedTimerIndex += 1
-                        }
-                    }) {
-                        Image(systemName: "chevron.forward")
-                            .font(.largeTitle)
-                            .foregroundStyle(isLastPage ? .gray.opacity(0.3) : .primary)
-                    }
-                    .disabled(isLastPage)
-
-                    Spacer()
-                }
+                // 좌 우 화살표 버튼
+                PageControlButtons(vm: vm, timerWidth: timerWidth)
             }
         }
-
     }
 }

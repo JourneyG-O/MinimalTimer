@@ -15,7 +15,7 @@ extension MainTimerView {
             Text(title ?? "Minimal Timer")
                 .font(.system(size: 40, weight: .bold, design: .rounded))
                 .fontWeight(.semibold)
-                .foregroundColor(.black)
+                .foregroundColor(.primary)
         }
     }
 }

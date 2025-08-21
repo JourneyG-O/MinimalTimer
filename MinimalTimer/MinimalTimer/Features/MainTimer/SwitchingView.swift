@@ -14,6 +14,7 @@ struct SwitchingView: View {
     var body: some View {
         ZStack {
             TimerPagerView(vm: vm)
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
 
             VStack {
                 Spacer()
