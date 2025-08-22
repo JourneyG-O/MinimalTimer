@@ -73,67 +73,6 @@ struct MainTimerView: View {
                 vm.enterSwitchMode()
             }
     }
-
-    // MARK: - Title
-
-    private var titleSection: some View {
-        let isAddTimer = vm.selectedTimerIndex == vm.timers.count
-        let title = isAddTimer ? "타이머 추가" : vm.currentTimer?.title
-
-        return TitleView(title: title)
-            .opacity(vm.interactionMode == .switching ? 1 : 0)
-    }
-
-    // MARK: - Timer Display
-
-    private func timerDisplaySection(in geometry: GeometryProxy) -> some View {
-        let minSide = min(geometry.size.width, geometry.size.height)
-        let timerSide = minSide * 0.8
-        let dragAction: (Double) -> Void = { angle in
-            vm.setUserProgress(from: angle)
-        }
-
-        return ZStack {
-            if vm.interactionMode == .normal {
-                if let timer = vm.currentTimer {
-                    SingleTimerView(
-                        timer: timer,
-                        progress: vm.progress,
-                        isRunning: vm.isRunning,
-                        isDragging: vm.isDragging,
-                        interactionMode: vm.interactionMode,
-                        onSingleTap: vm.startOrPauseTimer,
-                        onDoubleTap: vm.reset,
-                        onDrag: dragAction,
-                        onDragEnd: vm.endDragging
-                    )
-                    .frame(width: timerSide, height: timerSide)
-                    .transition(.scale.combined(with: .opacity))
-                }
-            }
-
-            if vm.interactionMode == .switching {
-                TimerPagerView(vm: vm)
-                    .frame(width: minSide, height: minSide)
-                    .transition(.scale.combined(with: .opacity))
-            }
-        }
-        .animation(.easeInOut(duration: 0.3), value: vm.interactionMode)
-    }
-
-    // MARK: - Bottom Information Section
-
-    @ViewBuilder
-    private func bottomInformationSection() -> some View {
-        if vm.interactionMode == .normal {
-            RemainingTimeView(viewModel: vm)
-        } else {
-            EditButtonView {
-                vm.presentEditTimerView(at: vm.selectedTimerIndex)
-            }
-            .opacity(vm.selectedTimerIndex != vm.timers.count ? 1 : 0)
-        }
-    }
 }
 
 #Preview {
