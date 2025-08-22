@@ -10,62 +10,55 @@ import SwiftUI
 struct TimerPagerView: View {
     @ObservedObject var vm: MainViewModel
 
+    @State private var isFirstPresented: Bool = true
+
     private var timers: [TimerModel] { vm.timers }
     private let scale: CGFloat = 0.6
 
     var body: some View {
         GeometryReader { geometry in
-            let timerWidth = geometry.size.width * scale
-            let timerHeight = geometry.size.height * scale
+            let side = min(geometry.size.width, geometry.size.height) * scale
 
             ZStack {
                 TabView(selection: $vm.selectedTimerIndex) {
-                    ForEach(0..<(vm.timers.count + 1), id: \.self) { index in
-                        if index >= timers.count {
-                            AddTimerCardView()
-                                .frame(width: timerWidth, height: timerHeight)
-                                .onTapGesture {
-                                    vm.presentAddTimerView()
-                                }
-                                .tag(index)
-                        } else {
+                    ForEach(0..<(timers.count + 1), id: \.self) { index in
+                        if index < timers.count {
                             let timer = timers[index]
 
-                            PreviewTimerView(color: timer.color.toColor, totalTime: timer.totalTime, title: timer.title) {
+                            let card = PreviewTimerView(
+                                color: timer.color.toColor,
+                                totalTime: timer.totalTime,
+                                title: timer.title
+                            ) {
                                 vm.selectTimer(at: index)
                                 vm.exitSwitchMode()
                             }
-                            .frame(width: timerWidth, height: timerHeight)
+                            .frame(width: side, height: side)
+
+                            Group {
+                                if isFirstPresented {
+                                    card.popInOnAppear()
+                                } else {
+                                    card
+                                }
+                            }
+                            .frame(maxWidth: .infinity, maxHeight: .infinity)
                             .tag(index)
+
+                        } else {
+                            AddTimerCardView()
+                                .frame(width: side, height: side)
+                                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                                .onTapGesture { vm.presentAddTimerView() }
+                                .tag(index)
                         }
-
-
-
-
-//                        if index < timers.count {
-//                            let timer = timers[index]
-//
-//                            PreviewTimerView(color: timer.color.toColor, totalTime: timer.totalTime, title: timer.title) {
-//                                vm.selectTimer(at: index)
-//                                vm.exitSwitchMode()
-//                            }
-//                            .frame(width: timerWidth, height: timerHeight)
-//                            .tag(index)
-//                        } else {
-//                            AddTimerCardView()
-//                                .frame(width: timerWidth, height: timerHeight)
-//                                .onTapGesture {
-//                                    vm.presentAddTimerView()
-//                                }
-//                                .tag(index)
-//                        }
                     }
                 }
                 .tabViewStyle(.page(indexDisplayMode: .never))
 
 
                 // 좌 우 화살표 버튼
-                PageControlButtons(vm: vm, timerWidth: timerWidth)
+                PageControlButtons(vm: vm, timerWidth: side)
             }
         }
     }

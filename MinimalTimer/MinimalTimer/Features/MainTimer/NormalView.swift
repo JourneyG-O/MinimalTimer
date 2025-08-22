@@ -32,6 +32,7 @@ struct NormalView: View {
                     .matchedGeometryEffect(id: "TIMER_CIRCLE", in: ns)
                     .frame(width: min(geometry.size.width, geometry.size.height) * 0.8,
                            height: min(geometry.size.width, geometry.size.height) * 0.8)
+                    .popInOnAppear()
                 }
                 Spacer()
                 RemainingTimeView(viewModel: vm)
