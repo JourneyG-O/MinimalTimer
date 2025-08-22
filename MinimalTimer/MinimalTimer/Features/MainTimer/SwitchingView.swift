@@ -21,12 +21,12 @@ struct SwitchingView: View {
     }
 
     var body: some View {
-        if let timer = vm.currentTimer {
-            ZStack {
-                TimerPagerView(vm: vm)
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+        ZStack {
+            TimerPagerView(vm: vm)
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
 
-                // 중앙 Edit 버튼
+            // 중앙 Edit 버튼
+            if let timer = vm.currentTimer {
                 VStack {
                     Spacer()
                     Button {
@@ -69,8 +69,9 @@ struct SwitchingView: View {
                 .transition(.move(edge: .bottom).combined(with: .opacity))
                 .allowsHitTesting(true)
             }
-            .animation(.spring(response: 0.28, dampingFraction: 0.9), value: vm.interactionMode)
+
         }
+        .animation(.spring(response: 0.28, dampingFraction: 0.9), value: vm.interactionMode)
     }
 }
 

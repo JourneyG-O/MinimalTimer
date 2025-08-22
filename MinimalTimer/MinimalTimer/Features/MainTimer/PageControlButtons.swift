@@ -35,7 +35,6 @@ struct PageControlButtons: View {
             Spacer()
 
             Button(action: {
-                // disabled 모디파이어가 있으므로 if 조건문은 제거합니다.
                 vm.selectedTimerIndex += 1
             }) {
                 Image(systemName: "chevron.forward")

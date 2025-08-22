@@ -21,7 +21,14 @@ struct TimerPagerView: View {
             ZStack {
                 TabView(selection: $vm.selectedTimerIndex) {
                     ForEach(0..<(vm.timers.count + 1), id: \.self) { index in
-                        if index < timers.count {
+                        if index >= timers.count {
+                            AddTimerCardView()
+                                .frame(width: timerWidth, height: timerHeight)
+                                .onTapGesture {
+                                    vm.presentAddTimerView()
+                                }
+                                .tag(index)
+                        } else {
                             let timer = timers[index]
 
                             PreviewTimerView(color: timer.color.toColor, totalTime: timer.totalTime, title: timer.title) {
@@ -30,14 +37,28 @@ struct TimerPagerView: View {
                             }
                             .frame(width: timerWidth, height: timerHeight)
                             .tag(index)
-                        } else {
-                            AddTimerCardView()
-                                .frame(width: timerWidth, height: timerHeight)
-                                .onTapGesture {
-                                    vm.presentAddTimerView()
-                                }
-                                .tag(index)
                         }
+
+
+
+
+//                        if index < timers.count {
+//                            let timer = timers[index]
+//
+//                            PreviewTimerView(color: timer.color.toColor, totalTime: timer.totalTime, title: timer.title) {
+//                                vm.selectTimer(at: index)
+//                                vm.exitSwitchMode()
+//                            }
+//                            .frame(width: timerWidth, height: timerHeight)
+//                            .tag(index)
+//                        } else {
+//                            AddTimerCardView()
+//                                .frame(width: timerWidth, height: timerHeight)
+//                                .onTapGesture {
+//                                    vm.presentAddTimerView()
+//                                }
+//                                .tag(index)
+//                        }
                     }
                 }
                 .tabViewStyle(.page(indexDisplayMode: .never))
