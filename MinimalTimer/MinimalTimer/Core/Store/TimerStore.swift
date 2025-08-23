@@ -13,6 +13,7 @@ struct TimerModelDTO: Codable {
     var title: String
     var totalTime: TimeInterval
     var currentTime: TimeInterval
+    var lastUserSetTime: TimeInterval?
     var color: String
     var isTickAlwaysVisible: Bool
     var isVibrationEnabled: Bool
@@ -27,6 +28,7 @@ extension TimerModel {
             title: title,
             totalTime: totalTime,
             currentTime: currentTime,
+            lastUserSetTime: lastUserSetTime,
             color: self.color.rawValue,
             isTickAlwaysVisible: isTickAlwaysVisible,
             isVibrationEnabled: isVibrationEnabled,
@@ -43,6 +45,7 @@ extension TimerModelDTO {
             title: title,
             totalTime: totalTime,
             currentTime: currentTime,
+            lastUserSetTime: lastUserSetTime,
             color: CustomColor(rawValue: self.color) ?? .red,
             isTickAlwaysVisible: isTickAlwaysVisible,
             isVibrationEnabled: isVibrationEnabled,

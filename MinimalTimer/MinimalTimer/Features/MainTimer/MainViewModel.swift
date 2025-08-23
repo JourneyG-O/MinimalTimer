@@ -46,7 +46,6 @@ final class MainViewModel: ObservableObject {
 
     // MARK: - Internal State
     private var timer: Timer?
-    private var lastUserSetTime: TimeInterval?
     private var previousSnappedMinutes: Int?
     private var previousAngle: Double = 0.0
     private let feedbackGenerator = UIImpactFeedbackGenerator(style: .light)
@@ -141,7 +140,8 @@ final class MainViewModel: ObservableObject {
         guard timers.indices.contains(selectedTimerIndex) else { return }
         pause(fromUser: false)
 
-        let resetTime = lastUserSetTime ?? timers[selectedTimerIndex].totalTime
+        let model = timers[selectedTimerIndex]
+        let resetTime = model.lastUserSetTime ?? model.totalTime
         timers[selectedTimerIndex].currentTime = resetTime
     }
 
@@ -149,8 +149,10 @@ final class MainViewModel: ObservableObject {
     func setUserProgress(to percentage: Double) {
         guard timers.indices.contains(selectedTimerIndex) else { return }
         let clamped = min(max(percentage, 0.0), 1.0)
-        timers[selectedTimerIndex].currentTime = timers[selectedTimerIndex].totalTime * clamped
-        lastUserSetTime = timers[selectedTimerIndex].totalTime * clamped
+        let total = timers[selectedTimerIndex].totalTime
+        let newValue = total * clamped
+        timers[selectedTimerIndex].currentTime = newValue
+        timers[selectedTimerIndex].lastUserSetTime = newValue
         if isRunning {
             pause(fromUser: false)
         }

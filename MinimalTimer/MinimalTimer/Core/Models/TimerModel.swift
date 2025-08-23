@@ -12,6 +12,7 @@ struct TimerModel: Identifiable {
     var title: String
     var totalTime: TimeInterval
     var currentTime: TimeInterval
+    var lastUserSetTime: TimeInterval?
     var color: CustomColor
     var isTickAlwaysVisible: Bool
     var isVibrationEnabled: Bool
@@ -23,6 +24,7 @@ struct TimerModel: Identifiable {
         title: String,
         totalTime: TimeInterval,
         currentTime: TimeInterval,
+        lastUserSetTime: TimeInterval? = nil,
         color: CustomColor,
         isTickAlwaysVisible: Bool = false,
         isVibrationEnabled: Bool = true,
@@ -34,6 +36,7 @@ struct TimerModel: Identifiable {
         self.title = title
         self.totalTime = totalTime
         self.currentTime = currentTime
+        self.lastUserSetTime = lastUserSetTime
         self.color = color
         self.isTickAlwaysVisible = isTickAlwaysVisible
         self.isVibrationEnabled = isVibrationEnabled
@@ -63,6 +66,7 @@ extension TimerModel {
         self.color = draft.color
         self.totalTime = TimeInterval(draft.totalSeconds)
         self.currentTime = TimeInterval(draft.totalSeconds)
+        self.lastUserSetTime = nil
         self.isTickAlwaysVisible = draft.isTickAlwaysVisible
         self.isVibrationEnabled = draft.isVibrationEnabled
         self.isSoundEnabled = draft.isSoundEnabled
@@ -75,6 +79,9 @@ extension TimerModel {
         self.color = draft.color
         self.totalTime = TimeInterval(draft.totalSeconds)
         self.currentTime = TimeInterval(draft.totalSeconds)
+        if let t = lastUserSetTime {
+            self.lastUserSetTime = min(t, self.totalTime)
+        }
         self.isTickAlwaysVisible = draft.isTickAlwaysVisible
         self.isVibrationEnabled = draft.isVibrationEnabled
         self.isSoundEnabled = draft.isSoundEnabled
