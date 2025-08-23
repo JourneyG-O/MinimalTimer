@@ -30,6 +30,7 @@ struct SingleTimerView: View {
                 interactionMode: interactionMode
             )
             .frame(maxWidth: .infinity, maxHeight: .infinity)
+            
 
             TimerDialView(
                 interactionMode: interactionMode,

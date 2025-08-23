@@ -27,6 +27,12 @@ struct TimerPieView: View {
     // MARK: - Body
     var body: some View {
         ZStack {
+
+            if timer.lastUserSetTime == 0 {
+                ZeroMarker(color: fillColor)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+            }
+
             PieShape(progress: progress)
                 .fill(fillColor)
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
