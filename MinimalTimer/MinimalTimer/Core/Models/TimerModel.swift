@@ -14,6 +14,7 @@ struct TimerModel: Identifiable {
     var currentTime: TimeInterval
     var lastUserSetTime: TimeInterval?
     var color: CustomColor
+    var isTitleAlwaysVisible: Bool
     var isTickAlwaysVisible: Bool
     var isVibrationEnabled: Bool
     var isSoundEnabled: Bool
@@ -26,6 +27,7 @@ struct TimerModel: Identifiable {
         currentTime: TimeInterval,
         lastUserSetTime: TimeInterval? = nil,
         color: CustomColor,
+        isTitleAlwaysVisible: Bool = false ,
         isTickAlwaysVisible: Bool = false,
         isVibrationEnabled: Bool = true,
         isSoundEnabled: Bool = true,
@@ -38,6 +40,7 @@ struct TimerModel: Identifiable {
         self.currentTime = currentTime
         self.lastUserSetTime = lastUserSetTime
         self.color = color
+        self.isTitleAlwaysVisible = isTitleAlwaysVisible
         self.isTickAlwaysVisible = isTickAlwaysVisible
         self.isVibrationEnabled = isVibrationEnabled
         self.isSoundEnabled = isSoundEnabled
@@ -51,6 +54,7 @@ extension TimerDraft {
         self.title = model.title
         self.color = model.color
         self.totalSeconds = Int(model.totalTime)
+        self.isTitleAlwaysVisible = model.isTitleAlwaysVisible
         self.isTickAlwaysVisible = model.isTickAlwaysVisible
         self.isVibrationEnabled = model.isVibrationEnabled
         self.isSoundEnabled = model.isSoundEnabled
@@ -67,6 +71,7 @@ extension TimerModel {
         self.totalTime = TimeInterval(draft.totalSeconds)
         self.currentTime = TimeInterval(draft.totalSeconds)
         self.lastUserSetTime = nil
+        self.isTitleAlwaysVisible = draft.isTitleAlwaysVisible
         self.isTickAlwaysVisible = draft.isTickAlwaysVisible
         self.isVibrationEnabled = draft.isVibrationEnabled
         self.isSoundEnabled = draft.isSoundEnabled
@@ -79,6 +84,7 @@ extension TimerModel {
         self.color = draft.color
         self.totalTime = TimeInterval(draft.totalSeconds)
         self.currentTime = TimeInterval(draft.totalSeconds)
+        self.isTitleAlwaysVisible = draft.isTitleAlwaysVisible
         if let t = lastUserSetTime {
             self.lastUserSetTime = min(t, self.totalTime)
         }

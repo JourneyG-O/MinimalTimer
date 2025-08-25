@@ -12,6 +12,7 @@ import SwiftUI
 struct TimerDraft: Equatable {
     var title: String = ""
     var color: CustomColor = .red
+    var isTitleAlwaysVisible: Bool = false
     var totalSeconds: Int = 0
     var isTickAlwaysVisible: Bool = false
     var isVibrationEnabled: Bool = true

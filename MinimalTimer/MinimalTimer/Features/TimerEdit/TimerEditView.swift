@@ -137,6 +137,9 @@ struct TimerEditView: View {
 
                 // Options
                 Section(header: Text("Options")) {
+                    Toggle(isOn: $vm.draft.isTitleAlwaysVisible) {
+                        Label("Always show title", systemImage: "textformat")
+                    }
                     Toggle(isOn: $vm.draft.isTickAlwaysVisible) {
                         Label("Show Ticks", systemImage: "dial.min")
                     }

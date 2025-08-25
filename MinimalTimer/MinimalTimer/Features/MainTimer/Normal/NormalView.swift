@@ -14,8 +14,10 @@ struct NormalView: View {
         GeometryReader { geometry in
             VStack {
                 Spacer()
-                TitleView(title: vm.currentTimer?.title)
-    //                .opacity(vm.showTitle ? 1 : 0) 추후에 기능 추가
+                if let t = vm.currentTimer, t.isTitleAlwaysVisible {
+                    TitleView(title: t.title)
+                }
+
                 Spacer()
                 if let timer = vm.currentTimer {
                     SingleTimerView(
