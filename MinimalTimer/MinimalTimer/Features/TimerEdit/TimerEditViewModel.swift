@@ -15,8 +15,7 @@ struct TimerDraft: Equatable {
     var isTitleAlwaysVisible: Bool = false
     var totalSeconds: Int = 0
     var isTickAlwaysVisible: Bool = false
-    var isVibrationEnabled: Bool = true
-    var isSoundEnabled: Bool = true
+    var isMuted: Bool = false
     var isRepeatEnabled: Bool = false
 }
 

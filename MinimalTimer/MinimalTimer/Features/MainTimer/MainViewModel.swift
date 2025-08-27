@@ -113,12 +113,20 @@ final class MainViewModel: ObservableObject {
             self.timers[self.selectedTimerIndex].currentTime -= 1
 
             if self.timers[self.selectedTimerIndex].currentTime <= 0 {
-                self.pause(fromUser: false)
-                self.playEndFeedback()
-                self.reset()
+                if let t = self.currentTimer {
+                    self.playEndFeedback(for: t)
+                }
+
+                if self.timers[self.selectedTimerIndex].isRepeatEnabled {
+                    self.reset()
+                    self.start()
+                } else {
+                    self.pause(fromUser: false)
+                    self.reset()
+                }
             }
         }
-        playTapFeedback()
+        if let t = currentTimer { playTapFeedback(for: t) }
     }
 
     func pause(fromUser: Bool) {
@@ -128,7 +136,7 @@ final class MainViewModel: ObservableObject {
         timer = nil
 
         if fromUser {
-            playTapFeedback()
+            if let t = currentTimer { playTapFeedback(for: t) }
         }
     }
 
@@ -188,7 +196,7 @@ final class MainViewModel: ObservableObject {
 
         if let previous = previousSnappedMinutes {
             if snappedMinutes != previous {
-                playSnapFeedback()
+                playSnapFeedback(for: timer)
                 previousSnappedMinutes = snappedMinutes
             }
         } else {
@@ -247,16 +255,20 @@ final class MainViewModel: ObservableObject {
     }
 
     // MARK: - Feedback
-    private func playEndFeedback() {
+
+    private func playEndFeedback(for timer: TimerModel) {
+        guard !timer.isMuted else { return }
         feedbackGenerator.impactOccurred()
         AudioServicesPlaySystemSound(1322)
     }
 
-    private func playTapFeedback() {
+    private func playTapFeedback(for timer: TimerModel) {
+        guard !timer.isMuted else { return }
         feedbackGenerator.impactOccurred()
     }
 
-    private func playSnapFeedback() {
+    private func playSnapFeedback(for timer: TimerModel) {
+        guard !timer.isMuted else { return }
         feedbackGenerator.impactOccurred()
         AudioServicesPlaySystemSound(1104)
     }

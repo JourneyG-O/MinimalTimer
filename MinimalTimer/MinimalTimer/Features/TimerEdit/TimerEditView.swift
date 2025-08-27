@@ -141,13 +141,10 @@ struct TimerEditView: View {
                         Label("Always show title", systemImage: "textformat")
                     }
                     Toggle(isOn: $vm.draft.isTickAlwaysVisible) {
-                        Label("Show Ticks", systemImage: "dial.min")
+                        Label("Always Show Ticks", systemImage: "dial.min")
                     }
-                    Toggle(isOn: $vm.draft.isVibrationEnabled) {
-                        Label("Vibration", systemImage: "waveform.path")
-                    }
-                    Toggle(isOn: $vm.draft.isSoundEnabled) {
-                        Label("Sound", systemImage: "speaker.wave.2")
+                    Toggle(isOn: $vm.draft.isMuted) {
+                        Label("Mute", systemImage: "speaker.slash.fill")
                     }
                     Toggle(isOn: $vm.draft.isRepeatEnabled) {
                         Label("Repeat", systemImage: "repeat")

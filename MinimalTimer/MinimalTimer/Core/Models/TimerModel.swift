@@ -16,8 +16,7 @@ struct TimerModel: Identifiable {
     var color: CustomColor
     var isTitleAlwaysVisible: Bool
     var isTickAlwaysVisible: Bool
-    var isVibrationEnabled: Bool
-    var isSoundEnabled: Bool
+    var isMuted: Bool
     var isRepeatEnabled: Bool
 
     init(
@@ -29,8 +28,7 @@ struct TimerModel: Identifiable {
         color: CustomColor,
         isTitleAlwaysVisible: Bool = false ,
         isTickAlwaysVisible: Bool = false,
-        isVibrationEnabled: Bool = true,
-        isSoundEnabled: Bool = true,
+        isMuted: Bool = true,
         isRepeatEnabled: Bool = false
 
     ) {
@@ -42,8 +40,7 @@ struct TimerModel: Identifiable {
         self.color = color
         self.isTitleAlwaysVisible = isTitleAlwaysVisible
         self.isTickAlwaysVisible = isTickAlwaysVisible
-        self.isVibrationEnabled = isVibrationEnabled
-        self.isSoundEnabled = isSoundEnabled
+        self.isMuted = isMuted
         self.isRepeatEnabled = isRepeatEnabled
     }
 }
@@ -56,8 +53,7 @@ extension TimerDraft {
         self.totalSeconds = Int(model.totalTime)
         self.isTitleAlwaysVisible = model.isTitleAlwaysVisible
         self.isTickAlwaysVisible = model.isTickAlwaysVisible
-        self.isVibrationEnabled = model.isVibrationEnabled
-        self.isSoundEnabled = model.isSoundEnabled
+        self.isMuted = model.isMuted
         self.isRepeatEnabled = model.isRepeatEnabled
     }
 }
@@ -73,8 +69,7 @@ extension TimerModel {
         self.lastUserSetTime = nil
         self.isTitleAlwaysVisible = draft.isTitleAlwaysVisible
         self.isTickAlwaysVisible = draft.isTickAlwaysVisible
-        self.isVibrationEnabled = draft.isVibrationEnabled
-        self.isSoundEnabled = draft.isSoundEnabled
+        self.isMuted = draft.isMuted
         self.isRepeatEnabled = draft.isRepeatEnabled
     }
 
@@ -89,8 +84,7 @@ extension TimerModel {
             self.lastUserSetTime = min(t, self.totalTime)
         }
         self.isTickAlwaysVisible = draft.isTickAlwaysVisible
-        self.isVibrationEnabled = draft.isVibrationEnabled
-        self.isSoundEnabled = draft.isSoundEnabled
+        self.isMuted = draft.isMuted
         self.isRepeatEnabled = draft.isRepeatEnabled
     }
 }
