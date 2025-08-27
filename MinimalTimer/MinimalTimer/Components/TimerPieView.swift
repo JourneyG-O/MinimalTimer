@@ -37,7 +37,7 @@ struct TimerPieView: View {
                 .fill(fillColor)
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
 
-            if interactionMode == .normal && isDragging {
+            if isDragging || timer.isTickAlwaysVisible {
                 TickMarksView(totalMinutes: Int(timer.totalTime) / 60)
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
             }
