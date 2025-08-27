@@ -168,9 +168,7 @@ struct TimerEditView: View {
                     }
                 }
             }
-            .scrollContentBackground(.hidden)
             .background(Color(.systemBackground))
-            // 프리뷰 높이만큼 컨텐츠 시작점 아래로 띄우기 → 이 영역도 스크롤에 포함
             .safeAreaInset(edge: .top, spacing: 0) {
                 Color.clear.frame(height: previewHeaderHeight + formTopExtraSpacing)
             }
