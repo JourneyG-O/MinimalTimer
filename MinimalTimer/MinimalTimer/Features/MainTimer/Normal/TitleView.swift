@@ -11,12 +11,14 @@ struct TitleView: View {
     let title: String?
 
     var body: some View {
-        Text(title ?? "Minimal Timer")
+        Text(title ?? "")
             .font(.system(size: 40, weight: .bold, design: .rounded))
-            .fontWeight(.semibold)
-            .foregroundColor(.primary)
+            .foregroundStyle(.primary)              
             .lineLimit(1)
-            .minimumScaleFactor(0.7)
-            .accessibilityIdentifier("TitleView_Text")
+            .truncationMode(.tail)
+            .minimumScaleFactor(0.75)
+            .allowsTightening(true)
+            .padding(.horizontal, 20)
+            .frame(maxWidth: .infinity, alignment: .center)
     }
 }

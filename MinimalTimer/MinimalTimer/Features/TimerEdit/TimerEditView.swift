@@ -39,15 +39,33 @@ struct TimerEditView: View {
                         Text(titleError ? "TITLE * 필수 항목" : "TITLE")
                         .foregroundStyle(titleError ? Color.red : Color.secondary)
                         .textCase(nil)
-
                 ) {
-                    TextField("Enter timer title", text: $vm.draft.title)
-                        .focused($isTitleFocused)
-                        .submitLabel(.done)
-                        // 타이틀 채우면 에러 해제
-                        .onChange(of: vm.draft.title) {
-                            titleError = false
+                    VStack(alignment: .leading, spacing: 6) {
+                        TextField("Enter timer title", text: $vm.draft.title)
+                            .focused($isTitleFocused)
+                            .submitLabel(.done)
+                            .onChange(of: vm.draft.title) { _, _ in
+                                titleError = false
+                            }
+
+                        HStack {
+                            let count = vm.draft.title.count
+                            let isCJK = vm.draft.title.unicodeScalars.contains { $0.properties.isIdeographic }
+                            let softLimit = isCJK ? 8 : 15
+
+                            Text("\(count)/\(softLimit)")
+                                .font(.caption2)
+                                .foregroundStyle(count > softLimit ? .orange : .secondary)
+
+                            Spacer()
+
+                            if count > softLimit {
+                                Text("일부 화면에서 잘릴 수 있어요")
+                                    .font(.caption2)
+                                    .foregroundStyle(.orange)
+                            }
                         }
+                    }
                 }
 
                 // Color grid

@@ -35,8 +35,11 @@ struct PreviewTimerView: View {
                 Text(title)
                     .font(.system(size: side * 0.12, weight: .semibold, design: .rounded))
                     .lineLimit(1)
+                    .truncationMode(.tail)
                     .minimumScaleFactor(0.8)
+                    .allowsTightening(true)
                     .foregroundColor(Color(.systemBackground).opacity(0.95))
+                    .frame(width: side * 0.8, alignment: .center)
                     .position(x: center.x, y: titleY)
             }
             .contentShape(Circle())
