@@ -46,7 +46,7 @@ final class MainViewModel: ObservableObject {
 
     // MARK: - Internal State
     private var timer: Timer?
-    private var previousSnappedMinutes: Int?
+    private var previousSnappedIndex: Int?
     private var previousAngle: Double = 0.0
     private let feedbackGenerator = UIImpactFeedbackGenerator(style: .light)
 
@@ -171,6 +171,7 @@ final class MainViewModel: ObservableObject {
 
         guard let timer = currentTimer else { return }
         let total = timer.totalTime
+        let unit = total < Constants.Time.snapSecondThreshold ? 1.0 : 60.0 // 초or분
 
         // wrap-around 방지
         if previousAngle >= 270 && angle <= 180 {
@@ -186,21 +187,21 @@ final class MainViewModel: ObservableObject {
         let rawProgress = angle / 360
         let rawTime = rawProgress * total
 
-        // 스냅 적용 (1분 = 60초 단위)
-        let snappedTime = round(rawTime / 60) * 60
+        // 스냅 적용 (1초 또는 60초)
+        let snappedTime = round(rawTime / unit) * unit
         let clampedTime = max(0, min(snappedTime, total))
         let snappedProgress = clampedTime / total
 
-        // ✅ 스냅 분 단위 계산 시 round 추가
-        let snappedMinutes = Int(clampedTime / 60)
+        // 스냅 단위 인덱스(초or분)
+        let snappedIndex = Int(clampedTime / unit)
 
-        if let previous = previousSnappedMinutes {
-            if snappedMinutes != previous {
+        if let prev = previousSnappedIndex {
+            if snappedIndex != prev {
                 playSnapFeedback(for: timer)
-                previousSnappedMinutes = snappedMinutes
+                previousSnappedIndex = snappedIndex
             }
         } else {
-            previousSnappedMinutes = snappedMinutes
+            previousSnappedIndex = snappedIndex
         }
 
         setUserProgress(to: snappedProgress)
@@ -215,7 +216,7 @@ final class MainViewModel: ObservableObject {
 
     func endDragging() {
         isDragging = false
-        previousSnappedMinutes = nil
+        previousSnappedIndex = nil
     }
 
     func selectTimer(at index: Int) {

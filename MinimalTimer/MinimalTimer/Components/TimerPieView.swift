@@ -38,8 +38,15 @@ struct TimerPieView: View {
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
 
             if isDragging || timer.isTickAlwaysVisible {
-                TickMarksView(totalMinutes: Int(timer.totalTime) / 60)
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                let useSeconds = timer.totalTime < Constants.Time.snapSecondThreshold
+                Group {
+                    if useSeconds {
+                        TickMarksView(totalSeconds: Int(timer.totalTime))
+                    } else {
+                        TickMarksView(totalMinutes: Int(timer.totalTime / 60))
+                    }
+                }
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
             }
         }
     }
