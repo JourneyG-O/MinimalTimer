@@ -14,6 +14,12 @@ enum InteractionMode {
 }
 
 final class MainViewModel: ObservableObject {
+
+    // MARK: - Premium
+    @Published var isPremium: Bool = UserDefaults.standard.bool(forKey: "isPremium") {
+        didSet { UserDefaults.standard.set(isPremium, forKey: "isPremium") }
+    }
+
     // MARK: - Dependencies
     private let store = TimerStore()
 
@@ -41,6 +47,7 @@ final class MainViewModel: ObservableObject {
         var id: String { String(describing: self) }
         case add
         case edit(index: Int)
+        case paywall
     }
 
 
@@ -245,14 +252,22 @@ final class MainViewModel: ObservableObject {
     }
 
     func presentAddTimerView() {
-        print("presentAddTimerView가 호출 됨")
-        route = .add
+        route = isPremium ? .add : .paywall
     }
 
     func presentEditTimerView(at index: Int) {
-        print("pressentEditTimerView가 호출 됨")
         guard timers.indices.contains(index) else { return }
-        route = .edit(index: index)
+        route = isPremium ? .edit(index: index) : .paywall
+    }
+
+    func handleUpgradePurchased() {
+        isPremium = true
+        route = nil
+    }
+
+    func restorePurchases() {
+        // 추후에 StoreKit으로 교체 - 데모로 해제
+        isPremium = true
     }
 
     // MARK: - Feedback
