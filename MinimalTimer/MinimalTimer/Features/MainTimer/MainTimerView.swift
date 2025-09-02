@@ -28,7 +28,7 @@ struct MainTimerView: View {
             }
             .animation(.easeInOut(duration: 0.35), value: vm.interactionMode)
         }
-        
+
         // 편집/생성 시트
         .fullScreenCover(item: $vm.route) { route in
             switch route {
@@ -57,6 +57,11 @@ struct MainTimerView: View {
                         )
                     )
                 }
+            case .paywall:
+                PaywallView(
+                    onClose: { vm.route = nil },
+                    onUpgradeTap: { vm.handleUpgradePurchased() }
+                )
             }
         }
     }
