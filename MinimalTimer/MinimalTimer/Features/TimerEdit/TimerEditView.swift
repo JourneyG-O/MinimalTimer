@@ -207,12 +207,12 @@ struct TimerEditView: View {
 
                     if vm.draft.isTickAlwaysVisible {
                         Circle()
-                            .stroke(Color(.systemBackground).opacity(0.3), lineWidth: 2)
+                            .fill(Color.clear)
                             .frame(width: previewSize, height: previewSize)
                             .overlay(
                                 ForEach(0..<tickCount, id: \.self) { tick in
                                     Rectangle()
-                                        .fill(Color.white.opacity(0.6))
+                                        .fill(Color(.systemBackground))
                                         .frame(width: 2, height: tickLength)
                                         .offset(y: -(previewSize / 2 - tickLength / 2))
                                         .rotationEffect(.degrees(Double(tick) / Double(tickCount) * 360.0))
@@ -251,13 +251,9 @@ struct TimerEditView: View {
                         .opacity(vm.isSavable ? 1 : 0.45)
                 }
         )
-        // 바깥 탭 시 키보드 내리기
         .simultaneousGesture(
             TapGesture().onEnded { isTitleFocused = false }
         )
-        // 아래로 스와이프해도 닫히지 않도록 (필요시 유지)
-        // .interactiveDismissDisabled(true)
-        // 키보드가 올라와도 레이아웃 밀어올리지 않음
         .ignoresSafeArea(.keyboard)
     }
 
