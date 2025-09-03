@@ -23,8 +23,9 @@ struct PageControlButtons: View {
             }) {
                 Image(systemName: "chevron.backward")
                     .font(.largeTitle)
-                    .foregroundStyle(isFirstPage ? .gray.opacity(0.3) : .primary)
+                    .foregroundStyle(.primary.opacity(isFirstPage ? 0.3 : 0.6))
             }
+            .buttonStyle(.plain)
             .disabled(isFirstPage)
 
             Spacer()
@@ -39,8 +40,9 @@ struct PageControlButtons: View {
             }) {
                 Image(systemName: "chevron.forward")
                     .font(.largeTitle)
-                    .foregroundStyle(isLastPage ? .gray.opacity(0.3) : .primary)
+                    .foregroundStyle(.primary.opacity(isLastPage ? 0.3 : 0.6))
             }
+            .buttonStyle(.plain)
             .disabled(isLastPage)
 
             Spacer()
