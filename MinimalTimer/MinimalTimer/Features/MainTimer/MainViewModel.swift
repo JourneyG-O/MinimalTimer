@@ -6,6 +6,7 @@
 //
 
 import AudioToolbox
+import AVFoundation
 import SwiftUI
 
 enum InteractionMode {
@@ -56,6 +57,7 @@ final class MainViewModel: ObservableObject {
     private var previousSnappedIndex: Int?
     private var previousAngle: Double = 0.0
     private let feedbackGenerator = UIImpactFeedbackGenerator(style: .light)
+    private var audioPlayer: AVAudioPlayer?
 
     // MARK: - Computed Properties
     var progress: CGFloat {
@@ -76,6 +78,7 @@ final class MainViewModel: ObservableObject {
         self.interactionMode = .normal
         validateSelectedTimerIndex()
         updatePreviousAngle()
+        configureAudioSession()
     }
 
     // MARK: - Index Validation
@@ -275,7 +278,7 @@ final class MainViewModel: ObservableObject {
     private func playEndFeedback(for timer: TimerModel) {
         guard !timer.isMuted else { return }
         feedbackGenerator.impactOccurred()
-        AudioServicesPlaySystemSound(1322)
+        playSoundIfAllowed(named: "finish", ext: "mp3")
     }
 
     private func playTapFeedback(for timer: TimerModel) {
@@ -286,7 +289,30 @@ final class MainViewModel: ObservableObject {
     private func playSnapFeedback(for timer: TimerModel) {
         guard !timer.isMuted else { return }
         feedbackGenerator.impactOccurred()
-        AudioServicesPlaySystemSound(1104)
+    }
+
+    // MARK: - Audio helpers
+    private func configureAudioSession() {
+        do {
+            try AVAudioSession.sharedInstance().setCategory(.ambient, mode: .default, options: [])
+            try AVAudioSession.sharedInstance().setActive(true)
+        } catch {
+            print("Audio session config failed: \(error)")
+        }
+    }
+
+    private func playSoundIfAllowed(named: String, ext: String) {
+        guard let url = Bundle.main.url(forResource: named, withExtension: ext) else {
+            print("Sound file mot found: \(named).\(ext)")
+            return
+        }
+        do {
+            audioPlayer = try AVAudioPlayer(contentsOf: url)
+            audioPlayer?.prepareToPlay()
+            audioPlayer?.play()
+        } catch {
+            print("Failed to play sound: \(error)")
+        }
     }
 }
 
