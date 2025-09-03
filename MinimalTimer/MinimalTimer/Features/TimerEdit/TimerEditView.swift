@@ -50,7 +50,7 @@ struct TimerEditView: View {
 
                         HStack {
                             let count = vm.draft.title.count
-                            let isCJK = vm.draft.title.unicodeScalars.contains { $0.properties.isIdeographic }
+                            let isCJK = vm.draft.title.isCJKLike
                             let softLimit = isCJK ? 8 : 15
 
                             Text("\(count)/\(softLimit)")
