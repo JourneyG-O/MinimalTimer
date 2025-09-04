@@ -9,6 +9,7 @@ import SwiftUI
 struct MainTimerView: View {
     @ObservedObject var vm: MainViewModel
     @Namespace private var animationNamespace
+    @AppStorage("hasSeenOnboarding") private var hasSeenOnboarding: Bool = false
 
     var body: some View {
         GeometryReader { geometry in
@@ -62,6 +63,17 @@ struct MainTimerView: View {
                     onClose: { vm.route = nil },
                     onUpgradeTap: { vm.handleUpgradePurchased() }
                 )
+            }
+        }
+        // 온보딩 (처음 1회)
+        .fullScreenCover(
+            isPresented: Binding(
+                get: { !hasSeenOnboarding },
+                set: { _ in }
+            )
+        ) {
+            OnboardingView {
+                hasSeenOnboarding = true
             }
         }
     }
