@@ -7,19 +7,25 @@
 
 import SwiftUI
 
-struct TimerEditView: View {
+// MARK: - Localization helpers
+private func L(_ key: String) -> LocalizedStringKey { LocalizedStringKey(key) }
+private func LF(_ key: String, _ args: CVarArg...) -> String {
+    String(format: NSLocalizedString(key, comment: ""), arguments: args)
+}
 
+struct TimerEditView: View {
+    
     @ObservedObject var vm: TimerEditViewModel
     @FocusState private var isTitleFocused: Bool
     @Environment(\.dismiss) private var dismiss
-
+    
     // MARK: - Local validation flags
     @State private var titleError: Bool = false
     @State private var timeError: Bool = false
-
+    
     // MARK: - Color Options
     private let availableColors = CustomColor.allCases
-
+    
     // MARK: - Preview/Tick layout
     private let previewSize: CGFloat = 150
     private let previewHeaderHeight: CGFloat = 220   // 프리뷰 컨테이너(배경 포함) 높이
@@ -28,7 +34,7 @@ struct TimerEditView: View {
     private let tickLength: CGFloat = 10
     private let previewPadding: CGFloat = 16
     private let formTopExtraSpacing: CGFloat = 36
-
+    
     var body: some View {
         ZStack(alignment: .top) {
             // MARK: - 1) Base Form (화면 전체, 배경 숨김)
@@ -36,40 +42,41 @@ struct TimerEditView: View {
                 // title
                 Section(
                     header:
-                        Text(titleError ? "TITLE * 필수 항목" : "TITLE")
+                        Text(titleError ? L("edit.title.required") : L("edit.timerName"))
                         .foregroundStyle(titleError ? Color.red : Color.secondary)
                         .textCase(nil)
                 ) {
                     VStack(alignment: .leading, spacing: 6) {
-                        TextField("Enter timer title", text: $vm.draft.title)
+                        TextField(L("edit.placeholder.title"), text: $vm.draft.title)
                             .focused($isTitleFocused)
                             .submitLabel(.done)
                             .onChange(of: vm.draft.title) { _, _ in
                                 titleError = false
                             }
-
+                        
                         HStack {
                             let count = vm.draft.title.count
                             let isCJK = vm.draft.title.isCJKLike
                             let softLimit = isCJK ? 8 : 15
-
-                            Text("\(count)/\(softLimit)")
+                            
+                            // dynamic "count/limit"
+                            Text(LF("%lld/%lld", count, softLimit))
                                 .font(.caption2)
                                 .foregroundStyle(count > softLimit ? .orange : .secondary)
-
+                            
                             Spacer()
-
+                            
                             if count > softLimit {
-                                Text("일부 화면에서 잘릴 수 있어요")
+                                Text(L("edit.trimWarning"))
                                     .font(.caption2)
                                     .foregroundStyle(.orange)
                             }
                         }
                     }
                 }
-
+                
                 // Color grid
-                Section(header: Text("Color")) {
+                Section(header: Text(L("edit.color"))) {
                     LazyVGrid(columns: Array(repeating: .init(.flexible()), count: 6)) {
                         ForEach(availableColors, id: \.self) { customColor in
                             Circle()
@@ -80,23 +87,22 @@ struct TimerEditView: View {
                                         .stroke(Color.primary, lineWidth: vm.draft.color == customColor ? 2 : 0)
                                 )
                                 .onTapGesture { vm.draft.color = customColor }
-                                .accessibilityLabel(Text(customColor == vm.draft.color ? "Selected color" : "Color option"))
                                 .accessibilityAddTraits(customColor == vm.draft.color ? .isSelected : [])
                         }
                     }
                     .padding(.vertical, 4)
                 }
-
+                
                 // Time
                 Section(
                     header:
-                        Text(timeError ? "TIME * 필수 항목" : "TIME")
+                        Text(timeError ? L("edit.time.required") : L("edit.time"))
                         .foregroundStyle(timeError ? Color.red : Color.secondary)
                         .textCase(nil)
                 ) {
                     HStack {
                         // minutes binding maps to draft.totalSeconds (clamped to 0...120)
-                        Picker("Minutes", selection: Binding<Int>(
+                        Picker(L("edit.minutes"), selection: Binding<Int>(
                             get: { vm.draft.totalSeconds / 60 },
                             set: { newMinutes in
                                 let m = max(0, min(newMinutes, Constants.Time.maxMinutes))
@@ -113,12 +119,12 @@ struct TimerEditView: View {
                             }
                         )) {
                             ForEach(0...Constants.Time.maxMinutes, id: \.self) { m in
-                                Text("\(m) 분")
+                                Text("\(m) \(NSLocalizedString("edit.minutes", comment: ""))")
                             }
                         }
-
+                        
                         // seconds binding maps to draft.totalSeconds (0...59)
-                        Picker("Seconds", selection: Binding<Int>(
+                        Picker(L("edit.seconds"), selection: Binding<Int>(
                             get: { vm.draft.totalSeconds % 60 },
                             set: { newSeconds in
                                 let m = vm.draft.totalSeconds / 60
@@ -130,7 +136,7 @@ struct TimerEditView: View {
                             }
                         )) {
                             ForEach(0..<60, id: \.self) { s in
-                                Text("\(s) 초")
+                                Text("\(s) \(NSLocalizedString("edit.seconds", comment: ""))")
                             }
                         }
                         // 분==120 "그리고" 초==0일 때만 비활성화 → 스냅 애니메이션 방해 X
@@ -152,23 +158,23 @@ struct TimerEditView: View {
                         if newValue > 0 { timeError = false }
                     }
                 }
-
+                
                 // Options
-                Section(header: Text("Options")) {
+                Section(header: Text(L("edit.options"))) {
                     Toggle(isOn: $vm.draft.isTitleAlwaysVisible) {
-                        Label("Always show title", systemImage: "textformat")
+                        Label(L("edit.option.alwaysShowTitle"), systemImage: "textformat")
                     }
                     Toggle(isOn: $vm.draft.isTickAlwaysVisible) {
-                        Label("Always Show Ticks", systemImage: "dial.min")
+                        Label(L("edit.option.alwaysShowTicks"), systemImage: "dial.min")
                     }
                     Toggle(isOn: $vm.draft.isMuted) {
-                        Label("Mute", systemImage: "speaker.slash.fill")
+                        Label(L("edit.option.mute"), systemImage: "speaker.slash.fill")
                     }
                     Toggle(isOn: $vm.draft.isRepeatEnabled) {
-                        Label("Repeat", systemImage: "repeat")
+                        Label(L("edit.option.repeat"), systemImage: "repeat")
                     }
                 }
-
+                
                 // 편집 모드에서만 노출 삭제 버튼
                 if case .edit = vm.mode {
                     Section {
@@ -190,13 +196,13 @@ struct TimerEditView: View {
             .safeAreaInset(edge: .top, spacing: 0) {
                 Color.clear.frame(height: previewHeaderHeight + formTopExtraSpacing)
             }
-
+            
             // MARK: - 2) Overlay Preview Header (유리 배경 + 프리뷰 내용)
             ZStack {
                 // 유리(머티리얼) 배경 — 사각형 컨테이너
                 RoundedRectangle(cornerRadius: previewCornerRadius, style: .continuous)
                     .fill(.ultraThinMaterial)
-
+                
                 // 프리뷰 콘텐츠: 원 + 눈금 + 텍스트
                 ZStack {
                     Circle()
@@ -204,7 +210,7 @@ struct TimerEditView: View {
                         .frame(width: previewSize, height: previewSize)
                         .shadow(color: .black.opacity(0.18), radius: 16, x: 0, y: 10)
                         .shadow(color: .black.opacity(0.26), radius: 4,  x: 0, y: 2)
-
+                    
                     if vm.draft.isTickAlwaysVisible {
                         Circle()
                             .fill(Color.clear)
@@ -219,7 +225,7 @@ struct TimerEditView: View {
                                 }
                             )
                     }
-
+                    
                     Text(formattedTime(vm.draft.totalSeconds))
                         .font(.system(size: 32, weight: .bold, design: .rounded))
                         .foregroundColor(Color(.systemBackground))
@@ -256,21 +262,21 @@ struct TimerEditView: View {
         )
         .ignoresSafeArea(.keyboard)
     }
-
+    
     private func formattedTime(_ sec: Int) -> String {
         let minutes = sec / 60
         let seconds = sec % 60
         return String(format: "%02d:%02d", minutes, seconds)
     }
-
+    
     // MARK: - Validation & Save
     private func handleCheckTap() {
         let isTitleEmpty = vm.draft.title.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
         let isTimeZero = vm.draft.totalSeconds <= 0
-
+        
         if isTitleEmpty { titleError = true }
         if isTimeZero { timeError = true }
-
+        
         guard !isTitleEmpty, !isTimeZero else {
             let generator = UINotificationFeedbackGenerator()
             generator.notificationOccurred(.error)
