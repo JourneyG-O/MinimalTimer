@@ -32,14 +32,13 @@ struct SwitchingView: View {
                     Button {
                         vm.presentEditTimerView(at: vm.selectedTimerIndex)
                     } label: {
-                        Text("EDIT")
+                        Text("switching.edit")
                             .font(Constants.editFont)
                             .foregroundColor(Color(.systemBackground))
                             .frame(height: Constants.editButtonHeight)
                             .padding(.horizontal, Constants.editButtonHorizontalPadding)
                             .background(timer.color.toColor, in: Capsule())
                     }
-                    .accessibilityLabel("Edit Timer")
                     .padding(.bottom, Constants.bottomPadding)
                 }
                 .frame(maxWidth: .infinity)
@@ -60,7 +59,6 @@ struct SwitchingView: View {
                                 .frame(width: Constants.floatingButtonSize, height: Constants.floatingButtonSize)
                                 .background(timer.color.toColor, in: Circle())
                         }
-                        .accessibilityLabel("Add Timer")
                         .padding(.trailing, Constants.trailingPadding)
                         .padding(.bottom, Constants.bottomPadding)
                     }
