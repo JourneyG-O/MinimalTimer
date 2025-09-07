@@ -41,6 +41,35 @@
     "Enter timer title" : {
 
     },
+    "main.switchHint" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Long press background to switch"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "背景を長押しして切り替え"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "배경을 길게 눌러 전환하기"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "长按背景以切换"
+          }
+        }
+      }
+    },
     "Minutes" : {
 
     },
@@ -455,9 +484,6 @@
 
     },
     "TITLE * 필수 항목" : {
-
-    },
-    "배경을 길게 눌러 전환하기" : {
 
     },
     "일부 화면에서 잘릴 수 있어요" : {

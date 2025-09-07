@@ -37,7 +37,7 @@ struct MainTimerView: View {
             // ✅ 하단 토스트 오버레이 (뷰 트리의 최상단 ZStack에 붙임)
             .overlay(alignment: .bottom) {
                 if showSwitchHint {
-                    Text("배경을 길게 눌러 전환하기")
+                    Text("main.switchHint")
                         .font(.footnote)
                         .padding(.horizontal, 12).padding(.vertical, 8)
                         .background(.ultraThinMaterial, in: Capsule())
