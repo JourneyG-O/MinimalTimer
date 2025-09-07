@@ -1,500 +1,53 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
-    "button.add" : {
-      "extractionState" : "manual",
+    "%lld 분" : {
+
+    },
+    "%lld 초" : {
+
+    },
+    "%lld/%lld" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
-            "state" : "translated",
-            "value" : "Add"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "追加"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "추가"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "添加"
+            "state" : "new",
+            "value" : "%1$lld/%2$lld"
           }
         }
       }
     },
-    "button.cancel" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Cancel"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "キャンセル"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "취소"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "取消"
-          }
-        }
-      }
+    "Add Timer" : {
+
     },
-    "button.delete" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Delete"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "削除"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "삭제"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "删除"
-          }
-        }
-      }
+    "Always Show Ticks" : {
+
     },
-    "button.done" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Done"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "完了"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "완료"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "完成"
-          }
-        }
-      }
+    "Always show title" : {
+
     },
-    "button.edit" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Edit"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "編集"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "편집"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "编辑"
-          }
-        }
-      }
+    "Color" : {
+
     },
-    "button.restore" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Restore"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "復元"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "복원"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "恢复"
-          }
-        }
-      }
+    "Color option" : {
+
     },
-    "button.save" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Save"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "保存"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "저장"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "保存"
-          }
-        }
-      }
+    "EDIT" : {
+
     },
-    "edit.option.mute" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Mute"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "ミュート"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "무음"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "静音"
-          }
-        }
-      }
+    "Edit Timer" : {
+
     },
-    "edit.option.repeat" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Repeat"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "繰り返し"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "반복"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "重复"
-          }
-        }
-      }
+    "Enter timer title" : {
+
     },
-    "edit.option.showTicks" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Always show ticks"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "目盛りを常に表示"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "눈금 항상 표시"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "始终显示刻度"
-          }
-        }
-      }
+    "Minutes" : {
+
     },
-    "edit.option.showTitle" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Always show title"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "タイトルを常に表示"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "타이틀 항상 표시"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "始终显示标题"
-          }
-        }
-      }
+    "Mute" : {
+
     },
-    "edit.placeholder.title" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Enter a title"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "タイトルを入力してください"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "타이틀을 입력하세요"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "请输入标题"
-          }
-        }
-      }
-    },
-    "edit.section.options" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Options"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "オプション"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "옵션"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "选项"
-          }
-        }
-      }
-    },
-    "edit.section.time" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Time"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "時間"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "시간"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "时间"
-          }
-        }
-      }
-    },
-    "edit.section.title" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Title"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "タイトル"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "타이틀"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "标题"
-          }
-        }
-      }
-    },
-    "edit.warning.length" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "May be truncated on some screens"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "一部の画面で切れる可能性があります"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "일부 화면에서 잘릴 수 있어요"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "部分界面可能会被截断"
-          }
-        }
-      }
-    },
-    "main.hint.switch" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Long press the background to switch timers."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "背景を長押しするとタイマー切替画面に移動します。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "배경을 길게 눌러 타이머 전환 화면으로 이동합니다."
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "长按背景切换到计时器切换界面。"
-          }
-        }
-      }
-    },
-    "main.title" : {
+    "onboarding.appName" : {
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
@@ -523,7 +76,7 @@
         }
       }
     },
-    "onboarding.button.next" : {
+    "onboarding.next" : {
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
@@ -552,122 +105,6 @@
         }
       }
     },
-    "onboarding.button.skip" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Skip"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "スキップ"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "건너뛰기"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "跳过"
-          }
-        }
-      }
-    },
-    "onboarding.button.start" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Start"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "開始"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "시작하기"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "开始"
-          }
-        }
-      }
-    },
-    "onboarding.header.subtitle" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Simplify with intuitive gestures"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "直感的なジェスチャーでよりシンプルに"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "간단한 제스처로 더 간편하게"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "用直观手势让操作更简洁"
-          }
-        }
-      }
-    },
-    "onboarding.header.title" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Minimal Timer"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Minimal Timer"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Minimal Timer"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Minimal Timer"
-          }
-        }
-      }
-    },
     "onboarding.page1.caption" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -680,13 +117,13 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "タイマー円をタップすると開始/停止できます。"
+            "value" : "タイマーの円を一回タップすると開始/停止できます。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "타이머 원을 한 번 탭하여 시작/정지할 수 있어요."
+            "value" : "타이머 원을 한 번 탭하면 시작/정지할 수 있어요."
           }
         },
         "zh-Hans" : {
@@ -703,13 +140,13 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Start / Pause with one tap"
+            "value" : "Start/Pause with a single tap"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "ワンタップで開始/停止"
+            "value" : "タップ一回で開始/停止"
           }
         },
         "ko" : {
@@ -721,7 +158,7 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "轻点一次即可开始/暂停"
+            "value" : "单点即可开始/暂停"
           }
         }
       }
@@ -732,25 +169,25 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Drag the circle to adjust the time."
+            "value" : "Drag the circle to adjust the time intuitively."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "円をドラッグして時間を調整できます。"
+            "value" : "円をドラッグして直感的に時間を調整しましょう。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "원을 드래그해서 시간을 맞출 수 있어요."
+            "value" : "원을 드래그해서 직관적으로 시간을 맞추세요."
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "拖动圆圈即可调整时间。"
+            "value" : "拖动圆圈直观调整时间。"
           }
         }
       }
@@ -761,13 +198,13 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Set time with a drag"
+            "value" : "Set time with drag"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "ドラッグで時間設定"
+            "value" : "ドラッグで時間を設定"
           }
         },
         "ko" : {
@@ -790,25 +227,25 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Double tap to reset. If a time was set, it resets to that value."
+            "value" : "If a time is set, it resets to that value."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "ダブルタップでリセット。設定された時間があればその値に戻ります。"
+            "value" : "設定された時間があれば、その値にリセットされます。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "타이머가 리셋됩니다. 설정된 시간이 있다면 그 값으로 리셋돼요."
+            "value" : "설정된 시간이 있다면 그 값으로 리셋돼요."
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "双击即可重置。如有设置时间，则重置为该值。"
+            "value" : "如果已设置时间，将重置为该值\n"
           }
         }
       }
@@ -819,7 +256,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Double tap to reset"
+            "value" : "Reset with double tap"
           }
         },
         "ja" : {
@@ -848,7 +285,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Long press the background to switch timer views."
+            "value" : "Long press the background to go to the timer switch screen."
           }
         },
         "ja" : {
@@ -866,7 +303,7 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "长按背景进入计时器切换界面。"
+            "value" : "长按背景切换到计时器界面。"
           }
         }
       }
@@ -877,376 +314,154 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Long press to switch timers"
+            "value" : "Long press background to switch timers"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "長押しでタイマー切替"
+            "value" : "背景を長押ししてタイマー切替ビューへ"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "배경을 길게 눌러 전환"
+            "value" : "배경 꾹 눌러서 타이머 전환뷰 이동"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "长按切换计时器"
+            "value" : "长按背景进入计时器切换界面"
           }
         }
       }
     },
-    "paywall.button.upgrade" : {
+    "onboarding.skip" : {
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Upgrade · %@"
+            "value" : "Skip"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "アップグレード · %@"
+            "value" : "スキップ"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "업그레이드 · %@"
+            "value" : "건너뛰기"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "升级 · %@"
+            "value" : "跳过"
           }
         }
       }
     },
-    "paywall.feature.1.desc" : {
+    "onboarding.slogan" : {
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Create and edit as many as you like"
+            "value" : "Simplify with simple gestures"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "いくつでも自由に作成・編集できます"
+            "value" : "シンプルなジェスチャーでより簡単に"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "원하는 만큼 타이머를 자유롭게 만드세요"
+            "value" : "간단한 제스처로 더 간결하게"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "随心创建和编辑"
+            "value" : "简单手势，更加简洁"
           }
         }
       }
     },
-    "paywall.feature.1.title" : {
+    "onboarding.start" : {
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Unlimited timers"
+            "value" : "Get Started"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "無制限のタイマー追加"
+            "value" : "はじめる"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "제한 없는 타이머 추가"
+            "value" : "시작하기"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "无限计时器"
+            "value" : "开始使用"
           }
         }
       }
     },
-    "paywall.feature.2.desc" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Titles, colors, and times, all customizable"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "タイトル、カラー、時間などを自由に設定可能"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "타이틀, 컬러, 시간 등 세부 설정을 취향대로 바꿔보세요"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "标题、颜色、时间均可定制"
-          }
-        }
-      }
+    "Options" : {
+
     },
-    "paywall.feature.2.title" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Custom styles"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "カスタムスタイル編集"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "맞춤 스타일 편집"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "自定义样式"
-          }
-        }
-      }
+    "paywall.link.privacy" : {
+
     },
-    "paywall.feature.3.desc" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ticks, mute, repeat, simplified and practical"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "目盛り、ミュート、繰り返しなどをシンプルに"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "눈금, 무음, 반복 등 꼭 필요한 기능만 간결하게"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "刻度、静音、重复，简洁实用"
-          }
-        }
-      }
+    "paywall.link.restore" : {
+
     },
-    "paywall.feature.3.title" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Essential features"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "必要機能"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "편의 기능 제공"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "必备功能"
-          }
-        }
-      }
+    "paywall.link.terms" : {
+
     },
-    "paywall.feature.4.desc" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "New features included with updates"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "アップデートで新機能も利用可能"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "업데이트 시 새로운 기능도 함께 누리세요"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "更新时一并享受新功能"
-          }
-        }
-      }
+    "Repeat" : {
+
     },
-    "paywall.feature.4.title" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Future updates"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "今後追加予定の機能"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "앞으로 추가될 기능"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "后续新增功能"
-          }
-        }
-      }
+    "Seconds" : {
+
     },
-    "paywall.footer.note" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "One-time purchase. Restore anytime with the same Apple ID."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "買い切り、同じApple IDでいつでも復元可能"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "일회성 결제, 동일 Apple ID로 언제든 복원 가능"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "一次性购买，可随时用同一Apple ID恢复"
-          }
-        }
-      }
+    "Selected color" : {
+
     },
-    "paywall.header.subtitle" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Upgrade to unlock all features"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "アップグレードしてすべての機能を解除"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "업그레이드하여 모든 기능 잠금 해제"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "升级解锁所有功能"
-          }
-        }
-      }
+    "TIME" : {
+
     },
-    "paywall.header.title" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Minimal Timer"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Minimal Timer"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Minimal Timer"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Minimal Timer"
-          }
-        }
-      }
+    "TIME * 필수 항목" : {
+
+    },
+    "TITLE" : {
+
+    },
+    "TITLE * 필수 항목" : {
+
+    },
+    "배경을 길게 눌러 전환하기" : {
+
+    },
+    "일부 화면에서 잘릴 수 있어요" : {
+
     }
   },
   "version" : "1.0"

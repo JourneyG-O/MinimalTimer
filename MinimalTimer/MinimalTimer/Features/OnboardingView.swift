@@ -8,29 +8,38 @@
 import SwiftUI
 
 struct OnboardingView: View {
-    struct Page: Identifiable, Hashable {
+    struct Page: Identifiable {
         let id = UUID()
         let imageName: String
-        let title: String
-        let caption: String
+        let titleKey: LocalizedStringKey
+        let captionKey: LocalizedStringKey
     }
 
     // 외부에서 닫기 처리
     var onFinish: (() -> Void)?
 
+    // MARK: - Localized Pages
     private let pages: [Page] = [
-        .init(imageName: "ob_tap",
-              title: "탭 한 번으로 시작/정지",
-              caption: "타이머 원을 한 번 탭하면 시작/정지할 수 있어요."),
-        .init(imageName: "ob_drag",
-              title: "드래그로 시간 설정",
-              caption: "원을 드래그해서 직관적으로 시간을 맞추세요."),
-        .init(imageName: "ob_doubletap",
-              title: "더블탭으로 리셋",
-              caption: "설정된 시간이 있다면 그 값으로 리셋돼요."),
-        .init(imageName: "ob_longpress",
-              title: "배경 꾹 눌러서 타이머 전환뷰 이동",
-              caption: "배경을 길게 눌러 타이머 전환 화면으로 이동합니다.")
+        .init(
+            imageName: "ob_tap",
+            titleKey: "onboarding.page1.title",
+            captionKey: "onboarding.page1.caption"
+        ),
+        .init(
+            imageName: "ob_drag",
+            titleKey: "onboarding.page2.title",
+            captionKey: "onboarding.page2.caption"
+        ),
+        .init(
+            imageName: "ob_doubletap",
+            titleKey: "onboarding.page3.title",
+            captionKey: "onboarding.page3.caption"
+        ),
+        .init(
+            imageName: "ob_longpress",
+            titleKey: "onboarding.page4.title",
+            captionKey: "onboarding.page4.caption"
+        )
     ]
 
     @State private var selection = 0
@@ -42,14 +51,16 @@ struct OnboardingView: View {
             VStack(spacing: 16) {
                 Spacer(minLength: 24)
 
+                // Header (App Name + Slogan)
                 VStack(spacing: 6) {
-                    Text("Minimal Timer")
+                    Text("onboarding.appName")
                         .font(.system(.title2, design: .rounded).bold())
-                    Text("간단한 제스처로 더 간결하게")
+                    Text("onboarding.slogan")
                         .font(.subheadline)
                         .foregroundStyle(.secondary)
                 }
 
+                // Cards Pager
                 TabView(selection: $selection) {
                     ForEach(pages.indices, id: \.self) { i in
                         OnboardingCard(imageName: pages[i].imageName)
@@ -62,14 +73,15 @@ struct OnboardingView: View {
                 .tabViewStyle(.page(indexDisplayMode: .always))
                 .indexViewStyle(.page(backgroundDisplayMode: .always))
 
+                // Title & Caption below pager
                 VStack(spacing: 6) {
-                    Text(pages[selection].title)
+                    Text(pages[selection].titleKey)
                         .font(.headline)
                         .multilineTextAlignment(.center)
                         .lineLimit(2)
                         .minimumScaleFactor(0.9)
 
-                    Text(pages[selection].caption)
+                    Text(pages[selection].captionKey)
                         .font(.subheadline)
                         .foregroundStyle(.secondary)
                         .multilineTextAlignment(.center)
@@ -81,9 +93,10 @@ struct OnboardingView: View {
 
                 Spacer()
 
+                // Footer Buttons
                 HStack {
-                    Button("건너뛰기") {
-                        onFinish?()
+                    Button(action: { onFinish?() }) {
+                        Text("onboarding.skip")
                     }
                     .foregroundStyle(.secondary)
 
@@ -96,7 +109,7 @@ struct OnboardingView: View {
                             onFinish?()
                         }
                     }) {
-                        Text(selection < pages.count - 1 ? "다음" : "시작하기")
+                        Text(selection < pages.count - 1 ? LocalizedStringKey("onboarding.next") : LocalizedStringKey("onboarding.start"))
                             .font(.system(size: 16, weight: .semibold))
                             .frame(width: 120, height: 44)
                             .foregroundColor(.white)

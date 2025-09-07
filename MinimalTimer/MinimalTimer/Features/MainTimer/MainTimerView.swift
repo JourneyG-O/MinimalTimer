@@ -77,6 +77,7 @@ struct MainTimerView: View {
                 }
             case .paywall:
                 PaywallView(
+                    priceString: "가격",
                     onClose: { vm.route = nil },
                     onUpgradeTap: { vm.handleUpgradePurchased() }
                 )
