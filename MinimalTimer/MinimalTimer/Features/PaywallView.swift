@@ -7,9 +7,6 @@
 
 import SwiftUI
 
-// Helper for static keys
-private func L(_ key: String) -> LocalizedStringKey { LocalizedStringKey(key) }
-
 struct PaywallView: View {
     var priceString: String                  // e.g., "₩3,000"
     var onClose: (() -> Void)? = nil

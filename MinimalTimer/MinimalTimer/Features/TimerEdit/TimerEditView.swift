@@ -7,12 +7,6 @@
 
 import SwiftUI
 
-// MARK: - Localization helpers
-private func L(_ key: String) -> LocalizedStringKey { LocalizedStringKey(key) }
-private func LF(_ key: String, _ args: CVarArg...) -> String {
-    String(format: NSLocalizedString(key, comment: ""), arguments: args)
-}
-
 struct TimerEditView: View {
 
     @ObservedObject var vm: TimerEditViewModel

@@ -74,16 +74,12 @@ final class TimerEditViewModel: ObservableObject {
 
 // MARK: - UI Helpers
 extension TimerEditViewModel {
-    var actionTitle: String {
+    var navTitle: LocalizedStringKey {
         switch mode {
-        case .create: "생성"
-        case .edit: "저장"
-        }
-    }
-    var navTitle: String {
-        switch mode {
-        case .create: "타이머 생성"
-        case .edit: "타이머 편집"
+        case .create:
+            return L("edit.nav.create")
+        case .edit:
+            return L("edit.nav.edit")
         }
     }
 }
