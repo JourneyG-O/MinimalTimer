@@ -14,18 +14,18 @@ private func LF(_ key: String, _ args: CVarArg...) -> String {
 }
 
 struct TimerEditView: View {
-    
+
     @ObservedObject var vm: TimerEditViewModel
     @FocusState private var isTitleFocused: Bool
     @Environment(\.dismiss) private var dismiss
-    
+
     // MARK: - Local validation flags
     @State private var titleError: Bool = false
     @State private var timeError: Bool = false
-    
+
     // MARK: - Color Options
     private let availableColors = CustomColor.allCases
-    
+
     // MARK: - Preview/Tick layout
     private let previewSize: CGFloat = 150
     private let previewHeaderHeight: CGFloat = 220   // 프리뷰 컨테이너(배경 포함) 높이
@@ -34,7 +34,7 @@ struct TimerEditView: View {
     private let tickLength: CGFloat = 10
     private let previewPadding: CGFloat = 16
     private let formTopExtraSpacing: CGFloat = 36
-    
+
     var body: some View {
         ZStack(alignment: .top) {
             // MARK: - 1) Base Form (화면 전체, 배경 숨김)
@@ -47,25 +47,25 @@ struct TimerEditView: View {
                         .textCase(nil)
                 ) {
                     VStack(alignment: .leading, spacing: 6) {
-                        TextField(L("edit.placeholder.title"), text: $vm.draft.title)
+                        TextField(L("edit.placeholder.name"), text: $vm.draft.title)
                             .focused($isTitleFocused)
                             .submitLabel(.done)
                             .onChange(of: vm.draft.title) { _, _ in
                                 titleError = false
                             }
-                        
+
                         HStack {
                             let count = vm.draft.title.count
                             let isCJK = vm.draft.title.isCJKLike
                             let softLimit = isCJK ? 8 : 15
-                            
+
                             // dynamic "count/limit"
                             Text(LF("%lld/%lld", count, softLimit))
                                 .font(.caption2)
                                 .foregroundStyle(count > softLimit ? .orange : .secondary)
-                            
+
                             Spacer()
-                            
+
                             if count > softLimit {
                                 Text(L("edit.trimWarning"))
                                     .font(.caption2)
@@ -74,7 +74,7 @@ struct TimerEditView: View {
                         }
                     }
                 }
-                
+
                 // Color grid
                 Section(header: Text(L("edit.color"))) {
                     LazyVGrid(columns: Array(repeating: .init(.flexible()), count: 6)) {
@@ -92,7 +92,7 @@ struct TimerEditView: View {
                     }
                     .padding(.vertical, 4)
                 }
-                
+
                 // Time
                 Section(
                     header:
@@ -122,7 +122,7 @@ struct TimerEditView: View {
                                 Text("\(m) \(NSLocalizedString("edit.minutes", comment: ""))")
                             }
                         }
-                        
+
                         // seconds binding maps to draft.totalSeconds (0...59)
                         Picker(L("edit.seconds"), selection: Binding<Int>(
                             get: { vm.draft.totalSeconds % 60 },
@@ -158,7 +158,7 @@ struct TimerEditView: View {
                         if newValue > 0 { timeError = false }
                     }
                 }
-                
+
                 // Options
                 Section(header: Text(L("edit.options"))) {
                     Toggle(isOn: $vm.draft.isTitleAlwaysVisible) {
@@ -174,7 +174,7 @@ struct TimerEditView: View {
                         Label(L("edit.option.repeat"), systemImage: "repeat")
                     }
                 }
-                
+
                 // 편집 모드에서만 노출 삭제 버튼
                 if case .edit = vm.mode {
                     Section {
@@ -196,13 +196,13 @@ struct TimerEditView: View {
             .safeAreaInset(edge: .top, spacing: 0) {
                 Color.clear.frame(height: previewHeaderHeight + formTopExtraSpacing)
             }
-            
+
             // MARK: - 2) Overlay Preview Header (유리 배경 + 프리뷰 내용)
             ZStack {
                 // 유리(머티리얼) 배경 — 사각형 컨테이너
                 RoundedRectangle(cornerRadius: previewCornerRadius, style: .continuous)
                     .fill(.ultraThinMaterial)
-                
+
                 // 프리뷰 콘텐츠: 원 + 눈금 + 텍스트
                 ZStack {
                     Circle()
@@ -210,7 +210,7 @@ struct TimerEditView: View {
                         .frame(width: previewSize, height: previewSize)
                         .shadow(color: .black.opacity(0.18), radius: 16, x: 0, y: 10)
                         .shadow(color: .black.opacity(0.26), radius: 4,  x: 0, y: 2)
-                    
+
                     if vm.draft.isTickAlwaysVisible {
                         Circle()
                             .fill(Color.clear)
@@ -225,7 +225,7 @@ struct TimerEditView: View {
                                 }
                             )
                     }
-                    
+
                     Text(formattedTime(vm.draft.totalSeconds))
                         .font(.system(size: 32, weight: .bold, design: .rounded))
                         .foregroundColor(Color(.systemBackground))
@@ -262,21 +262,21 @@ struct TimerEditView: View {
         )
         .ignoresSafeArea(.keyboard)
     }
-    
+
     private func formattedTime(_ sec: Int) -> String {
         let minutes = sec / 60
         let seconds = sec % 60
         return String(format: "%02d:%02d", minutes, seconds)
     }
-    
+
     // MARK: - Validation & Save
     private func handleCheckTap() {
         let isTitleEmpty = vm.draft.title.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
         let isTimeZero = vm.draft.totalSeconds <= 0
-        
+
         if isTitleEmpty { titleError = true }
         if isTimeZero { timeError = true }
-        
+
         guard !isTitleEmpty, !isTimeZero else {
             let generator = UINotificationFeedbackGenerator()
             generator.notificationOccurred(.error)
