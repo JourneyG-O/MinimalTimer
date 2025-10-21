@@ -12,22 +12,12 @@ struct PaywallView: View {
     var onClose: (() -> Void)? = nil
     var onUpgradeTap: (() -> Void)? = nil
     var onRestoreTap: (() -> Void)? = nil
+    @Environment(\.dismiss) private var dismiss
 
     var body: some View {
         ZStack(alignment: .topTrailing) {
             Color(.systemBackground).ignoresSafeArea()
 
-            // Close button
-            Button { onClose?() } label: {
-                Image(systemName: "xmark")
-                    .font(.system(size: 14, weight: .bold))
-                    .foregroundStyle(.orange)
-                    .frame(width: 32, height: 32)
-                    .background(.thinMaterial, in: Circle())
-            }
-            .accessibilityLabel(L("paywall.close"))
-            .padding(.top, 16)
-            .padding(.trailing, 16)
 
             VStack(spacing: 0) {
                 // Header
@@ -132,6 +122,19 @@ struct PaywallView: View {
                     .foregroundStyle(.secondary)
             }
             .background(.ultraThinMaterial)
+        }
+
+        .toolbar {
+            ToolbarItem(placement: .topBarTrailing) {
+                Button {
+                    if let onClose { onClose() } else { dismiss() }
+                } label: {
+                    Image(systemName: "xmark")
+                }
+                .buttonStyle(.borderedProminent)
+                .tint(.orange)
+                .accessibilityLabel(L("paywall.close"))
+            }
         }
     }
 }

@@ -51,7 +51,7 @@ struct MainTimerView: View {
         .fullScreenCover(item: $vm.route) { route in
             switch route {
             case .add:
-                NavigationView {
+                NavigationStack {
                     TimerEditView(
                         vm: .init(
                             mode: .create,
@@ -63,7 +63,7 @@ struct MainTimerView: View {
             case .edit(let index):
                 // 기존 모델 -> Draft로 초기화
                 let initial = TimerDraft(model: vm.timers[index])
-                NavigationView {
+                NavigationStack {
                     TimerEditView(
                         vm: .init(
                             mode: .edit(index: index),
@@ -76,11 +76,14 @@ struct MainTimerView: View {
                     )
                 }
             case .paywall:
-                PaywallView(
-                    priceString: "가격",
-                    onClose: { vm.route = nil },
-                    onUpgradeTap: { vm.handleUpgradePurchased() }
-                )
+                NavigationStack {
+                    PaywallView(
+                        priceString: "가격",
+                        onClose: { vm.route = nil },
+                        onUpgradeTap: { vm.handleUpgradePurchased() }
+                    )
+                }
+
             }
         }
         // 온보딩 (처음 1회)
