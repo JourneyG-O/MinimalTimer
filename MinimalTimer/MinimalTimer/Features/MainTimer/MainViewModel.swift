@@ -282,8 +282,7 @@ final class MainViewModel: ObservableObject {
     private func playEndFeedback(for timer: TimerModel) {
         guard !timer.isMuted else { return }
         DispatchQueue.main.async {
-            self.notifyGenerator.prepare()
-            self.notifyGenerator.notificationOccurred(.success)
+            AudioServicesPlaySystemSound(kSystemSoundID_Vibrate)
         }
         playSoundIfAllowed(named: "finish", ext: "mp3")
     }
