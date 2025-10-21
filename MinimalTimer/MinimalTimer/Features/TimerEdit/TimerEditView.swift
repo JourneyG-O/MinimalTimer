@@ -236,19 +236,15 @@ struct TimerEditView: View {
             leading:
                 Button(action: { dismiss() }) {
                     Image(systemName: "xmark")
-                        .foregroundColor(.white)
-                        .padding(8)
-                        .background(Color.black.opacity(0.3), in: Circle())
+                        .foregroundColor(.primary)
                 },
             trailing:
                 Button(action: {
                     handleCheckTap()
                 }) {
                     Image(systemName: "checkmark")
-                        .foregroundColor(Color(.systemBackground))
-                        .padding(8)
-                        .background(vm.draft.color.toColor, in: Circle())
-                        .opacity(vm.isSavable ? 1 : 0.45)
+                        .foregroundColor(.primary)
+                        .opacity(vm.isSavable ? 1 : 0.3)
                 }
         )
         .simultaneousGesture(
