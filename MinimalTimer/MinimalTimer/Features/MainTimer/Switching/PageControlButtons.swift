@@ -12,7 +12,7 @@ struct PageControlButtons: View {
 
     // 연산 프로퍼티로 분리하여 body를 간결하게 만듭니다.
     private var isFirstPage: Bool { vm.selectedTimerIndex == 0 }
-    private var isLastPage: Bool { vm.selectedTimerIndex == vm.timers.count }
+    private var isLastPage: Bool { vm.selectedTimerIndex == vm.timers.count - 1 }
 
     var body: some View {
         HStack {

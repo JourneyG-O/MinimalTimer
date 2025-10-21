@@ -21,37 +21,28 @@ struct TimerPagerView: View {
 
             ZStack {
                 TabView(selection: $vm.selectedTimerIndex) {
-                    ForEach(0..<(timers.count + 1), id: \.self) { index in
-                        if index < timers.count {
-                            let timer = timers[index]
+                    ForEach(0..<(timers.count), id: \.self) { index in
+                        let timer = timers[index]
 
-                            let card = PreviewTimerView(
-                                color: timer.color.toColor,
-                                totalTime: timer.totalTime,
-                                title: timer.title
-                            ) {
-                                vm.selectTimer(at: index)
-                                vm.exitSwitchMode()
-                            }
+                        let card = PreviewTimerView(
+                            color: timer.color.toColor,
+                            totalTime: timer.totalTime,
+                            title: timer.title
+                        ) {
+                            vm.selectTimer(at: index)
+                            vm.exitSwitchMode()
+                        }
                             .frame(width: side, height: side)
 
-                            Group {
-                                if isFirstPresented {
-                                    card.popInOnAppear()
-                                } else {
-                                    card
-                                }
+                        Group {
+                            if isFirstPresented {
+                                card.popInOnAppear()
+                            } else {
+                                card
                             }
-                            .frame(maxWidth: .infinity, maxHeight: .infinity)
-                            .tag(index)
-
-                        } else {
-                            AddTimerCardView()
-                                .frame(width: side, height: side)
-                                .frame(maxWidth: .infinity, maxHeight: .infinity)
-                                .onTapGesture { vm.presentAddTimerView() }
-                                .tag(index)
                         }
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                        .tag(index)
                     }
                 }
                 .tabViewStyle(.page(indexDisplayMode: .never))

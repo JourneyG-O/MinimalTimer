@@ -30,7 +30,6 @@ struct SwitchingView: View {
             
             ToolbarItemGroup(placement: .bottomBar) {
                 // 편집 버튼
-                if vm.currentTimer != nil {
                     Button {
                         vm.presentEditTimerView(at: vm.selectedTimerIndex)
                     } label: {
@@ -38,12 +37,10 @@ struct SwitchingView: View {
                     }
                     .tint(vm.currentTimer?.color.toColor ?? .primary)
                     .accessibilityLabel("Edit Timer")
-                }
 
                 Spacer()
 
                 // + 버튼
-                if vm.currentTimer != nil {
                     Button {
                         vm.presentAddTimerView()
                     } label: {
@@ -51,7 +48,6 @@ struct SwitchingView: View {
                             .font(.headline)
                     }
                     .accessibilityLabel("Add Timer")
-                }
             }
         }
     }
