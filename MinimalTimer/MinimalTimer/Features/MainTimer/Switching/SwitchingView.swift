@@ -24,51 +24,31 @@ struct SwitchingView: View {
         ZStack {
             TimerPagerView(vm: vm)
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
-
-            // 중앙 Edit 버튼
-            if let timer = vm.currentTimer {
-                VStack {
-                    Spacer()
-                    Button {
-                        vm.presentEditTimerView(at: vm.selectedTimerIndex)
-                    } label: {
-                        Text("switching.edit")
-                            .font(Constants.editFont)
-                            .foregroundColor(Color(.systemBackground))
-                            .frame(height: Constants.editButtonHeight)
-                            .padding(.horizontal, Constants.editButtonHorizontalPadding)
-                            .background(timer.color.toColor, in: Capsule())
-                    }
-                    .padding(.bottom, Constants.bottomPadding)
-                }
-                .frame(maxWidth: .infinity)
-                .ignoresSafeArea(.keyboard, edges: .bottom)
-                .transition(.move(edge: .bottom).combined(with: .opacity))
-
-                // 우측 + 버튼
-                VStack {
-                    Spacer()
-                    HStack {
-                        Spacer()
-                        Button {
-                            vm.presentAddTimerView()
-                        } label: {
-                            Image(systemName: "plus")
-                                .foregroundColor(Color(.systemBackground))
-                                .font(Constants.addFont)
-                                .frame(width: Constants.floatingButtonSize, height: Constants.floatingButtonSize)
-                                .background(timer.color.toColor, in: Circle())
-                        }
-                        .padding(.trailing, Constants.trailingPadding)
-                        .padding(.bottom, Constants.bottomPadding)
-                    }
-                }
-                .ignoresSafeArea(.keyboard, edges: .bottom)
-                .transition(.move(edge: .bottom).combined(with: .opacity))
-                .allowsHitTesting(true)
-            }
-
         }
         .animation(.spring(response: 0.28, dampingFraction: 0.9), value: vm.interactionMode)
+        .toolbar {
+            
+            ToolbarItemGroup(placement: .bottomBar) {
+                // 편집 버튼
+                Button {
+                    vm.presentEditTimerView(at: vm.selectedTimerIndex)
+                } label: {
+                    Image(systemName: "gearshape.fill")
+                }
+                .tint(vm.currentTimer?.color.toColor ?? .primary)
+                .accessibilityLabel("Edit Timer")
+
+                Spacer()
+
+                // + 버튼
+                Button {
+                    vm.presentAddTimerView()
+                } label: {
+                    Image(systemName: "plus")
+                        .font(.headline)
+                }
+                .accessibilityLabel("Add Timer")
+            }
+        }
     }
 }
