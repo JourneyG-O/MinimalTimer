@@ -22,14 +22,6 @@ struct PaywallView: View {
             VStack(spacing: 0) {
                 // Header
                 VStack(spacing: 12) {
-                    ZStack {
-                        Circle().fill(.ultraThinMaterial).frame(width: 100, height: 100)
-                        Image("Logo")
-                            .resizable()
-                            .scaledToFit()
-                            .frame(width: 100, height: 100)
-                    }
-                    .padding(.top, 56)
 
                     VStack(spacing: 6) {
                         Text(L("paywall.appName"))
