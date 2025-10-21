@@ -57,6 +57,7 @@ final class MainViewModel: ObservableObject {
     private var previousSnappedIndex: Int?
     private var previousAngle: Double = 0.0
     private let feedbackGenerator = UIImpactFeedbackGenerator(style: .light)
+    private let notifyGenerator = UINotificationFeedbackGenerator()
     private var audioPlayer: AVAudioPlayer?
 
     // MARK: - Computed Properties
@@ -177,7 +178,10 @@ final class MainViewModel: ObservableObject {
     }
 
     func setUserProgress(from angle: Double) {
-        isDragging = true
+        if !isDragging {
+            isDragging = true
+            feedbackGenerator.prepare()
+        }
 
         guard let timer = currentTimer else { return }
         let total = timer.totalTime
@@ -277,18 +281,27 @@ final class MainViewModel: ObservableObject {
 
     private func playEndFeedback(for timer: TimerModel) {
         guard !timer.isMuted else { return }
-        feedbackGenerator.impactOccurred()
+        DispatchQueue.main.async {
+            self.notifyGenerator.prepare()
+            self.notifyGenerator.notificationOccurred(.success)
+        }
         playSoundIfAllowed(named: "finish", ext: "mp3")
     }
 
     private func playTapFeedback(for timer: TimerModel) {
         guard !timer.isMuted else { return }
+        DispatchQueue.main.async {
+            self.feedbackGenerator.prepare()
+            self.feedbackGenerator.impactOccurred()
+        }
         feedbackGenerator.impactOccurred()
     }
 
     private func playSnapFeedback(for timer: TimerModel) {
         guard !timer.isMuted else { return }
-        feedbackGenerator.impactOccurred()
+        DispatchQueue.main.async {
+            self.feedbackGenerator.impactOccurred()
+        }
     }
 
     // MARK: - Audio helpers
@@ -303,7 +316,7 @@ final class MainViewModel: ObservableObject {
 
     private func playSoundIfAllowed(named: String, ext: String) {
         guard let url = Bundle.main.url(forResource: named, withExtension: ext) else {
-            print("Sound file mot found: \(named).\(ext)")
+            print("Sound file not found: \(named).\(ext)")
             return
         }
         do {
