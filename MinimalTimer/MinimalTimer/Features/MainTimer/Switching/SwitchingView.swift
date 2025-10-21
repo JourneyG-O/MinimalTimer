@@ -30,24 +30,28 @@ struct SwitchingView: View {
             
             ToolbarItemGroup(placement: .bottomBar) {
                 // 편집 버튼
-                Button {
-                    vm.presentEditTimerView(at: vm.selectedTimerIndex)
-                } label: {
-                    Image(systemName: "gearshape")
+                if vm.currentTimer != nil {
+                    Button {
+                        vm.presentEditTimerView(at: vm.selectedTimerIndex)
+                    } label: {
+                        Image(systemName: "gearshape")
+                    }
+                    .tint(vm.currentTimer?.color.toColor ?? .primary)
+                    .accessibilityLabel("Edit Timer")
                 }
-                .tint(vm.currentTimer?.color.toColor ?? .primary)
-                .accessibilityLabel("Edit Timer")
 
                 Spacer()
 
                 // + 버튼
-                Button {
-                    vm.presentAddTimerView()
-                } label: {
-                    Image(systemName: "plus")
-                        .font(.headline)
+                if vm.currentTimer != nil {
+                    Button {
+                        vm.presentAddTimerView()
+                    } label: {
+                        Image(systemName: "plus")
+                            .font(.headline)
+                    }
+                    .accessibilityLabel("Add Timer")
                 }
-                .accessibilityLabel("Add Timer")
             }
         }
     }
