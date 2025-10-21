@@ -72,10 +72,3 @@ struct SwitchingView: View {
         .animation(.spring(response: 0.28, dampingFraction: 0.9), value: vm.interactionMode)
     }
 }
-
-#Preview("SwitchingView") {
-    @Previewable @Namespace var ns
-    let vm = MainViewModel()
-    vm.interactionMode = .switching
-    return SwitchingView(vm: vm, ns: ns)
-}
