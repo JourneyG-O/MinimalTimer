@@ -33,7 +33,7 @@ struct SwitchingView: View {
                 Button {
                     vm.presentEditTimerView(at: vm.selectedTimerIndex)
                 } label: {
-                    Image(systemName: "gearshape.fill")
+                    Image(systemName: "gearshape")
                 }
                 .tint(vm.currentTimer?.color.toColor ?? .primary)
                 .accessibilityLabel("Edit Timer")
