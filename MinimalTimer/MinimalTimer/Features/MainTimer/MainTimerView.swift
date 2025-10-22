@@ -37,7 +37,7 @@ struct MainTimerView: View {
                         TitleView(title: timer.title)
                             .frame(height: 60)
                             .opacity(showTitle ? 1 : 0)
-                            .accessibilityHidden(!showTitle)  
+                            .accessibilityHidden(!showTitle)
                     }
 
                     Spacer()
@@ -75,6 +75,26 @@ struct MainTimerView: View {
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
                 .padding(.horizontal, 16)
+            }
+            .toolbar {
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button {
+                        path.append(.list)
+                    } label: {
+                        Image(systemName: "list.bullet")
+                    }
+                    .accessibilityLabel("Timers")
+                }
+            }
+            .navigationDestination(for: AppRoute.self) { route in
+                switch route {
+                case .list:
+                    EmptyView()
+                case .create:
+                    EmptyView()
+                case .edit:
+                    EmptyView()
+                }
             }
         }
 
