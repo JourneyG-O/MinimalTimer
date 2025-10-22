@@ -16,14 +16,16 @@ struct TimerRow: View {
 
 
     var body: some View {
-        HStack(spacing: 12) {
+        HStack {
             // Color swatch
             Circle()
                 .fill(timer.color.toColor)
-                .frame(width: 14, height: 14)
+                .frame(width: 40, height: 40)
+
+            Spacer()
 
             // Title + total time
-            VStack(alignment: .leading, spacing: 2) {
+            VStack(alignment: .center, spacing: 4) {
                 Text(timer.title.isEmpty ? "Timer" : timer.title)
                     .font(.body.weight(.semibold))
                     .lineLimit(1)
@@ -36,18 +38,29 @@ struct TimerRow: View {
 
             Spacer()
 
-            // Selected mark
-            if isSelected {
-                Image(systemName: "checkmark")
-                    .symbolRenderingMode(.hierarchical)
-                    .foregroundStyle(.secondary)
-            }
-
-            // Viertical ellipsis edit button
+            // Vertical ellipsis edit button
             Button(action: onEdit) {
-                Image(systemName: "ellip")
+                Image(systemName: "ellipsis")
+                    .rotationEffect(.degrees(90))
+                    .font(.system(size: 16, weight: .semibold))
+                    .frame(width: 40, height: 40)
+                    .contentShape(Rectangle())
+                    .symbolRenderingMode(.hierarchical)
             }
+            .buttonStyle(.plain)
+            .accessibilityLabel("Edit Timer")
         }
+        .padding(.vertical, 15)
+        .padding(.horizontal, 15)
+        .background(
+            Capsule()
+                .fill(.secondary)
+                .overlay(
+                    Capsule().stroke(.primary)
+                )
+        )
+        .contentShape(Rectangle())
+        .accessibilityElement(children: .combine)
     }
 
     // MARK: - Helpers
@@ -57,7 +70,3 @@ struct TimerRow: View {
         return String(format: "%02d:%02d", minutes, seconds)
     }
 }
-
-//#Preview {
-//    TimerRow(_)
-//}

@@ -19,8 +19,9 @@ struct TimerListView: View {
     // MARK: - Body
     var body: some View {
         ScrollView {
-            LazyVStack(spacing: 12) {
-                ForEach(Array(vm.timers.enumerated()), id: \.element.id) { index, timer in
+            LazyVStack(spacing: 15) {
+                ForEach(vm.timers.indices, id: \.self) { index in
+                    let timer = vm.timers[index]
                     TimerRow(timer: timer,
                              isSelected: index == vm.selectedTimerIndex,
                              onSelect: { handleSelect(index) },
@@ -28,19 +29,12 @@ struct TimerListView: View {
                     )
                     .padding(.horizontal, 16)
                 }
-                .padding(.top, 12)
-                .padding(.bottom, 24)
             }
+            .padding(.vertical, 30)
         }
-        .toolbar {
-            ToolbarItem(placement: .topBarTrailing) {
-                Button(action: handleCreate){
-                    Image(systemName: "plus")
-                }
-                .accessibilityLabel("Add Timer")
-            }
-        }
+        .scrollIndicators(.automatic)
     }
+
 
     // MARK: - Helpers
     private func handleSelect(_ index: Int) {
