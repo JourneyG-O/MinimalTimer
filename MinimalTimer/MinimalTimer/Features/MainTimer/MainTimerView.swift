@@ -89,7 +89,7 @@ struct MainTimerView: View {
             .navigationDestination(for: AppRoute.self) { route in
                 switch route {
                 case .list:
-                    EmptyView()
+                    TimerListView(vm: vm)
                 case .create:
                     EmptyView()
                 case .edit:
