@@ -6,86 +6,78 @@
 //
 import SwiftUI
 
+enum AppRoute: Hashable {
+    case list
+    case create
+    case edit(Int)
+}
+
 struct MainTimerView: View {
+    // MARK: - Dependencies
     @ObservedObject var vm: MainViewModel
-    @Namespace private var animationNamespace
 
-    // 온보딩 1회 표시 여부
+    // MARK: - Flags
     @AppStorage("hasSeenOnboarding") private var hasSeenOnboarding: Bool = false
+    @State private var path: [AppRoute] = []
 
-    // 전환 힌트(토스트) 1회 표시 여부
-    @AppStorage("hasShownSwitchHint") private var hasShownSwitchHint: Bool = false
-    @State private var showSwitchHint: Bool = false
-
+    // MARK: - Body
     var body: some View {
-        GeometryReader { geometry in
-            ZStack {
-                backgroundLayer
-                    .gesture(backgroundLongPressGesture)
+        NavigationStack(path: $path) {
+            GeometryReader { proxy in
 
-                if vm.interactionMode == .normal {
-                    NormalView(vm: vm, ns: animationNamespace)
-                        .frame(maxWidth: .infinity, maxHeight: .infinity)
-                }
+                let minSide = min(proxy.size.width, proxy.size.height)
+                let timerSize = minSide * 0.8
+                let showTitle = vm.currentTimer?.isTitleAlwaysVisible == true
 
-                if vm.interactionMode == .switching {
-                    SwitchingView(vm: vm, ns: animationNamespace)
-                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                VStack() {
+
+                    Spacer()
+
+                    if let timer = vm.currentTimer {
+                        TitleView(title: timer.title)
+                            .frame(height: 60)
+                            .opacity(showTitle ? 1 : 0)
+                            .accessibilityHidden(!showTitle)  
+                    }
+
+                    Spacer()
+
+                    if let timer = vm.currentTimer {
+                        SingleTimerView(
+                            timer: timer,
+                            progress: vm.progress,
+                            isRunning: vm.isRunning,
+                            isDragging: vm.isDragging,
+                            interactionMode: vm.interactionMode,
+                            onSingleTap: vm.startOrPauseTimer,
+                            onDoubleTap: vm.reset,
+                            onDrag: { angle in vm.setUserProgress(from: angle) },
+                            onDragEnd: vm.endDragging
+                        )
+                        .frame(width: timerSize, height:timerSize)
+                        .popInOnAppear()
+                    } else {
+                        ContentUnavailableView(
+                            "No Timers",
+                            systemImage: "timer",
+                            description: Text("Create a timer to get started.")
+                        )
+                        .frame(height: timerSize)
+                    }
+
+                    Spacer()
+
+                    RemainingTimeView(viewModel: vm)
+                        .frame(height: 60)
+
+                    Spacer()
+
                 }
-            }
-            .animation(.easeInOut(duration: 0.35), value: vm.interactionMode)
-            // ✅ 하단 토스트 오버레이 (뷰 트리의 최상단 ZStack에 붙임)
-            .overlay(alignment: .bottom) {
-                if showSwitchHint {
-                    Text("main.switchHint")
-                        .font(.footnote)
-                        .padding(.horizontal, 12).padding(.vertical, 8)
-                        .background(.ultraThinMaterial, in: Capsule())
-                        .overlay(Capsule().stroke(Color.primary.opacity(0.08)))
-                        .padding(.bottom, 24)
-                        .transition(.opacity.combined(with: .move(edge: .bottom)))
-                }
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .padding(.horizontal, 16)
             }
         }
-        // 편집/생성/페이월 시트
-        .fullScreenCover(item: $vm.route) { route in
-            switch route {
-            case .add:
-                NavigationStack {
-                    TimerEditView(
-                        vm: .init(
-                            mode: .create,
-                            initial: .init(),
-                            saveAction: vm.handleSave
-                        )
-                    )
-                }
-            case .edit(let index):
-                // 기존 모델 -> Draft로 초기화
-                let initial = TimerDraft(model: vm.timers[index])
-                NavigationStack {
-                    TimerEditView(
-                        vm: .init(
-                            mode: .edit(index: index),
-                            initial: initial,
-                            saveAction: vm.handleSave,
-                            deleteAction: { idx in
-                                vm.deleteTimer(at: idx)
-                            }
-                        )
-                    )
-                }
-            case .paywall:
-                NavigationStack {
-                    PaywallView(
-                        priceString: "가격",
-                        onClose: { vm.route = nil },
-                        onUpgradeTap: { vm.handleUpgradePurchased() }
-                    )
-                }
 
-            }
-        }
         // 온보딩 (처음 1회)
         .fullScreenCover(
             isPresented: Binding(
@@ -97,35 +89,11 @@ struct MainTimerView: View {
                 hasSeenOnboarding = true
             }
         }
-        // ✅ 첫 실행 시 전환 힌트 1회 노출 스케줄
-        .onAppear {
-            guard !hasShownSwitchHint else { return }
-            // 온보딩이 먼저 떠 있으면 토스트는 뒤로 미룸
-            // (온보딩이 닫힌 뒤 다시 onAppear가 돌지 않으므로, 간단히 지연만 둔다)
-            DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
-                guard !hasShownSwitchHint, hasSeenOnboarding else { return }
-                withAnimation(.easeInOut) { showSwitchHint = true }
-                DispatchQueue.main.asyncAfter(deadline: .now() + 2.5) {
-                    withAnimation(.easeInOut) { showSwitchHint = false }
-                }
-            }
-        }
     }
 
     // MARK: - Background
-
     private var backgroundLayer: some View {
         Color(.systemBackground)
-    }
-
-    private var backgroundLongPressGesture: some Gesture {
-        LongPressGesture(minimumDuration: 0.6)
-            .onEnded { _ in
-                vm.enterSwitchMode()
-                // ✅ 전환모드 한 번 진입하면 힌트 영구 비활성
-                hasShownSwitchHint = true
-                withAnimation(.easeInOut) { showSwitchHint = false }
-            }
     }
 }
 
