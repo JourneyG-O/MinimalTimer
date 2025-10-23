@@ -10,51 +10,53 @@ import SwiftUI
 struct TimerRow: View {
     // MARK: - Dependencies
     let timer: TimerModel
-    let isSelected: Bool
     let onSelect: () -> Void
     let onEdit: () -> Void
 
     // MARK: - Press State
     var body: some View {
-        HStack {
-            // Color swatch
-            Circle()
-                .fill(timer.color.toColor)
-                .frame(width: 40, height: 40)
-
-            Spacer()
-
-            // Title + total time
-            VStack(alignment: .center, spacing: 4) {
-                Text(timer.title.isEmpty ? "Timer" : timer.title)
-                    .font(.body.weight(.semibold))
-                    .lineLimit(1)
-                    .truncationMode(.tail)
-
-                Text(formatTotalTime(seconds: Int(timer.totalTime)))
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
-            }
-
-            Spacer()
-
-            // Vertical ellipsis edit button
-            Button(action: onEdit) {
-                Image(systemName: "ellipsis")
-                    .rotationEffect(.degrees(90))
-                    .font(.system(size: 16, weight: .semibold))
+        Button(action: onSelect) {
+            HStack {
+                // Color swatch
+                Circle()
+                    .fill(timer.color.toColor)
                     .frame(width: 40, height: 40)
-                    .contentShape(Rectangle())
-                    .symbolRenderingMode(.hierarchical)
+
+                Spacer()
+
+                // Title + total time
+                VStack(alignment: .center, spacing: 4) {
+                    Text(timer.title.isEmpty ? "Timer" : timer.title)
+                        .font(.body.weight(.semibold))
+                        .lineLimit(1)
+                        .truncationMode(.tail)
+
+                    Text(formatTotalTime(seconds: Int(timer.totalTime)))
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
+
+                Spacer()
+
+                // Vertical ellipsis edit button
+                Button(action: onEdit) {
+                    Image(systemName: "ellipsis")
+                        .rotationEffect(.degrees(90))
+                        .font(.system(size: 16, weight: .semibold))
+                        .frame(width: 40, height: 40)
+                        .contentShape(Rectangle())
+                        .symbolRenderingMode(.hierarchical)
+                }
+                .buttonStyle(.plain)
+                .accessibilityLabel("Edit Timer")
             }
-            .buttonStyle(.plain)
-            .accessibilityLabel("Edit Timer")
+            .padding(.vertical, 15)
+            .padding(.horizontal, 15)
+            .contentShape(Rectangle())
+            .glassEffect(.regular.interactive())
+            .accessibilityElement(children: .combine)
+
         }
-        .padding(.vertical, 15)
-        .padding(.horizontal, 15)
-        .glassEffect(.regular.interactive())
-        .onTapGesture { onSelect() }
-        .accessibilityElement(children: .combine)
     }
 
     // MARK: - Helpers

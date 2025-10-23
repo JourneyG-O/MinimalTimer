@@ -26,7 +26,6 @@ struct TimerListView: View {
 
                 TimerRow(
                     timer: timer,
-                    isSelected: index == vm.selectedTimerIndex,
                     onSelect: { handleSelect(index) },
                     onEdit:   { handleEdit(index) }
                 )
