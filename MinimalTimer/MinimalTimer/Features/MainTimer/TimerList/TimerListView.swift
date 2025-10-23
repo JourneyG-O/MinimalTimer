@@ -59,33 +59,18 @@ struct TimerListView: View {
         }
     }
 
-
     // MARK: - Helpers
     private func handleSelect(_ index: Int) {
-        print("hanleSelect가 호출 됨")
         vm.selectTimer(at: index)
         UISelectionFeedbackGenerator().selectionChanged()
         onSelectTimer?(index)
     }
 
     private func handleCreate() {
-        if vm.isPremium || vm.timers.count < 3 {
-            onCreate?()
-        } else {
-            vm.route = .paywall
-        }
+        onCreate?()
     }
 
     private func handleEdit(_ index: Int) {
-        print("hanleEdit가 호출 됨")
-        if vm.isPremium {
-            onEdit?(index)
-        } else {
-            vm.route = .paywall
-        }
+        onEdit?(index)
     }
 }
-
-//#Preview {
-//    TimerListView()
-//}
