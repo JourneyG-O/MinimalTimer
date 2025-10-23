@@ -62,6 +62,7 @@ struct TimerListView: View {
 
     // MARK: - Helpers
     private func handleSelect(_ index: Int) {
+        print("hanleSelect가 호출 됨")
         vm.selectTimer(at: index)
         UISelectionFeedbackGenerator().selectionChanged()
         dismiss()
@@ -76,6 +77,7 @@ struct TimerListView: View {
     }
 
     private func handleEdit(_ index: Int) {
+        print("hanleEdit가 호출 됨")
         if vm.isPremium {
             onEdit?(index)
         } else {

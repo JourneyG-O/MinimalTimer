@@ -14,7 +14,7 @@ struct TimerRow: View {
     let onSelect: () -> Void
     let onEdit: () -> Void
 
-
+    // MARK: - Press State
     var body: some View {
         HStack {
             // Color swatch
@@ -52,8 +52,8 @@ struct TimerRow: View {
         }
         .padding(.vertical, 15)
         .padding(.horizontal, 15)
-        .glassEffect()
-        .contentShape(Rectangle())
+        .glassEffect(.regular.interactive())
+        .onTapGesture { onSelect() }
         .accessibilityElement(children: .combine)
     }
 
