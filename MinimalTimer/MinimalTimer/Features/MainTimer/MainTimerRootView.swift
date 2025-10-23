@@ -145,6 +145,7 @@ struct MainTimerRootView: View {
     }
 
     private func openEdit(_ index: Int) {
+        print("openEdit가 호출 됨")
         if vm.isPremium {
             withAnimation(.snappy) { editRoute = .edit(index) }
         } else {

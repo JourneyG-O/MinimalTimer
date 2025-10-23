@@ -1,10 +1,3 @@
-//
-//  TimerRow.swift
-//  MinimalTimer
-//
-//  Created by KoJeongseok on 10/22/25.
-//
-
 import SwiftUI
 
 struct TimerRow: View {
@@ -13,56 +6,71 @@ struct TimerRow: View {
     let onSelect: () -> Void
     let onEdit: () -> Void
 
-    // MARK: - Press State
     var body: some View {
-        Button(action: onSelect) {
-            HStack {
-                // Color swatch
-                Circle()
-                    .fill(timer.color.toColor)
-                    .frame(width: 40, height: 40)
+        HStack(spacing: 0) {
 
-                Spacer()
-
-                // Title + total time
-                VStack(alignment: .center, spacing: 4) {
-                    Text(timer.title.isEmpty ? "Timer" : timer.title)
-                        .font(.body.weight(.semibold))
-                        .lineLimit(1)
-                        .truncationMode(.tail)
-
-                    Text(formatTotalTime(seconds: Int(timer.totalTime)))
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
-                }
-
-                Spacer()
-
-                // Vertical ellipsis edit button
-                Button(action: onEdit) {
-                    Image(systemName: "ellipsis")
-                        .rotationEffect(.degrees(90))
-                        .font(.system(size: 16, weight: .semibold))
+            // ✅ 좌측: 선택 버튼 (Row 넓은 영역)
+            Button(action: onSelect) {
+                HStack {
+                    Circle()
+                        .fill(timer.color.toColor)
                         .frame(width: 40, height: 40)
-                        .contentShape(Rectangle())
-                        .symbolRenderingMode(.hierarchical)
-                }
-                .buttonStyle(.plain)
-                .accessibilityLabel("Edit Timer")
-            }
-            .padding(.vertical, 15)
-            .padding(.horizontal, 15)
-            .contentShape(Rectangle())
-            .glassEffect(.regular.interactive())
-            .accessibilityElement(children: .combine)
 
+                    Spacer(minLength: 12)
+
+                    VStack(alignment: .center, spacing: 4) {
+                        Text(timer.title.isEmpty ? "Timer" : timer.title)
+                            .font(.body.weight(.semibold))
+                            .lineLimit(1)
+                            .truncationMode(.tail)
+
+                        Text(formatTotalTime(seconds: Int(timer.totalTime)))
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                    }
+
+                    Spacer(minLength: 0)
+                }
+                .contentShape(Rectangle())
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .padding(.vertical, 15)
+                .padding(.leading, 15)
+            }
+            .buttonStyle(.plain)
+
+            // ✅ 우측: 편집 버튼 (독립 히트영역)
+            Button(action: onEdit) {
+                Image(systemName: "ellipsis")
+                    .rotationEffect(.degrees(90))
+                    .font(.system(size: 16, weight: .semibold))
+                    .frame(width: 44, height: 44)      // 터치 타겟 44pt
+                    .contentShape(Rectangle())
+                    .symbolRenderingMode(.hierarchical)
+            }
+            .buttonStyle(.borderless)                  // 제스처 충돌 ↓
+            .padding(.trailing, 15)
+            .accessibilityLabel("Edit Timer")
         }
+        // ✅ 캡슐형 글래스 배경은 컨테이너에만 적용 (히트테스트 X)
+        .background(
+            Group {
+                if #available(iOS 18.0, *) {
+                    Color.clear
+                        .glassEffect(.regular.interactive(), in: Capsule())
+                        .allowsHitTesting(false)
+                } else {
+                    Color.clear
+                        .background(.ultraThinMaterial, in: Capsule())
+                        .allowsHitTesting(false)
+                }
+            }
+        )
+        .accessibilityElement(children: .combine)
     }
 
     // MARK: - Helpers
     private func formatTotalTime(seconds: Int) -> String {
-        let minutes = seconds / 60
-        let seconds = seconds % 60
-        return String(format: "%02d:%02d", minutes, seconds)
+        let m = seconds / 60, s = seconds % 60
+        return String(format: "%02d:%02d", m, s)
     }
 }
