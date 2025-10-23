@@ -31,7 +31,7 @@ struct SwitchingView: View {
             ToolbarItemGroup(placement: .bottomBar) {
                 // 편집 버튼
                     Button {
-                        vm.presentEditTimerView(at: vm.selectedTimerIndex)
+//                        vm.presentEditTimerView(at: vm.selectedTimerIndex)
                     } label: {
                         Image(systemName: "gearshape")
                     }
@@ -42,7 +42,7 @@ struct SwitchingView: View {
 
                 // + 버튼
                     Button {
-                        vm.presentAddTimerView()
+//                        vm.presentAddTimerView()
                     } label: {
                         Image(systemName: "plus")
                             .font(.headline)

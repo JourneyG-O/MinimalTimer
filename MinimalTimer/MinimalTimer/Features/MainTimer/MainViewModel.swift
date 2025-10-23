@@ -258,14 +258,6 @@ final class MainViewModel: ObservableObject {
         }
     }
 
-    func presentAddTimerView() {
-        route = isPremium ? .add : .paywall
-    }
-
-    func presentEditTimerView(at index: Int) {
-        guard timers.indices.contains(index) else { return }
-        route = isPremium ? .edit(index: index) : .paywall
-    }
 
     func handleUpgradePurchased() {
         isPremium = true
