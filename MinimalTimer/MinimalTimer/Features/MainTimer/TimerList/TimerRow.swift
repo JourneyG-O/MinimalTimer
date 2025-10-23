@@ -52,13 +52,7 @@ struct TimerRow: View {
         }
         .padding(.vertical, 15)
         .padding(.horizontal, 15)
-        .background(
-            Capsule()
-                .fill(.secondary)
-                .overlay(
-                    Capsule().stroke(.primary)
-                )
-        )
+        .glassEffect()
         .contentShape(Rectangle())
         .accessibilityElement(children: .combine)
     }

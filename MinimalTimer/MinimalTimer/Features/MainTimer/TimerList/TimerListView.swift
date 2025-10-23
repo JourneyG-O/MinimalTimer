@@ -15,24 +15,48 @@ struct TimerListView: View {
 
     // MARK: - States
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.editMode) private var editMode
 
     // MARK: - Body
     var body: some View {
-        ScrollView {
-            LazyVStack(spacing: 15) {
-                ForEach(vm.timers.indices, id: \.self) { index in
-                    let timer = vm.timers[index]
-                    TimerRow(timer: timer,
-                             isSelected: index == vm.selectedTimerIndex,
-                             onSelect: { handleSelect(index) },
-                             onEdit: { handleEdit(index) }
-                    )
-                    .padding(.horizontal, 16)
+
+        List {
+            ForEach(vm.timers) { timer in         // ← indices 대신 모델 자체 사용
+                let index = vm.timers.firstIndex(where: { $0.id == timer.id }) ?? 0
+
+                TimerRow(
+                    timer: timer,
+                    isSelected: index == vm.selectedTimerIndex,
+                    onSelect: { handleSelect(index) },
+                    onEdit:   { handleEdit(index) }
+                )
+                .listRowInsets(.init(top: 0, leading: 16, bottom: 0, trailing: 16))
+                .listRowSeparator(.hidden)
+                .listRowBackground(Color.clear)
+                .padding(.vertical, 8)
+                .swipeActions(edge: .trailing) {
+                    Button(role: .destructive) {
+                        vm.deleteTimer(at: index)
+                    } label: {
+                        Label("Delete", systemImage: "trash")
+                    }
                 }
+                .moveDisabled(editMode?.wrappedValue != .active)
             }
-            .padding(.vertical, 30)
+            .onMove { from, to in
+                vm.timers.move(fromOffsets: from, toOffset: to)
+                vm.saveTimers()
+            }
+            .onDelete { indexSet in
+                indexSet.sorted(by: >).forEach { vm.deleteTimer(at: $0) }
+            }
         }
-        .scrollIndicators(.automatic)
+        .listStyle(.plain)
+        .scrollContentBackground(.hidden)
+        .background(Color(.systemBackground))
+        .toolbar {
+            ToolbarItem(placement: .topBarTrailing) { EditButton() }
+        }
     }
 
 
