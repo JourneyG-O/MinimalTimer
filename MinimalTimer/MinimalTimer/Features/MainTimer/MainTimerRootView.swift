@@ -16,15 +16,18 @@ enum EditSheetRoute: Identifiable {
 
     var id: String {
         switch self {
-        case .create: return "create"
-        case .edit(let i): return "eidt-\(i)"
+        case .create:           return "create"
+        case .edit(let i):      return "eidt-\(i)"
         }
     }
 }
 
 struct MainTimerRootView: View {
-    // MARK: - Depedencies
+    // MARK: - Dependencies
     @ObservedObject var vm: MainViewModel
+
+    // MARK: - Flags
+    @AppStorage("hasSeenOnboarding") private var hasSeenOnboarding: Bool = false
 
     // MARK: - Navigation State
     @State private var path: [AppRoute] = []
@@ -45,11 +48,26 @@ struct MainTimerRootView: View {
                         TimerListView(
                             vm: vm,
                             onCreate: { openCreate() },
-                            onEdit: { idx in openEdit(idx) }
-                        )
+                            onEdit: { idx in openEdit(idx) }) { _ in
+                                DispatchQueue.main.async {
+                                    withAnimation(.snappy) { path.removeAll() }
+                                }
+                            }
                     }
                 }
         }
+        // 온보딩 (처음 1회)
+        .fullScreenCover(
+            isPresented: Binding(
+                get: { !hasSeenOnboarding },
+                set: { _ in }
+            )
+        ) {
+            OnboardingView {
+                hasSeenOnboarding = true
+            }
+        }
+
         // MARK: - Persistent FAB (stays across navigation)
         .overlay(alignment: .bottomTrailing) {
             FloatingButton(symbol: fabSymbol, tint: fabTint) {
@@ -111,7 +129,6 @@ struct MainTimerRootView: View {
                             showPaywall = false
                         }
                     )
-                    .navigationTitle("")
                     .navigationBarTitleDisplayMode(.inline)
                 }
             }

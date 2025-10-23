@@ -12,6 +12,7 @@ struct TimerListView: View {
     @ObservedObject var vm: MainViewModel
     var onCreate: (() -> Void)?
     var onEdit: ((Int) -> Void)?
+    var onSelectTimer: ((Int) -> Void)?
 
     // MARK: - States
     @Environment(\.dismiss) private var dismiss
@@ -64,7 +65,7 @@ struct TimerListView: View {
         print("hanleSelect가 호출 됨")
         vm.selectTimer(at: index)
         UISelectionFeedbackGenerator().selectionChanged()
-        dismiss()
+        onSelectTimer?(index)
     }
 
     private func handleCreate() {

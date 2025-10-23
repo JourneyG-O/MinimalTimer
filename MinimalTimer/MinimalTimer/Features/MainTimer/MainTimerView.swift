@@ -10,8 +10,7 @@ struct MainTimerView: View {
     // MARK: - Dependencies
     @ObservedObject var vm: MainViewModel
 
-    // MARK: - Flags
-    @AppStorage("hasSeenOnboarding") private var hasSeenOnboarding: Bool = false
+    
 
     // MARK: - Body
     var body: some View {
@@ -67,18 +66,6 @@ struct MainTimerView: View {
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             .padding(.horizontal, 16)
-        }
-
-        // 온보딩 (처음 1회)
-        .fullScreenCover(
-            isPresented: Binding(
-                get: { !hasSeenOnboarding },
-                set: { _ in }
-            )
-        ) {
-            OnboardingView {
-                hasSeenOnboarding = true
-            }
         }
     }
 
