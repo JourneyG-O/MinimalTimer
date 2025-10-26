@@ -8,6 +8,8 @@
 import SwiftUI
 
 struct OnboardingView: View {
+    @Environment(\.colorScheme) private var colorScheme
+
     struct Page: Identifiable {
         let id = UUID()
         let imageName: String
@@ -35,11 +37,6 @@ struct OnboardingView: View {
             titleKey: "onboarding.page3.title",
             captionKey: "onboarding.page3.caption"
         ),
-        .init(
-            imageName: "ob_longpress",
-            titleKey: "onboarding.page4.title",
-            captionKey: "onboarding.page4.caption"
-        )
     ]
 
     @State private var selection = 0
@@ -51,19 +48,14 @@ struct OnboardingView: View {
             VStack(spacing: 16) {
                 Spacer(minLength: 24)
 
-                // Header (App Name + Slogan)
-                VStack(spacing: 6) {
-                    Text("onboarding.appName")
-                        .font(.system(.title2, design: .rounded).bold())
-                    Text("onboarding.slogan")
-                        .font(.subheadline)
-                        .foregroundStyle(.secondary)
-                }
-
                 // Cards Pager
                 TabView(selection: $selection) {
                     ForEach(pages.indices, id: \.self) { i in
-                        OnboardingCard(imageName: pages[i].imageName)
+                        OnboardingCard(imageName: {
+                            let base = pages[i].imageName
+                            let suffix = (colorScheme == .dark) ? "_dark" : "_light"
+                            return base + suffix
+                        }())
                             .frame(maxWidth: 520)
                             .frame(height: 360)
                             .padding(.horizontal, 20)
