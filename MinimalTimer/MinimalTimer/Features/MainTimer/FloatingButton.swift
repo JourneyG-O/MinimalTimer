@@ -9,18 +9,23 @@ import SwiftUI
 
 struct FloatingButton: View {
     let symbol: String
-    let tint: Color
     let action: () -> Void
 
     var body: some View {
         Button(action: action) {
             Image(systemName: symbol)
                 .font(.system(size: 20, weight: .bold))
-                .frame(width: 60, height: 60)
-                .contentShape(Circle())
                 .symbolRenderingMode(.hierarchical)
                 .contentTransition(.symbolEffect(.replace))
+                .padding(18)
+                .background {
+                    Capsule().fill(.clear)
+                }
         }
         .buttonStyle(.plain)
+        .glassEffect(.regular.interactive(), in: .capsule)
+        .shadow(color: .black.opacity(0.12), radius: 10, x: 0, y: 6)
+        .contentShape(Capsule())
+        .accessibilityAddTraits(.isButton)
     }
 }

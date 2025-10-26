@@ -70,7 +70,7 @@ struct MainTimerRootView: View {
 
         // MARK: - Persistent FAB (stays across navigation)
         .overlay(alignment: .bottomTrailing) {
-            FloatingButton(symbol: fabSymbol, tint: fabTint) {
+            FloatingButton(symbol: fabSymbol) {
                 if path.isEmpty {
                     withAnimation(.snappy) { path.append(.list) }
                 } else {
@@ -78,8 +78,8 @@ struct MainTimerRootView: View {
                 }
             }
             .padding(.trailing, 20)
-            .padding(.bottom, 24)
-            .ignoresSafeArea(.keyboard, edges: .bottom)
+            .padding(.bottom, 0)
+            .ignoresSafeArea()
         }
         .animation(.snappy, value: fabSymbol)
 

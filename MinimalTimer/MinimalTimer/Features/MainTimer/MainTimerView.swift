@@ -24,11 +24,9 @@ struct MainTimerView: View {
 
                 Spacer()
 
-                if let timer = vm.currentTimer {
+                if let timer = vm.currentTimer, showTitle {
                     TitleView(title: timer.title)
                         .frame(height: 60)
-                        .opacity(showTitle ? 1 : 0)
-                        .accessibilityHidden(!showTitle)
                 }
 
                 Spacer()
