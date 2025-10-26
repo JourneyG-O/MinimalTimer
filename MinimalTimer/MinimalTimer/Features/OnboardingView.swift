@@ -129,13 +129,9 @@ private extension OnboardingView {
                 Text(selection < pages.count - 1 ? LocalizedStringKey("onboarding.next") : LocalizedStringKey("onboarding.start"))
                     .font(.system(size: 16, weight: .semibold))
                     .frame(width: 120, height: 44)
-                    .foregroundColor(.white)
-                    .background(
-                        RoundedRectangle(cornerRadius: 12, style: .continuous)
-                            .fill(Color.orange)
-                    )
+                    .foregroundColor(.primary)
             }
-            .buttonStyle(.plain)
+            .buttonStyle(.glass)
         }
     }
 
@@ -154,8 +150,9 @@ private struct OnboardingCard: View {
 
     var body: some View {
         ZStack {
-            RoundedRectangle(cornerRadius: 20, style: .continuous)
-                .fill(Color(.secondarySystemBackground))
+            RoundedRectangle(cornerRadius: 20)
+                .fill(.secondary)
+                .glassEffect(in: .rect(cornerRadius: 20.0))
 
             GeometryReader { geo in
                 let side = min(geo.size.width * 0.78, geo.size.height * 0.78, 300)
