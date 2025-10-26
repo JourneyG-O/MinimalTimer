@@ -43,11 +43,13 @@ struct TimerRow: View {
                 Image(systemName: "ellipsis")
                     .rotationEffect(.degrees(90))
                     .font(.system(size: 16, weight: .semibold))
-                    .frame(width: 44, height: 44)      // 터치 타겟 44pt
+                    .frame(width: 44, height: 44)
                     .contentShape(Rectangle())
-                    .symbolRenderingMode(.hierarchical)
+                    .symbolRenderingMode(.monochrome)
+                    .foregroundStyle(.primary)
             }
-            .buttonStyle(.borderless)                  // 제스처 충돌 ↓
+            .buttonStyle(.borderless)
+            .tint(.primary)
             .padding(.trailing, 15)
             .accessibilityLabel("Edit Timer")
         }
