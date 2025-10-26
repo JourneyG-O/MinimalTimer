@@ -7,10 +7,9 @@ struct TimerRow: View {
     let onEdit: () -> Void
 
     var body: some View {
-        HStack(spacing: 0) {
+        Button(action: onSelect) {
+            HStack(spacing: 0) {
 
-            // ✅ 좌측: 선택 버튼 (Row 넓은 영역)
-            Button(action: onSelect) {
                 HStack {
                     Circle()
                         .fill(timer.color.toColor)
@@ -35,30 +34,27 @@ struct TimerRow: View {
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .padding(.vertical, 15)
                 .padding(.leading, 15)
-            }
-            .buttonStyle(.plain)
 
-            // ✅ 우측: 편집 버튼 (독립 히트영역)
-            Button(action: onEdit) {
-                Image(systemName: "ellipsis")
-                    .rotationEffect(.degrees(90))
-                    .font(.system(size: 16, weight: .semibold))
-                    .frame(width: 44, height: 44)
-                    .contentShape(Rectangle())
-                    .symbolRenderingMode(.monochrome)
-                    .foregroundStyle(.primary)
+                // ✅ 우측: 편집 버튼 (독립 히트영역)
+                Button(action: onEdit) {
+                    Image(systemName: "ellipsis")
+                        .rotationEffect(.degrees(90))
+                        .font(.system(size: 16, weight: .semibold))
+                        .frame(width: 44, height: 44)
+                        .contentShape(Rectangle())
+                        .symbolRenderingMode(.monochrome)
+                        .foregroundStyle(.primary)
+                }
+                .buttonStyle(.borderless)
+                .tint(.primary)
+                .padding(.trailing, 15)
+                .accessibilityLabel("Edit Timer")
+                .allowsHitTesting(true)
             }
-            .buttonStyle(.borderless)
-            .tint(.primary)
-            .padding(.trailing, 15)
-            .accessibilityLabel("Edit Timer")
+            .contentShape(Rectangle())
         }
-        // ✅ 캡슐형 글래스 배경은 컨테이너에만 적용 (히트테스트 X)
-        .background(
-            Color.clear
-                .glassEffect(.regular.interactive(), in: Capsule())
-                .allowsHitTesting(false)
-        )
+        .buttonStyle(.plain)
+        .glassEffect(.regular.interactive(), in: Capsule())
         .accessibilityElement(children: .combine)
     }
 

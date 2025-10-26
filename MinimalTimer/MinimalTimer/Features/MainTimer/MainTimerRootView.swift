@@ -63,6 +63,7 @@ struct MainTimerRootView: View {
         .overlay(alignment: .bottomTrailing) {
             FloatingButton(symbol: fabSymbol) {
                 if path.isEmpty {
+                    vm.pause(fromUser: false)
                     withAnimation(.snappy) { path.append(.list) }
                 } else {
                     openCreate()
