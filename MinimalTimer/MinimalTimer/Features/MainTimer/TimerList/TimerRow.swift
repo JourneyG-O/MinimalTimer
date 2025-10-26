@@ -55,17 +55,9 @@ struct TimerRow: View {
         }
         // ✅ 캡슐형 글래스 배경은 컨테이너에만 적용 (히트테스트 X)
         .background(
-            Group {
-                if #available(iOS 18.0, *) {
-                    Color.clear
-                        .glassEffect(.regular.interactive(), in: Capsule())
-                        .allowsHitTesting(false)
-                } else {
-                    Color.clear
-                        .background(.ultraThinMaterial, in: Capsule())
-                        .allowsHitTesting(false)
-                }
-            }
+            Color.clear
+                .glassEffect(.regular.interactive(), in: Capsule())
+                .allowsHitTesting(false)
         )
         .accessibilityElement(children: .combine)
     }

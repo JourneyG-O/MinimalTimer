@@ -40,18 +40,6 @@ final class MainViewModel: ObservableObject {
     @Published var isRunning: Bool = false
     @Published var isDragging: Bool = false
 
-    // 편집/생성 화면 라우팅 상태
-    @Published var route: Route? = nil
-
-    // 화면 라우트
-    enum Route: Identifiable, Equatable {
-        var id: String { String(describing: self) }
-        case add
-        case edit(index: Int)
-        case paywall
-    }
-
-
     // MARK: - Internal State
     private var timer: Timer?
     private var previousSnappedIndex: Int?
@@ -101,7 +89,6 @@ final class MainViewModel: ObservableObject {
             selectedTimerIndex = max(timers.count - 1, 0)
         }
         saveTimers()
-        route = nil
     }
 
     // MARK: - Timer Control
@@ -261,7 +248,6 @@ final class MainViewModel: ObservableObject {
 
     func handleUpgradePurchased() {
         isPremium = true
-        route = nil
     }
 
     func restorePurchases() {
@@ -285,7 +271,6 @@ final class MainViewModel: ObservableObject {
             self.feedbackGenerator.prepare()
             self.feedbackGenerator.impactOccurred()
         }
-        feedbackGenerator.impactOccurred()
     }
 
     private func playSnapFeedback(for timer: TimerModel) {
@@ -334,6 +319,5 @@ extension MainViewModel {
         }
 
         store.save(timers: timers, selectedIndex: selectedTimerIndex)
-        route = nil
     }
 }

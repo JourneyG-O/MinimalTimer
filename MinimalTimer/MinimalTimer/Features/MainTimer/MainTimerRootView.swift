@@ -8,36 +8,34 @@
 import SwiftUI
 
 // MARK: - Routes
-enum AppRoute { case list }
+private enum AppRoute { case list }
 
-enum EditSheetRoute: Identifiable {
+private enum EditSheetRoute: Identifiable {
     case create
     case edit(Int)
 
     var id: String {
         switch self {
         case .create:           return "create"
-        case .edit(let i):      return "eidt-\(i)"
+        case .edit(let i):      return "edit-\(i)"
         }
     }
 }
 
 struct MainTimerRootView: View {
-    // MARK: - Dependencies
+    // MARK: Dependencies
     @ObservedObject var vm: MainViewModel
 
-    // MARK: - Flags
+    // MARK: Persistent Flags
     @AppStorage("hasSeenOnboarding") private var hasSeenOnboarding: Bool = false
 
-    // MARK: - Navigation State
+    // MARK: Navigation State
     @State private var path: [AppRoute] = []
     @State private var editRoute: EditSheetRoute?
     @State private var showPaywall: Bool = false
 
-    // MARK: - FAB State
-    private var fabSymbol: String { path.isEmpty ? "list.bullet" : "plus"}
-    private var fabTint: Color { .orange }
-
+    // MARK: Floating Action Button State
+    private var fabSymbol: String { path.isEmpty ? "list.bullet" : "plus" }
 
     var body: some View {
         NavigationStack(path: $path) {
@@ -48,27 +46,20 @@ struct MainTimerRootView: View {
                         TimerListView(
                             vm: vm,
                             onCreate: { openCreate() },
-                            onEdit: { idx in openEdit(idx) }) { _ in
-                                DispatchQueue.main.async {
-                                    withAnimation(.snappy) { path.removeAll() }
-                                }
+                            onEdit: { idx in openEdit(idx) }
+                        ) { _ in
+                            DispatchQueue.main.async {
+                                withAnimation(.snappy) { path.removeAll() }
                             }
+                        }
                     }
                 }
         }
-        // 온보딩 (처음 1회)
-        .fullScreenCover(
-            isPresented: Binding(
-                get: { !hasSeenOnboarding },
-                set: { _ in }
-            )
-        ) {
-            OnboardingView {
-                hasSeenOnboarding = true
-            }
+        // MARK: Onboarding (first launch only)
+        .fullScreenCover(isPresented: Binding(get: { !hasSeenOnboarding }, set: { _ in })) {
+            OnboardingView { hasSeenOnboarding = true }
         }
-
-        // MARK: - Persistent FAB (stays across navigation)
+        // MARK: Persistent FAB (stays across navigation)
         .overlay(alignment: .bottomTrailing) {
             FloatingButton(symbol: fabSymbol) {
                 if path.isEmpty {
@@ -82,61 +73,65 @@ struct MainTimerRootView: View {
             .ignoresSafeArea()
         }
         .animation(.snappy, value: fabSymbol)
-
-        // MARK: - Create/Edit: sheet
+        // MARK: Create/Edit Sheet
         .sheet(item: $editRoute) { route in
             switch route {
             case .create:
-                NavigationStack {
-                    TimerEditView(
-                        vm: .init(
-                            mode: .create,
-                            initial: .init(),
-                            saveAction: vm.handleSave
-                        )
-                    )
-                }
-                .presentationDetents([.medium, .large])
-                .presentationDragIndicator(.visible)
-
+                NavigationStack { editView(mode: .create, index: nil) }
+                    .sheetStyle()
             case .edit(let idx):
-                let initial = TimerDraft(model: vm.timers[idx])
-                NavigationStack {
-                    TimerEditView(
-                        vm: .init(
-                            mode: .edit(index: idx),
-                            initial: initial,
-                            saveAction: vm.handleSave,
-                            deleteAction: { i in vm.deleteTimer(at: i) }
-
-                        )
-                    )
-                }
-                .presentationDetents([.medium, .large])
-                .presentationDragIndicator(.visible)
+                NavigationStack { editView(mode: .edit, index: idx) }
+                    .sheetStyle()
             }
         }
-
-        // MARK: - Paywall: fullScreenCover
+        // MARK: Paywall
         .fullScreenCover(isPresented: $showPaywall) {
             NavigationStack {
-                NavigationStack {
-                    PaywallView(
-                        priceString: "가격",
-                        onClose: { showPaywall = false },
-                        onUpgradeTap: {
-                            vm.handleUpgradePurchased()
-                            showPaywall = false
-                        }
+                PaywallView(
+                    priceString: "가격",
+                    onClose: { showPaywall = false },
+                    onUpgradeTap: {
+                        vm.handleUpgradePurchased()
+                        showPaywall = false
+                    }
+                )
+                .navigationBarTitleDisplayMode(.inline)
+            }
+        }
+    }
+}
+
+// MARK: - Private Helpers
+private extension MainTimerRootView {
+    enum EditMode { case create, edit }
+
+    @ViewBuilder
+    func editView(mode: EditMode, index: Int?) -> some View {
+        switch mode {
+        case .create:
+            TimerEditView(
+                vm: .init(
+                    mode: .create,
+                    initial: .init(),
+                    saveAction: vm.handleSave
+                )
+            )
+        case .edit:
+            if let i = index {
+                let initial = TimerDraft(model: vm.timers[i])
+                TimerEditView(
+                    vm: .init(
+                        mode: .edit(index: i),
+                        initial: initial,
+                        saveAction: vm.handleSave,
+                        deleteAction: { idx in vm.deleteTimer(at: idx) }
                     )
-                    .navigationBarTitleDisplayMode(.inline)
-                }
+                )
             }
         }
     }
 
-    // MARK: - Routing helpers
-    private func openCreate() {
+    func openCreate() {
         if vm.isPremium || vm.timers.count < 3 {
             withAnimation(.snappy) { editRoute = .create }
         } else {
@@ -144,12 +139,23 @@ struct MainTimerRootView: View {
         }
     }
 
-    private func openEdit(_ index: Int) {
-        print("openEdit가 호출 됨")
+    func openEdit(_ index: Int) {
+        #if DEBUG
+        print("openEdit 호출: index=\(index)")
+        #endif
         if vm.isPremium {
             withAnimation(.snappy) { editRoute = .edit(index) }
         } else {
             showPaywall = true
         }
+    }
+}
+
+// MARK: - View Modifiers
+private extension View {
+    func sheetStyle() -> some View {
+        self
+            .presentationDetents([.medium, .large])
+            .presentationDragIndicator(.visible)
     }
 }

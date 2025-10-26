@@ -64,12 +64,6 @@ final class TimerEditViewModel: ObservableObject {
         guard case let .edit(index) = mode else { return }
         deleteAction?(index)
     }
-
-    func performDelete() {
-        if case let .edit(index) = mode {
-            deleteAction?(index)
-        }
-    }
 }
 
 // MARK: - UI Helpers
