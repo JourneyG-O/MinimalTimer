@@ -8,8 +8,10 @@
 import SwiftUI
 
 struct OnboardingView: View {
+    // MARK: - Dependencies
     @Environment(\.colorScheme) private var colorScheme
 
+    // MARK: - Models
     struct Page: Identifiable {
         let id = UUID()
         let imageName: String
@@ -17,10 +19,10 @@ struct OnboardingView: View {
         let captionKey: LocalizedStringKey
     }
 
-    // 외부에서 닫기 처리
+    // MARK: - External Callbacks
     var onFinish: (() -> Void)?
 
-    // MARK: - Localized Pages
+    // MARK: - Initialization / Pages
     private let pages: [Page] = [
         .init(
             imageName: "ob_tap",
@@ -39,8 +41,10 @@ struct OnboardingView: View {
         ),
     ]
 
-    @State private var selection = 0
+    // MARK: - State
+    @State private var selection: Int = 0
 
+    // MARK: - Body
     var body: some View {
         ZStack {
             Color(.systemBackground).ignoresSafeArea()
@@ -48,82 +52,103 @@ struct OnboardingView: View {
             VStack(spacing: 16) {
                 Spacer(minLength: 24)
 
-                // Cards Pager
-                TabView(selection: $selection) {
-                    ForEach(pages.indices, id: \.self) { i in
-                        OnboardingCard(imageName: {
-                            let base = pages[i].imageName
-                            let suffix = (colorScheme == .dark) ? "_dark" : "_light"
-                            return base + suffix
-                        }())
-                            .frame(maxWidth: 520)
-                            .frame(height: 360)
-                            .padding(.horizontal, 20)
-                            .tag(i)
-                    }
-                }
-                .tabViewStyle(.page(indexDisplayMode: .always))
-                .indexViewStyle(.page(backgroundDisplayMode: .always))
+                pager
+                    .tabViewStyle(.page(indexDisplayMode: .always))
+                    .indexViewStyle(.page(backgroundDisplayMode: .always))
 
-                // Title & Caption below pager
-                VStack(spacing: 6) {
-                    Text(pages[selection].titleKey)
-                        .font(.headline)
-                        .multilineTextAlignment(.center)
-                        .lineLimit(2)
-                        .minimumScaleFactor(0.9)
-
-                    Text(pages[selection].captionKey)
-                        .font(.subheadline)
-                        .foregroundStyle(.secondary)
-                        .multilineTextAlignment(.center)
-                        .lineLimit(2)
-                        .minimumScaleFactor(0.9)
-                        .padding(.horizontal, 16)
-                }
-                .frame(height: 64)
+                titleAndCaption
+                    .frame(height: 64)
 
                 Spacer()
 
-                // Footer Buttons
-                HStack {
-                    Button(action: { onFinish?() }) {
-                        Text("onboarding.skip")
-                    }
-                    .foregroundStyle(.secondary)
-
-                    Spacer()
-
-                    Button(action: {
-                        if selection < pages.count - 1 {
-                            withAnimation(.easeInOut) { selection += 1 }
-                        } else {
-                            onFinish?()
-                        }
-                    }) {
-                        Text(selection < pages.count - 1 ? LocalizedStringKey("onboarding.next") : LocalizedStringKey("onboarding.start"))
-                            .font(.system(size: 16, weight: .semibold))
-                            .frame(width: 120, height: 44)
-                            .foregroundColor(.white)
-                            .background(
-                                RoundedRectangle(cornerRadius: 12, style: .continuous)
-                                    .fill(Color.orange)
-                            )
-                    }
-                    .buttonStyle(.plain)
-                }
-                .padding(.horizontal, 24)
-                .padding(.bottom, 24)
+                footer
+                    .padding(.horizontal, 24)
+                    .padding(.bottom, 24)
             }
             .animation(.easeInOut(duration: 0.25), value: selection)
         }
-        .onAppear {
-            UIPageControl.appearance().currentPageIndicatorTintColor = UIColor.label
-            UIPageControl.appearance().pageIndicatorTintColor = UIColor.secondaryLabel
+        .onAppear { configurePageControlAppearance() }
+    }
+}
+
+// MARK: - Private Helpers
+private extension OnboardingView {
+    func resolvedImageName(for base: String) -> String {
+        let suffix = (colorScheme == .dark) ? "_dark" : "_light"
+        return base + suffix
+    }
+
+    func configurePageControlAppearance() {
+        UIPageControl.appearance().currentPageIndicatorTintColor = UIColor.label
+        UIPageControl.appearance().pageIndicatorTintColor = UIColor.secondaryLabel
+    }
+}
+
+// MARK: - Subviews
+private extension OnboardingView {
+    var pager: some View {
+        TabView(selection: $selection) {
+            ForEach(pages.indices, id: \.self) { i in
+                OnboardingCard(imageName: resolvedImageName(for: pages[i].imageName))
+                    .frame(maxWidth: 520)
+                    .frame(height: 360)
+                    .padding(.horizontal, 20)
+                    .tag(i)
+            }
+        }
+    }
+
+    var titleAndCaption: some View {
+        VStack(spacing: 6) {
+            Text(pages[selection].titleKey)
+                .font(.headline)
+                .multilineTextAlignment(.center)
+                .lineLimit(2)
+                .minimumScaleFactor(0.9)
+
+            Text(pages[selection].captionKey)
+                .font(.subheadline)
+                .foregroundStyle(.secondary)
+                .multilineTextAlignment(.center)
+                .lineLimit(2)
+                .minimumScaleFactor(0.9)
+                .padding(.horizontal, 16)
+        }
+    }
+
+    var footer: some View {
+        HStack {
+            Button(action: { onFinish?() }) {
+                Text("onboarding.skip")
+            }
+            .foregroundStyle(.secondary)
+
+            Spacer()
+
+            Button(action: nextOrFinish) {
+                Text(selection < pages.count - 1 ? LocalizedStringKey("onboarding.next") : LocalizedStringKey("onboarding.start"))
+                    .font(.system(size: 16, weight: .semibold))
+                    .frame(width: 120, height: 44)
+                    .foregroundColor(.white)
+                    .background(
+                        RoundedRectangle(cornerRadius: 12, style: .continuous)
+                            .fill(Color.orange)
+                    )
+            }
+            .buttonStyle(.plain)
+        }
+    }
+
+    func nextOrFinish() {
+        if selection < pages.count - 1 {
+            withAnimation(.easeInOut) { selection += 1 }
+        } else {
+            onFinish?()
         }
     }
 }
 
+// MARK: - Components
 private struct OnboardingCard: View {
     let imageName: String
 
