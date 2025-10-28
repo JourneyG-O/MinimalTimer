@@ -29,145 +29,200 @@ struct TimerEditView: View {
     private let previewPadding: CGFloat = 16
     private let formTopExtraSpacing: CGFloat = 36
 
+    // MARK: - Helpers
+    private var minutesBinding: Binding<Int> {
+        Binding<Int>(
+            get: { vm.draft.totalSeconds / 60 },
+            set: { newMinutes in
+                let m = max(0, min(newMinutes, Constants.Time.maxMinutes))
+                let s = vm.draft.totalSeconds % 60
+                let maxTotal = Constants.Time.maxMinutes * 60
+                if m >= Constants.Time.maxMinutes && s > 0 {
+                    withAnimation(.easeInOut(duration: 0.15)) {
+                        vm.draft.totalSeconds = maxTotal
+                    }
+                } else {
+                    vm.draft.totalSeconds = m * 60 + s
+                }
+            }
+        )
+    }
+
+    private var secondsBinding: Binding<Int> {
+        Binding<Int>(
+            get: { vm.draft.totalSeconds % 60 },
+            set: { newSeconds in
+                let m = vm.draft.totalSeconds / 60
+                let sCap = (m >= Constants.Time.maxMinutes) ? 0 : min(max(0, newSeconds), 59)
+                let maxTotal = Constants.Time.maxMinutes * 60
+                let total = m * 60 + sCap
+                vm.draft.totalSeconds = min(total, maxTotal)
+            }
+        )
+    }
+
+    // MARK: - Subviews
+    private var titleSection: some View {
+        Section(
+            header:
+                Text(titleError ? L("edit.title.required") : L("edit.timerName"))
+                .foregroundStyle(titleError ? Color.red : Color.secondary)
+                .textCase(nil)
+        ) {
+            VStack(alignment: .leading, spacing: 6) {
+                TextField(L("edit.placeholder.name"), text: $vm.draft.title)
+                    .focused($isTitleFocused)
+                    .submitLabel(.done)
+                    .onChange(of: vm.draft.title) { _, _ in
+                        titleError = false
+                    }
+
+                HStack {
+                    let count = vm.draft.title.count
+                    let isCJK = vm.draft.title.isCJKLike
+                    let softLimit = isCJK ? 8 : 15
+
+                    Text(LF("%lld/%lld", count, softLimit))
+                        .font(.caption2)
+                        .foregroundStyle(count > softLimit ? .orange : .secondary)
+
+                    Spacer()
+
+                    if count > softLimit {
+                        Text(L("edit.trimWarning"))
+                            .font(.caption2)
+                            .foregroundStyle(.orange)
+                    }
+                }
+            }
+        }
+    }
+
+    private var colorGridSection: some View {
+        Section(header: Text(L("edit.color"))) {
+            LazyVGrid(columns: Array(repeating: .init(.flexible()), count: 6)) {
+                ForEach(availableColors, id: \.self) { customColor in
+                    Circle()
+                        .fill(customColor.toColor)
+                        .frame(width: 32, height: 32)
+                        .overlay(
+                            Circle()
+                                .stroke(Color.primary, lineWidth: vm.draft.color == customColor ? 2 : 0)
+                        )
+                        .onTapGesture { vm.draft.color = customColor }
+                        .accessibilityAddTraits(customColor == vm.draft.color ? .isSelected : [])
+                }
+            }
+            .padding(.vertical, 4)
+        }
+    }
+
+    private var timeSection: some View {
+        Section(
+            header:
+                Text(timeError ? L("edit.time.required") : L("edit.time"))
+                .foregroundStyle(timeError ? Color.red : Color.secondary)
+                .textCase(nil)
+        ) {
+            HStack {
+                Picker(L("edit.minutes"), selection: minutesBinding) {
+                    ForEach(0...Constants.Time.maxMinutes, id: \.self) { m in
+                        Text("\(m) \(NSLocalizedString("edit.minutes", comment: ""))")
+                    }
+                }
+
+                Picker(L("edit.seconds"), selection: secondsBinding) {
+                    ForEach(0..<60, id: \.self) { s in
+                        Text("\(s) \(NSLocalizedString("edit.seconds", comment: ""))")
+                    }
+                }
+                .disabled((vm.draft.totalSeconds / 60) >= Constants.Time.maxMinutes && (vm.draft.totalSeconds % 60) == 0)
+                .opacity(((vm.draft.totalSeconds / 60) >= Constants.Time.maxMinutes && (vm.draft.totalSeconds % 60) == 0) ? 0.4 : 1.0)
+            }
+            .pickerStyle(.wheel)
+            .frame(height: 100)
+            .onChange(of: vm.draft.totalSeconds / 60) { newMinutes, _ in
+                let s = vm.draft.totalSeconds % 60
+                guard newMinutes >= Constants.Time.maxMinutes, s > 0 else { return }
+                withAnimation(.easeInOut(duration: 0.15)) {
+                    vm.draft.totalSeconds = Constants.Time.maxMinutes * 60
+                }
+            }
+            .onChange(of: vm.draft.totalSeconds) { newValue, _ in
+                if newValue > 0 { timeError = false }
+            }
+        }
+    }
+
+    private var optionsSection: some View {
+        Section(header: Text(L("edit.options"))) {
+            Toggle(isOn: $vm.draft.isTitleAlwaysVisible) {
+                Label(L("edit.option.alwaysShowTitle"), systemImage: "textformat")
+            }
+            Toggle(isOn: $vm.draft.isTickAlwaysVisible) {
+                Label(L("edit.option.alwaysShowTicks"), systemImage: "dial.min")
+            }
+            Toggle(isOn: $vm.draft.isMuted) {
+                Label(L("edit.option.mute"), systemImage: "speaker.slash.fill")
+            }
+            Toggle(isOn: $vm.draft.isRepeatEnabled) {
+                Label(L("edit.option.repeat"), systemImage: "repeat")
+            }
+        }
+    }
+
+    private var previewHeader: some View {
+        ZStack {
+            RoundedRectangle(cornerRadius: previewCornerRadius, style: .continuous)
+                .fill(.ultraThinMaterial)
+
+            ZStack {
+                Circle()
+                    .fill(vm.draft.color.toColor)
+                    .frame(width: previewSize, height: previewSize)
+                    .shadow(color: .black.opacity(0.18), radius: 16, x: 0, y: 10)
+                    .shadow(color: .black.opacity(0.26), radius: 4,  x: 0, y: 2)
+
+                if vm.draft.isTickAlwaysVisible {
+                    Circle()
+                        .fill(Color.clear)
+                        .frame(width: previewSize, height: previewSize)
+                        .overlay(
+                            ForEach(0..<tickCount, id: \.self) { tick in
+                                Rectangle()
+                                    .fill(Color(.systemBackground))
+                                    .frame(width: 2, height: tickLength)
+                                    .offset(y: -(previewSize / 2 - tickLength / 2))
+                                    .rotationEffect(.degrees(Double(tick) / Double(tickCount) * 360.0))
+                            }
+                        )
+                }
+
+                Text(formattedTime(vm.draft.totalSeconds))
+                    .font(.system(size: 32, weight: .bold, design: .rounded))
+                    .foregroundColor(Color(.systemBackground))
+            }
+        }
+        .frame(height: previewHeaderHeight)
+        .padding(.top, previewPadding)
+        .padding(.horizontal, previewPadding)
+    }
+
     var body: some View {
         ZStack(alignment: .top) {
             // MARK: - 1) Base Form (화면 전체, 배경 숨김)
             Form {
                 // title
-                Section(
-                    header:
-                        Text(titleError ? L("edit.title.required") : L("edit.timerName"))
-                        .foregroundStyle(titleError ? Color.red : Color.secondary)
-                        .textCase(nil)
-                ) {
-                    VStack(alignment: .leading, spacing: 6) {
-                        TextField(L("edit.placeholder.name"), text: $vm.draft.title)
-                            .focused($isTitleFocused)
-                            .submitLabel(.done)
-                            .onChange(of: vm.draft.title) { _, _ in
-                                titleError = false
-                            }
-
-                        HStack {
-                            let count = vm.draft.title.count
-                            let isCJK = vm.draft.title.isCJKLike
-                            let softLimit = isCJK ? 8 : 15
-
-                            // dynamic "count/limit"
-                            Text(LF("%lld/%lld", count, softLimit))
-                                .font(.caption2)
-                                .foregroundStyle(count > softLimit ? .orange : .secondary)
-
-                            Spacer()
-
-                            if count > softLimit {
-                                Text(L("edit.trimWarning"))
-                                    .font(.caption2)
-                                    .foregroundStyle(.orange)
-                            }
-                        }
-                    }
-                }
+                titleSection
 
                 // Color grid
-                Section(header: Text(L("edit.color"))) {
-                    LazyVGrid(columns: Array(repeating: .init(.flexible()), count: 6)) {
-                        ForEach(availableColors, id: \.self) { customColor in
-                            Circle()
-                                .fill(customColor.toColor)
-                                .frame(width: 32, height: 32)
-                                .overlay(
-                                    Circle()
-                                        .stroke(Color.primary, lineWidth: vm.draft.color == customColor ? 2 : 0)
-                                )
-                                .onTapGesture { vm.draft.color = customColor }
-                                .accessibilityAddTraits(customColor == vm.draft.color ? .isSelected : [])
-                        }
-                    }
-                    .padding(.vertical, 4)
-                }
+                colorGridSection
 
                 // Time
-                Section(
-                    header:
-                        Text(timeError ? L("edit.time.required") : L("edit.time"))
-                        .foregroundStyle(timeError ? Color.red : Color.secondary)
-                        .textCase(nil)
-                ) {
-                    HStack {
-                        // minutes binding maps to draft.totalSeconds (clamped to 0...120)
-                        Picker(L("edit.minutes"), selection: Binding<Int>(
-                            get: { vm.draft.totalSeconds / 60 },
-                            set: { newMinutes in
-                                let m = max(0, min(newMinutes, Constants.Time.maxMinutes))
-                                let s = vm.draft.totalSeconds % 60
-                                let maxTotal = Constants.Time.maxMinutes * 60
-                                if m >= Constants.Time.maxMinutes && s > 0 {
-                                    // 120분에서 초가 남아있으면, 초를 애니메이션으로 0으로 스냅
-                                    withAnimation(.easeInOut(duration: 0.15)) {
-                                        vm.draft.totalSeconds = maxTotal // 120:00
-                                    }
-                                } else {
-                                    vm.draft.totalSeconds = m * 60 + s
-                                }
-                            }
-                        )) {
-                            ForEach(0...Constants.Time.maxMinutes, id: \.self) { m in
-                                Text("\(m) \(NSLocalizedString("edit.minutes", comment: ""))")
-                            }
-                        }
-
-                        // seconds binding maps to draft.totalSeconds (0...59)
-                        Picker(L("edit.seconds"), selection: Binding<Int>(
-                            get: { vm.draft.totalSeconds % 60 },
-                            set: { newSeconds in
-                                let m = vm.draft.totalSeconds / 60
-                                // 분이 최대면 초는 0으로 고정 (UI도 비활성화됨)
-                                let sCap = (m >= Constants.Time.maxMinutes) ? 0 : min(max(0, newSeconds), 59)
-                                let maxTotal = Constants.Time.maxMinutes * 60
-                                let total = m * 60 + sCap
-                                vm.draft.totalSeconds = min(total, maxTotal)
-                            }
-                        )) {
-                            ForEach(0..<60, id: \.self) { s in
-                                Text("\(s) \(NSLocalizedString("edit.seconds", comment: ""))")
-                            }
-                        }
-                        // 분==120 "그리고" 초==0일 때만 비활성화 → 스냅 애니메이션 방해 X
-                        .disabled((vm.draft.totalSeconds / 60) >= Constants.Time.maxMinutes
-                                  && (vm.draft.totalSeconds % 60) == 0)
-                        .opacity(((vm.draft.totalSeconds / 60) >= Constants.Time.maxMinutes
-                                  && (vm.draft.totalSeconds % 60) == 0) ? 0.4 : 1.0)
-                    }
-                    .pickerStyle(.wheel)
-                    .frame(height: 100)
-                    .onChange(of: vm.draft.totalSeconds / 60) { newMinutes, _ in
-                        let s = vm.draft.totalSeconds % 60
-                        guard newMinutes >= Constants.Time.maxMinutes, s > 0 else { return }
-                        withAnimation(.easeInOut(duration: 0.15)) {
-                            vm.draft.totalSeconds = Constants.Time.maxMinutes * 60 // 120:00으로 고정
-                        }
-                    }
-                    .onChange(of: vm.draft.totalSeconds) { newValue, _ in
-                        if newValue > 0 { timeError = false }
-                    }
-                }
+                timeSection
 
                 // Options
-                Section(header: Text(L("edit.options"))) {
-                    Toggle(isOn: $vm.draft.isTitleAlwaysVisible) {
-                        Label(L("edit.option.alwaysShowTitle"), systemImage: "textformat")
-                    }
-                    Toggle(isOn: $vm.draft.isTickAlwaysVisible) {
-                        Label(L("edit.option.alwaysShowTicks"), systemImage: "dial.min")
-                    }
-                    Toggle(isOn: $vm.draft.isMuted) {
-                        Label(L("edit.option.mute"), systemImage: "speaker.slash.fill")
-                    }
-                    Toggle(isOn: $vm.draft.isRepeatEnabled) {
-                        Label(L("edit.option.repeat"), systemImage: "repeat")
-                    }
-                }
+                optionsSection
 
                 // 편집 모드에서만 노출 삭제 버튼
                 if case .edit = vm.mode {
@@ -192,42 +247,7 @@ struct TimerEditView: View {
             }
 
             // MARK: - 2) Overlay Preview Header (유리 배경 + 프리뷰 내용)
-            ZStack {
-                // 유리(머티리얼) 배경 — 사각형 컨테이너
-                RoundedRectangle(cornerRadius: previewCornerRadius, style: .continuous)
-                    .fill(.ultraThinMaterial)
-
-                // 프리뷰 콘텐츠: 원 + 눈금 + 텍스트
-                ZStack {
-                    Circle()
-                        .fill(vm.draft.color.toColor)
-                        .frame(width: previewSize, height: previewSize)
-                        .shadow(color: .black.opacity(0.18), radius: 16, x: 0, y: 10)
-                        .shadow(color: .black.opacity(0.26), radius: 4,  x: 0, y: 2)
-
-                    if vm.draft.isTickAlwaysVisible {
-                        Circle()
-                            .fill(Color.clear)
-                            .frame(width: previewSize, height: previewSize)
-                            .overlay(
-                                ForEach(0..<tickCount, id: \.self) { tick in
-                                    Rectangle()
-                                        .fill(Color(.systemBackground))
-                                        .frame(width: 2, height: tickLength)
-                                        .offset(y: -(previewSize / 2 - tickLength / 2))
-                                        .rotationEffect(.degrees(Double(tick) / Double(tickCount) * 360.0))
-                                }
-                            )
-                    }
-
-                    Text(formattedTime(vm.draft.totalSeconds))
-                        .font(.system(size: 32, weight: .bold, design: .rounded))
-                        .foregroundColor(Color(.systemBackground))
-                }
-            }
-            .frame(height: previewHeaderHeight)
-            .padding(.top, previewPadding)
-            .padding(.horizontal, previewPadding)
+            previewHeader
         }
         .navigationTitle(vm.navTitle)
         .navigationBarTitleDisplayMode(.inline)
