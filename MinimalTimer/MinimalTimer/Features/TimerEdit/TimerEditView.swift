@@ -272,7 +272,18 @@ struct TimerEditView: View {
             generator.notificationOccurred(.error)
             return
         }
+
+        // Success path: provide light feedback, save, and dismiss
+        let successGenerator = UINotificationFeedbackGenerator()
+        successGenerator.notificationOccurred(.success)
+
+        // End any active text field focus before dismissing
+        isTitleFocused = false
+
         vm.save()
+
+        // Dismiss after successful save
+        dismiss()
     }
 }
 
