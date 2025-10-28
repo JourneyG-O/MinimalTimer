@@ -1,165 +1,172 @@
 //
-//  PayWallView.swift
+//  NewPaywallView.swift
 //  MinimalTimer
 //
-//  Created by KoJeongseok on 9/2/25.
+//  Created by KoJeongseok on 10/28/25.
 //
 
 import SwiftUI
 
 struct PaywallView: View {
-    var priceString: String                  // e.g., "₩3,000"
-    var onClose: (() -> Void)? = nil
-    var onUpgradeTap: (() -> Void)? = nil
-    var onRestoreTap: (() -> Void)? = nil
-    @Environment(\.dismiss) private var dismiss
+    // MARK: - Dependencies
+    let priceString: String
+    var onClose: (() -> Void)?
+    var onUpgradeTap: (() -> Void)?
+    var onRestoreTap: (() -> Void)?
+    var onOpenTerms: (() -> Void)?
+    var onOpenPrivacy: (() -> Void)?
 
+    // MARK: - State
+    @State private var isLoadingPrice = false
+
+    // MARK: - Body
     var body: some View {
-        ZStack(alignment: .topTrailing) {
+        ZStack {
             Color(.systemBackground).ignoresSafeArea()
 
+            VStack(spacing: 24) {
+                header
+                    .padding(.top, 24)
 
-            VStack(spacing: 0) {
-                // Header
-                VStack(spacing: 12) {
+                features
+                    .padding(.horizontal, 32)
+                    .padding(.top, 24)
 
-                    VStack(spacing: 6) {
-                        Text(L("paywall.appName"))
-                            .font(.system(.title, design: .rounded).bold())
-                        Text(L("paywall.subtitle"))
-                            .font(.subheadline)
-                            .foregroundStyle(.secondary)
-                    }
-                    .padding(.bottom, 8)
-                }
+                Spacer(minLength: 0)
 
-                // Feature list
-                List {
-                    Section {
-                        FeatureRow(
-                            icon: "plus.app.fill",
-                            title: L("paywall.feature.unlimited.title"),
-                            subtitle: L("paywall.feature.unlimited.subtitle")
-                        )
-                        .listRowBackground(Color(.secondarySystemBackground))
-                        .listRowSeparator(.hidden)
+                restoreButton
 
-                        FeatureRow(
-                            icon: "paintpalette.fill",
-                            title: L("paywall.feature.custom.title"),
-                            subtitle: L("paywall.feature.custom.subtitle")
-                        )
-                        .listRowBackground(Color(.secondarySystemBackground))
-                        .listRowSeparator(.hidden)
-
-                        FeatureRow(
-                            icon: "repeat",
-                            title: L("paywall.feature.utility.title"),
-                            subtitle: L("paywall.feature.utility.subtitle")
-                        )
-                        .listRowBackground(Color(.secondarySystemBackground))
-                        .listRowSeparator(.hidden)
-
-                        FeatureRow(
-                            icon: "sparkles",
-                            title: L("paywall.feature.future.title"),
-                            subtitle: L("paywall.feature.future.subtitle")
-                        )
-                        .listRowBackground(Color(.secondarySystemBackground))
-                        .listRowSeparator(.hidden)
-                    }
-
-                    Section(footer:
-                        VStack(alignment: .leading, spacing: 8) {
-                            HStack(spacing: 16) {
-                                Button(L("paywall.links.privacy")) { /* open privacy */ }
-                                Button(L("paywall.links.terms")) { /* open terms */ }
-                                Spacer()
-                                Button(L("paywall.links.restore")) { onRestoreTap?() }
-                                    .fontWeight(.semibold)
-                            }
-                            .font(.caption)
-                            .foregroundStyle(.gray)
-                        }
-                        .padding(.top, 4)
-                    ) {
-                        EmptyView()
-                    }
-                }
-                .scrollContentBackground(.hidden)
-                .background(Color(.systemBackground))
-                .listStyle(.insetGrouped)
-                .scrollIndicators(.automatic)
-                .safeAreaPadding(.bottom, 80)
+                upgradeButton
+                    .buttonStyle(.plain)
             }
         }
-        .safeAreaInset(edge: .bottom) {
-            VStack(spacing: 6) {
-                Button { onUpgradeTap?() } label: {
-                    Text(LocalizedStringKey("paywall.cta.upgrade \(priceString)")) // 유료 기능 붙힐 때 수정해야 함
-                        .font(.system(size: 17, weight: .semibold))
-                        .frame(maxWidth: .infinity, minHeight: 50)
-                        .foregroundStyle(.white)
-                        .background(
-                            RoundedRectangle(cornerRadius: 12, style: .continuous)
-                                .fill(Color.orange)
-                        )
-                        .padding(.horizontal, 20)
-                        .padding(.vertical, 8)
-                }
-                .buttonStyle(.plain)
+        .toolbar { topBar }
+        .navigationBarTitleDisplayMode(.inline)
+        .task { await simulatePriceLoading() }
+    }
+}
 
-                Text(L("paywall.restore.note"))
-                    .font(.caption2)
+// MARK: - Sections
+private extension PaywallView {
+    var header: some View {
+        VStack(spacing: 8) {
+            Text("Minimal Timer Pro")
+                .font(.system(size: 32, weight: .bold, design: .rounded))
+        }
+    }
+
+    var features: some View {
+        VStack(alignment: .leading, spacing: 24) {
+            featureRow(
+                icon: "checkmark",
+                title: "한 번의 결제로 평생 소유",
+                subtitle: "Minimal Timer의 모든 기능을 영원히 사용하세요."
+            )
+            featureRow(
+                icon: "infinity",
+                title: "무제한 타이머 생성",
+                subtitle: "제한 없이 원하는 만큼 타이머를 만들 수 있습니다."
+            )
+            featureRow(
+                icon: "lock.open.fill",
+                title: "모든 기능 언락",
+                subtitle: "컬러, 무음, 눈금, 타이틀 세밀한 설정까지 모두 열립니다."
+            )
+            featureRow(
+                icon: "sparkles",
+                title: "앞으로의 업데이트",
+                subtitle: "결제 후 추가될 모든 기능을 함께 누리세요."
+            )
+        }
+    }
+
+    var restoreButton: some View {
+        Button(action: { onRestoreTap?() }) {
+            HStack(spacing: 6) {
+                Image(systemName: "repeat")
+                    .opacity(0.5)
+                Text("구매 복원")
+                    .font(.system(size: 14))
                     .foregroundStyle(.secondary)
             }
-            .background(.ultraThinMaterial)
         }
+        .font(.caption)
+        .tint(.primary)
+    }
 
-        .toolbar {
-            ToolbarItem(placement: .topBarTrailing) {
-                Button {
-                    if let onClose { onClose() } else { dismiss() }
-                } label: {
-                    Image(systemName: "xmark")
-                }
-                .buttonStyle(.borderedProminent)
-                .tint(.orange)
-                .accessibilityLabel(L("paywall.close"))
+    var upgradeButton: some View {
+        Button {
+            UIImpactFeedbackGenerator(style: .light).impactOccurred()
+            onUpgradeTap?()
+        } label: {
+            HStack(spacing: 8) {
+                Image(systemName: isLoadingPrice ? "hourglass" : "lock.open")
+                    .contentTransition(.symbolEffect(.replace))
+                Text(isLoadingPrice ? "가격 확인 중…" : "\(priceString)에 업그레이드")
+                    .contentTransition(.opacity)
             }
+            .font(.system(size: 17, weight: .semibold))
+            .frame(maxWidth: .infinity, minHeight: 52)
+            .foregroundStyle(.white)
+            .glassEffect(.regular.tint(.primary).interactive())
+            .padding(.horizontal, 20)
+            .padding(.vertical, 8)
         }
     }
 }
 
-private struct FeatureRow: View {
-    let icon: String
-    let title: LocalizedStringKey
-    let subtitle: LocalizedStringKey
-
-    var body: some View {
-        HStack(alignment: .center, spacing: 14) {
+// MARK: - Private Views
+private extension PaywallView {
+    func featureRow(icon: String, title: String, subtitle: String) -> some View {
+        HStack(spacing: 16) {
             Image(systemName: icon)
                 .font(.system(size: 22, weight: .semibold))
-                .foregroundStyle(.orange)
+                .foregroundStyle(.primary)
 
             VStack(alignment: .leading, spacing: 2) {
                 Text(title)
-                    .font(.system(size: 17, weight: .semibold))
+                    .font(.system(size: 18, weight: .semibold))
                 Text(subtitle)
-                    .font(.footnote)
+                    .font(.system(size: 14))
                     .foregroundStyle(.secondary)
-                    .fixedSize(horizontal: false, vertical: true)
             }
-            Spacer(minLength: 0)
         }
     }
 }
 
-#Preview("Paywall – Light") {
-    PaywallView(priceString: "₩3,000")
-        .preferredColorScheme(.light)
+// MARK: - Toolbar & Tasks
+private extension PaywallView {
+    var topBar: some ToolbarContent {
+        ToolbarItem(placement: .topBarTrailing) {
+            Button { onClose?() } label: {
+                Image(systemName: "xmark")
+                    .font(.system(size: 14, weight: .bold))
+                    .frame(width: 32, height: 32)
+                    .background(.thinMaterial, in: Circle())
+                    .foregroundStyle(.primary)
+            }
+            .accessibilityLabel("닫기")
+        }
+    }
+
+    func simulatePriceLoading() async {
+        isLoadingPrice = true
+        try? await Task.sleep(nanoseconds: 900_000_000)
+        isLoadingPrice = false
+    }
 }
-#Preview("Paywall – Dark") {
-    PaywallView(priceString: "₩3,000")
-        .preferredColorScheme(.dark)
+
+// MARK: - Preview
+#Preview("NewPaywallView - 기본") {
+    NavigationStack {
+        PaywallView(
+            priceString: "₩5,900",
+            onClose: { print("닫기") },
+            onUpgradeTap: { print("업그레이드") },
+            onRestoreTap: { print("복원") },
+            onOpenTerms: { print("이용약관") },
+            onOpenPrivacy: { print("개인정보 처리방침") }
+        )
+        .navigationBarTitleDisplayMode(.inline)
+    }
 }

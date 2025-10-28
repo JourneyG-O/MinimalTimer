@@ -88,7 +88,7 @@ struct MainTimerRootView: View {
         // MARK: Paywall
         .fullScreenCover(isPresented: $showPaywall) {
             NavigationStack {
-                NewPaywallView(
+                PaywallView(
                     priceString: "₩5,900",
                     onClose: { showPaywall = false },
                     onUpgradeTap: {
