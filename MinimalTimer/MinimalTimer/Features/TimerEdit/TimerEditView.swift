@@ -87,7 +87,7 @@ struct TimerEditView: View {
         Section(
             header:
                 Text(titleError ? L("edit.title.required") : L("edit.timerName"))
-                .foregroundStyle(titleError ? Color.red : Color.secondary)
+                .foregroundStyle(titleError ? Color.red : Color.primary)
                 .textCase(nil)
         ) {
             VStack(alignment: .leading, spacing: 6) {
@@ -123,7 +123,7 @@ struct TimerEditView: View {
         Section(header:
                     Label { Text(L("edit.color")) } icon: { Image(systemName: "lock.fill") }
             .textCase(nil)
-            .foregroundStyle(.secondary)
+            .foregroundStyle(isPremium ? .primary : .secondary)
         ) {
             let firstColor = availableColors.first
             LazyVGrid(columns: Array(repeating: .init(.flexible()), count: 6)) {
@@ -172,7 +172,7 @@ struct TimerEditView: View {
         Section(
             header:
                 Text(timeError ? L("edit.time.required") : L("edit.time"))
-                .foregroundStyle(timeError ? Color.red : Color.secondary)
+                .foregroundStyle(timeError ? Color.red : Color.primary)
                 .textCase(nil)
         ) {
             HStack {
@@ -209,7 +209,7 @@ struct TimerEditView: View {
         Section(header:
                     Label { Text(L("edit.options")) } icon: { Image(systemName: "lock.fill") }
             .textCase(nil)
-            .foregroundStyle(.secondary)
+            .foregroundStyle(isPremium ? .primary : .secondary)
         ) {
             premiumToggle(isOn: $vm.draft.isTitleAlwaysVisible,
                           label: { Label(L("edit.option.alwaysShowTitle"), systemImage: "textformat") },
