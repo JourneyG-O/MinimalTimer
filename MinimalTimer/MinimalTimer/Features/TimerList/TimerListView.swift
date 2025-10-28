@@ -17,6 +17,7 @@ struct TimerListView: View {
     // MARK: - States
     @Environment(\.dismiss) private var dismiss
     @Environment(\.editMode) private var editMode
+    @State private var isPresentingSettings: Bool = false
 
     // MARK: - Body
     var body: some View {
@@ -35,6 +36,17 @@ struct TimerListView: View {
                 .listRowBackground(Color.clear)
                 .padding(.vertical, 8)
                 .swipeActions(edge: .trailing) {
+                    Button {
+                        if editMode?.wrappedValue == .active {
+                            editMode?.wrappedValue = .inactive
+                        } else {
+                            editMode?.wrappedValue = .active
+                        }
+                    } label: {
+                        Label("Reorder", systemImage: "arrow.up.arrow.down")
+                    }
+                    .tint(.blue)
+
                     Button(role: .destructive) {
                         vm.deleteTimer(at: index)
                     } label: {
@@ -55,7 +67,49 @@ struct TimerListView: View {
         .scrollContentBackground(.hidden)
         .background(Color(.systemBackground))
         .toolbar {
-            ToolbarItem(placement: .topBarTrailing) { EditButton() }
+            ToolbarItem(placement: .topBarTrailing) {
+                if editMode?.wrappedValue == .active {
+                    Button {
+                        editMode?.wrappedValue = .inactive
+                    } label: {
+                        Image(systemName: "checkmark")
+                    }
+                    .accessibilityLabel("편집 완료")
+                } else {
+                    Button {
+                        isPresentingSettings = true
+                    } label: {
+                        Image(systemName: "gearshape.fill")
+                    }
+                    .accessibilityLabel("설정")
+                }
+            }
+        }
+        .sheet(isPresented: $isPresentingSettings) {
+            NavigationStack {
+                List {
+                    Section("앱 정보") {
+                        HStack {
+                            Text("버전")
+                            Spacer()
+                            Text(Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "-")
+                                .foregroundStyle(.secondary)
+                        }
+                    }
+                    Section("정책") {
+                        Button("이용약관") { /* TODO: Open terms */ }
+                        Button("개인정보처리방침") { /* TODO: Open privacy */ }
+                    }
+                }
+                .navigationTitle("설정")
+                .toolbar {
+                    ToolbarItem(placement: .topBarTrailing) {
+                        Button(action: { isPresentingSettings = false }) {
+                            Image(systemName: "xmark")
+                        }
+                    }
+                }
+            }
         }
     }
 
@@ -74,3 +128,4 @@ struct TimerListView: View {
         onEdit?(index)
     }
 }
+
