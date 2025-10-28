@@ -165,7 +165,6 @@ private extension MainTimerRootView {
 private extension View {
     func sheetStyle() -> some View {
         self
-            .presentationDetents([.medium, .large])
             .presentationDragIndicator(.visible)
     }
 }
