@@ -13,6 +13,10 @@ struct TimerEditView: View {
     @FocusState private var isTitleFocused: Bool
     @Environment(\.dismiss) private var dismiss
 
+    @Environment(\.isPremium) private var isPremium
+    // Optional callback to present paywall from parent
+    var onPaywall: (() -> Void)? = nil
+
     // MARK: - Local validation flags
     @State private var titleError: Bool = false
     @State private var timeError: Bool = false
@@ -61,6 +65,23 @@ struct TimerEditView: View {
         )
     }
 
+    private func triggerPaywall() {
+        if let onPaywall {
+            onPaywall()
+        } else {
+            let gen = UINotificationFeedbackGenerator()
+            gen.notificationOccurred(.warning)
+        }
+    }
+    
+    private func enforceColorEntitlement() {
+        guard !isPremium else { return }
+        guard let first = availableColors.first else { return }
+        if vm.draft.color != first {
+            vm.draft.color = first
+        }
+    }
+
     // MARK: - Subviews
     private var titleSection: some View {
         Section(
@@ -99,22 +120,52 @@ struct TimerEditView: View {
     }
 
     private var colorGridSection: some View {
-        Section(header: Text(L("edit.color"))) {
+        Section(header:
+                    Label { Text(L("edit.color")) } icon: { Image(systemName: "lock.fill") }
+            .textCase(nil)
+            .foregroundStyle(.secondary)
+        ) {
+            let firstColor = availableColors.first
             LazyVGrid(columns: Array(repeating: .init(.flexible()), count: 6)) {
                 ForEach(availableColors, id: \.self) { customColor in
-                    Circle()
-                        .fill(customColor.toColor)
-                        .frame(width: 32, height: 32)
-                        .overlay(
-                            Circle()
-                                .stroke(Color.primary, lineWidth: vm.draft.color == customColor ? 2 : 0)
-                        )
-                        .onTapGesture { vm.draft.color = customColor }
-                        .accessibilityAddTraits(customColor == vm.draft.color ? .isSelected : [])
+                    let isUnlocked = isPremium || customColor == firstColor
+                    ZStack {
+                        Circle()
+                            .fill(customColor.toColor)
+                            .frame(width: 32, height: 32)
+                            .overlay(
+                                Circle().stroke(Color.primary, lineWidth: vm.draft.color == customColor ? 2 : 0)
+                            )
+                            .opacity(isUnlocked ? 1.0 : 0.45)
+                            .overlay(alignment: .center) {
+                                if !isUnlocked {
+                                    Image(systemName: "lock.fill")
+                                        .font(.system(size: 10, weight: .semibold))
+                                        .foregroundStyle(.secondary)
+                                        .padding(2)
+                                }
+                            }
+                        // Invisible tap catcher to either select or show paywall
+                        Color.clear
+                            .contentShape(Circle())
+                            .onTapGesture {
+                                if isUnlocked {
+                                    vm.draft.color = customColor
+                                } else {
+                                    triggerPaywall()
+                                }
+                            }
+                    }
+                    .accessibilityLabel(Text("\(String(describing: customColor))"))
+                    .accessibilityHint(isUnlocked ? Text("") : Text(L("premium.locked")))
+                    .accessibilityAddTraits(vm.draft.color == customColor ? .isSelected : [])
                 }
             }
             .padding(.vertical, 4)
         }
+        .onAppear { enforceColorEntitlement() }
+        .onChange(of: isPremium) { _, _ in enforceColorEntitlement() }
+        .onChange(of: vm.draft.color) { _, _ in enforceColorEntitlement() }
     }
 
     private var timeSection: some View {
@@ -155,20 +206,47 @@ struct TimerEditView: View {
     }
 
     private var optionsSection: some View {
-        Section(header: Text(L("edit.options"))) {
-            Toggle(isOn: $vm.draft.isTitleAlwaysVisible) {
-                Label(L("edit.option.alwaysShowTitle"), systemImage: "textformat")
-            }
-            Toggle(isOn: $vm.draft.isTickAlwaysVisible) {
-                Label(L("edit.option.alwaysShowTicks"), systemImage: "dial.min")
-            }
-            Toggle(isOn: $vm.draft.isMuted) {
-                Label(L("edit.option.mute"), systemImage: "speaker.slash.fill")
-            }
-            Toggle(isOn: $vm.draft.isRepeatEnabled) {
-                Label(L("edit.option.repeat"), systemImage: "repeat")
+        Section(header:
+                    Label { Text(L("edit.options")) } icon: { Image(systemName: "lock.fill") }
+            .textCase(nil)
+            .foregroundStyle(.secondary)
+        ) {
+            premiumToggle(isOn: $vm.draft.isTitleAlwaysVisible,
+                          label: { Label(L("edit.option.alwaysShowTitle"), systemImage: "textformat") },
+                          isPremium: isPremium)
+            premiumToggle(isOn: $vm.draft.isTickAlwaysVisible,
+                          label: { Label(L("edit.option.alwaysShowTicks"), systemImage: "dial.min") },
+                          isPremium: isPremium)
+            premiumToggle(isOn: $vm.draft.isMuted,
+                          label: { Label(L("edit.option.mute"), systemImage: "speaker.slash.fill") },
+                          isPremium: isPremium)
+            premiumToggle(isOn: $vm.draft.isRepeatEnabled,
+                          label: { Label(L("edit.option.repeat"), systemImage: "repeat") },
+                          isPremium: isPremium)
+        }
+    }
+
+    @ViewBuilder
+    private func premiumToggle(isOn: Binding<Bool>, label: () -> some View, isPremium: Bool) -> some View {
+        ZStack {
+            Toggle(isOn: isOn) { label() }
+                .opacity(isPremium ? 1.0 : 0.45)
+                .disabled(!isPremium)
+            // Tap catcher overlay to show paywall when not premium
+            if !isPremium {
+                Color.clear
+                    .contentShape(Rectangle())
+                    .onTapGesture { triggerPaywall() }
             }
         }
+        .overlay(alignment: .trailing) {
+            if !isPremium {
+                Image(systemName: "lock.fill")
+                    .font(.system(size: 12, weight: .semibold))
+                    .foregroundStyle(.secondary)
+            }
+        }
+        .accessibilityHint(isPremium ? Text("") : Text(L("premium.locked")))
     }
 
     private var previewHeader: some View {
@@ -310,7 +388,10 @@ struct TimerEditView: View {
 #Preview {
     NavigationView {
         TimerEditView(
-            vm: .init(mode: .create, saveAction: { _, _ in})
+            vm: .init(mode: .create, saveAction: { _, _ in}),
+            onPaywall: { print("Present Paywall") }
         )
+        .environment(\.isPremium, false)
     }
 }
+
