@@ -107,7 +107,7 @@ private extension PaywallView {
             }
             .font(.system(size: 17, weight: .semibold))
             .frame(maxWidth: .infinity, minHeight: 52)
-            .foregroundStyle(.white)
+            .foregroundStyle(.background)
             .glassEffect(.regular.tint(.primary).interactive())
             .padding(.horizontal, 20)
             .padding(.vertical, 8)
@@ -141,10 +141,11 @@ private extension PaywallView {
             Button { onClose?() } label: {
                 Image(systemName: "xmark")
                     .font(.system(size: 14, weight: .bold))
+                    .foregroundStyle(.background)
                     .frame(width: 32, height: 32)
-                    .background(.thinMaterial, in: Circle())
-                    .foregroundStyle(.primary)
             }
+            .glassEffect(.regular.tint(.primary).interactive())
+            .clipShape(Circle())
             .accessibilityLabel("닫기")
         }
     }

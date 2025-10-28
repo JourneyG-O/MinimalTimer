@@ -1050,9 +1050,6 @@
         }
       }
     },
-    "paywall.cta.upgrade %@" : {
-
-    },
     "paywall.feature.custom.subtitle" : {
       "extractionState" : "manual",
       "localizations" : {
