@@ -150,14 +150,7 @@ private extension MainTimerRootView {
     }
 
     func openEdit(_ index: Int) {
-        #if DEBUG
-        print("openEdit 호출: index=\(index)")
-        #endif
-        if vm.isPremium {
-            withAnimation(.snappy) { editRoute = .edit(index) }
-        } else {
-            showPaywall = true
-        }
+        withAnimation(.snappy) { editRoute = .edit(index) }
     }
 }
 
@@ -168,3 +161,4 @@ private extension View {
             .presentationDragIndicator(.visible)
     }
 }
+
