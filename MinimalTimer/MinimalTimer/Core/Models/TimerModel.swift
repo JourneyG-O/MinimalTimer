@@ -28,7 +28,7 @@ struct TimerModel: Identifiable {
         color: CustomColor,
         isTitleAlwaysVisible: Bool = false ,
         isTickAlwaysVisible: Bool = false,
-        isMuted: Bool = true,
+        isMuted: Bool = false,
         isRepeatEnabled: Bool = false
 
     ) {

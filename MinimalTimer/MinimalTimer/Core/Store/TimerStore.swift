@@ -85,9 +85,7 @@ class TimerStore {
 
     static var defaultTimers: [TimerModel] {
         return [
-            TimerModel(title: "표준 타이머", totalTime: 60 * 60, currentTime: 60 * 60, color: CustomColor.yellow),
-            TimerModel(title: "긴 타이머", totalTime: 120 * 60, currentTime: 120 * 60, color: CustomColor.blue),
-            TimerModel(title: "짧은 타이머", totalTime: 5 * 60, currentTime: 5 * 60, color: CustomColor.red)
+            TimerModel(title: "기본 타이머", totalTime: 30 * 30, currentTime: 30 * 30, color: CustomColor.dynamicForeground)
         ]
     }
 }
