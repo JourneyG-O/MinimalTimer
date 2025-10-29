@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXFileReference section */
-		D71CED612DB8D69A0042E2E1 /* MinimalTimer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MinimalTimer.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		D71CED612DB8D69A0042E2E1 /* MiniTime.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MiniTime.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -40,7 +40,7 @@
 		D71CED622DB8D69A0042E2E1 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				D71CED612DB8D69A0042E2E1 /* MinimalTimer.app */,
+				D71CED612DB8D69A0042E2E1 /* MiniTime.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -67,7 +67,7 @@
 			packageProductDependencies = (
 			);
 			productName = MinimalTimer;
-			productReference = D71CED612DB8D69A0042E2E1 /* MinimalTimer.app */;
+			productReference = D71CED612DB8D69A0042E2E1 /* MiniTime.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -282,7 +282,7 @@
 				);
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = app.stannum.MiniTime;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = MiniTime;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -314,7 +314,7 @@
 				);
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = app.stannum.MiniTime;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = MiniTime;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
