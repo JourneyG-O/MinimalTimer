@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import StoreKit
 
 struct TimerListView: View {
     // MARK: - Dependencies
@@ -22,6 +23,8 @@ struct TimerListView: View {
     @State private var isPresentingSettings: Bool = false
     @State private var showSafari = false
     @State private var selectedPolicyURL: URL?
+    @State private var isPurchasing: Bool = false
+    @StateObject private var purchaseManager = PurchaseManager.shared
     
     // MARK: - Body
     var body: some View {
@@ -103,6 +106,48 @@ struct TimerListView: View {
         .sheet(isPresented: $isPresentingSettings) {
             NavigationStack {
                 List {
+                    Section("프리미엄") {
+                        if purchaseManager.isPremium || vm.isPremium {
+                            Label("프리미엄 활성화됨", systemImage: "checkmark.seal.fill")
+                                .foregroundStyle(.green)
+                        } else {
+                            HStack {
+                                VStack(alignment: .leading, spacing: 4) {
+                                    Text("모든 기능 잠금해제")
+                                    Text(purchaseManager.localizedPrice.isEmpty ? "가격 불러오는 중…" : purchaseManager.localizedPrice)
+                                        .font(.caption)
+                                        .foregroundStyle(.secondary)
+                                }
+                                Spacer()
+                                Button(action: {
+                                    isPurchasing = true
+                                    Task {
+                                        let _ = await purchaseManager.purchase()
+                                        isPurchasing = false
+                                        if purchaseManager.isPremium { vm.handleUpgradePurchased() }
+                                    }
+                                }) {
+                                    if isPurchasing {
+                                        ProgressView()
+                                    } else {
+                                        Text("구매")
+                                    }
+                                }
+                                .buttonStyle(.borderedProminent)
+                            }
+
+                            Button("복원") {
+                                Task { await purchaseManager.restore() }
+                            }
+                        }
+
+                        if let err = purchaseManager.lastError {
+                            Text(err)
+                                .font(.caption)
+                                .foregroundStyle(.red)
+                        }
+                    }
+                    
                     Section("앱 정보") {
                         HStack {
                             Text("버전")
@@ -143,12 +188,16 @@ struct TimerListView: View {
                     }
                 }
             }
+            .task { await purchaseManager.refreshProducts() }
         }
         .sheet(isPresented: $showSafari) {
             if let url = selectedPolicyURL {
                 SafariView(url: url)
                     .ignoresSafeArea()
             }
+        }
+        .onChange(of: purchaseManager.isPremium) { newValue, _ in
+            if newValue { vm.handleUpgradePurchased() }
         }
     }
     

@@ -8,6 +8,7 @@
 import AudioToolbox
 import AVFoundation
 import SwiftUI
+import StoreKit
 
 enum InteractionMode {
     case normal
@@ -68,6 +69,27 @@ final class MainViewModel: ObservableObject {
         validateSelectedTimerIndex()
         updatePreviousAngle()
         configureAudioSession()
+
+        // Observe premium entitlement from StoreKit
+        Task { @MainActor in
+            let pm = PurchaseManager.shared
+            self.isPremium = pm.isPremium
+        }
+        Task {
+            for await _ in NotificationCenter.default.notifications(named: .NSSystemClockDidChange) {
+                // no-op placeholder to keep Task alive
+                break
+            }
+        }
+
+        Task.detached { [weak self] in
+            while let self = self {
+                await MainActor.run {
+                    self.isPremium = PurchaseManager.shared.isPremium
+                }
+                try? await Task.sleep(nanoseconds: 500_000_000)
+            }
+        }
     }
 
     // MARK: - Index Validation
@@ -251,8 +273,7 @@ final class MainViewModel: ObservableObject {
     }
 
     func restorePurchases() {
-        // 추후에 StoreKit으로 교체 - 데모로 해제
-        isPremium = true
+        Task { await PurchaseManager.shared.restore() }
     }
 
     // MARK: - Feedback
@@ -321,3 +342,4 @@ extension MainViewModel {
         store.save(timers: timers, selectedIndex: selectedTimerIndex)
     }
 }
+
