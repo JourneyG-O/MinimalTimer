@@ -114,7 +114,7 @@ struct TimerListView: View {
                     
                     Section("정책") {
                         Button("이용약관") {
-                            if let url = URL(string: "https://stannum.app") {
+                            if let url = URL(string: "https://stannum.app/apps/minimal-timer/legal/terms.html") {
                                 selectedPolicyURL = url
                                 isPresentingSettings = false
                                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.35) {
@@ -124,7 +124,7 @@ struct TimerListView: View {
                         }
                         
                         Button("개인정보처리방침") {
-                            if let url = URL(string: "https://stannum.app") {
+                            if let url = URL(string: "https://stannum.app/apps/minimal-timer/legal/privacy.html") {
                                 selectedPolicyURL = url
                                 isPresentingSettings = false
                                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.35) {
