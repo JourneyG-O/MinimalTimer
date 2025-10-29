@@ -46,7 +46,8 @@ struct MainTimerRootView: View {
                         TimerListView(
                             vm: vm,
                             onCreate: { openCreate() },
-                            onEdit: { idx in openEdit(idx) }
+                            onEdit: { idx in openEdit(idx) },
+                            onShowPaywall: { showPaywall = true }
                         ) { _ in
                             DispatchQueue.main.async {
                                 withAnimation(.snappy) { path.removeAll() }

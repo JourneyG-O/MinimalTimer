@@ -12,59 +12,72 @@ struct TimerListView: View {
     @ObservedObject var vm: MainViewModel
     var onCreate: (() -> Void)?
     var onEdit: ((Int) -> Void)?
+    var onShowPaywall: (() -> Void)?
     var onSelectTimer: ((Int) -> Void)?
 
+    
     // MARK: - States
     @Environment(\.dismiss) private var dismiss
     @Environment(\.editMode) private var editMode
     @State private var isPresentingSettings: Bool = false
-
+    
     // MARK: - Body
     var body: some View {
-
-        List {
-            ForEach(vm.timers) { timer in         // ← indices 대신 모델 자체 사용
-                let index = vm.timers.firstIndex(where: { $0.id == timer.id }) ?? 0
-
-                TimerRow(
-                    timer: timer,
-                    onSelect: { handleSelect(index) },
-                    onEdit:   { handleEdit(index) }
-                )
-                .listRowInsets(.init(top: 0, leading: 16, bottom: 0, trailing: 16))
-                .listRowSeparator(.hidden)
-                .listRowBackground(Color.clear)
-                .padding(.vertical, 8)
-                .swipeActions(edge: .trailing) {
-                    Button {
-                        if editMode?.wrappedValue == .active {
-                            editMode?.wrappedValue = .inactive
-                        } else {
-                            editMode?.wrappedValue = .active
+        
+        VStack(spacing: 0) {
+            List {
+                ForEach(vm.timers) { timer in         // ← indices 대신 모델 자체 사용
+                    let index = vm.timers.firstIndex(where: { $0.id == timer.id }) ?? 0
+                    
+                    TimerRow(
+                        timer: timer,
+                        onSelect: { handleSelect(index) },
+                        onEdit:   { handleEdit(index) }
+                    )
+                    .listRowInsets(.init(top: 0, leading: 16, bottom: 0, trailing: 16))
+                    .listRowSeparator(.hidden)
+                    .listRowBackground(Color.clear)
+                    .padding(.vertical, 8)
+                    .swipeActions(edge: .trailing) {
+                        Button {
+                            if editMode?.wrappedValue == .active {
+                                editMode?.wrappedValue = .inactive
+                            } else {
+                                editMode?.wrappedValue = .active
+                            }
+                        } label: {
+                            Label("Reorder", systemImage: "arrow.up.arrow.down")
                         }
-                    } label: {
-                        Label("Reorder", systemImage: "arrow.up.arrow.down")
+                        .tint(.blue)
+                        
+                        Button(role: .destructive) {
+                            vm.deleteTimer(at: index)
+                        } label: {
+                            Label("Delete", systemImage: "trash")
+                        }
                     }
-                    .tint(.blue)
-
-                    Button(role: .destructive) {
-                        vm.deleteTimer(at: index)
-                    } label: {
-                        Label("Delete", systemImage: "trash")
-                    }
+                    .moveDisabled(editMode?.wrappedValue != .active)
                 }
-                .moveDisabled(editMode?.wrappedValue != .active)
+                .onMove { from, to in
+                    vm.timers.move(fromOffsets: from, toOffset: to)
+                    vm.saveTimers()
+                }
+                .onDelete { indexSet in
+                    indexSet.sorted(by: >).forEach { vm.deleteTimer(at: $0) }
+                }
             }
-            .onMove { from, to in
-                vm.timers.move(fromOffsets: from, toOffset: to)
-                vm.saveTimers()
-            }
-            .onDelete { indexSet in
-                indexSet.sorted(by: >).forEach { vm.deleteTimer(at: $0) }
+            .listStyle(.plain)
+            .scrollContentBackground(.hidden)
+            
+            if !vm.isPremium {
+                PaywallPromoRow {
+                    onShowPaywall?()
+                }
+                .padding(.horizontal, 16)
+                .padding(.top, 12)
+                .padding(.bottom, 80)
             }
         }
-        .listStyle(.plain)
-        .scrollContentBackground(.hidden)
         .background(Color(.systemBackground))
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
@@ -112,18 +125,18 @@ struct TimerListView: View {
             }
         }
     }
-
+    
     // MARK: - Helpers
     private func handleSelect(_ index: Int) {
         vm.selectTimer(at: index)
         UISelectionFeedbackGenerator().selectionChanged()
         onSelectTimer?(index)
     }
-
+    
     private func handleCreate() {
         onCreate?()
     }
-
+    
     private func handleEdit(_ index: Int) {
         onEdit?(index)
     }
