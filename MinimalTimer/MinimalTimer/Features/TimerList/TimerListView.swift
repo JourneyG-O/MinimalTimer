@@ -14,12 +14,14 @@ struct TimerListView: View {
     var onEdit: ((Int) -> Void)?
     var onShowPaywall: (() -> Void)?
     var onSelectTimer: ((Int) -> Void)?
-
+    
     
     // MARK: - States
     @Environment(\.dismiss) private var dismiss
     @Environment(\.editMode) private var editMode
     @State private var isPresentingSettings: Bool = false
+    @State private var showSafari = false
+    @State private var selectedPolicyURL: URL?
     
     // MARK: - Body
     var body: some View {
@@ -109,9 +111,27 @@ struct TimerListView: View {
                                 .foregroundStyle(.secondary)
                         }
                     }
+                    
                     Section("정책") {
-                        Button("이용약관") { /* TODO: Open terms */ }
-                        Button("개인정보처리방침") { /* TODO: Open privacy */ }
+                        Button("이용약관") {
+                            if let url = URL(string: "https://stannum.app") {
+                                selectedPolicyURL = url
+                                isPresentingSettings = false
+                                DispatchQueue.main.asyncAfter(deadline: .now() + 0.35) {
+                                    showSafari = true
+                                }
+                            }
+                        }
+                        
+                        Button("개인정보처리방침") {
+                            if let url = URL(string: "https://stannum.app") {
+                                selectedPolicyURL = url
+                                isPresentingSettings = false
+                                DispatchQueue.main.asyncAfter(deadline: .now() + 0.35) {
+                                    showSafari = true
+                                }
+                            }
+                        }
                     }
                 }
                 .navigationTitle("설정")
@@ -122,6 +142,12 @@ struct TimerListView: View {
                         }
                     }
                 }
+            }
+        }
+        .sheet(isPresented: $showSafari) {
+            if let url = selectedPolicyURL {
+                SafariView(url: url)
+                    .ignoresSafeArea()
             }
         }
     }
