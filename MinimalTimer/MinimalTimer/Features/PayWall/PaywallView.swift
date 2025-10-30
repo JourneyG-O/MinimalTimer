@@ -118,9 +118,13 @@ private extension PaywallView {
 // MARK: - Private Views
 private extension PaywallView {
     func featureRow(icon: String, title: String, subtitle: String) -> some View {
-        HStack(spacing: 16) {
+        HStack(alignment: .firstTextBaseline, spacing: 16) {
             Image(systemName: icon)
-                .font(.system(size: 22, weight: .semibold))
+                .font(.system(size: 18, weight: .semibold))
+                .frame(width: 28, height: 28, alignment: .center)
+                .alignmentGuide(.firstTextBaseline) { d in
+                    d[VerticalAlignment.center]
+                }
                 .foregroundStyle(.primary)
 
             VStack(alignment: .leading, spacing: 2) {
