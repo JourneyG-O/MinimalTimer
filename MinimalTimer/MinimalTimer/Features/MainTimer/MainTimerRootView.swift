@@ -36,6 +36,8 @@ struct MainTimerRootView: View {
 
     // MARK: Floating Action Button State
     private var fabSymbol: String { path.isEmpty ? "list.bullet" : "plus" }
+    private var fabAXLabel: LocalizedStringKey { path.isEmpty ? "main.fab.showList.label" : "main.fab.create.label" }
+    private var fabAXHint: LocalizedStringKey { path.isEmpty ? "main.fab.showList.hint" : "main.fab.create.hint" }
 
     var body: some View {
         NavigationStack(path: $path) {
@@ -53,12 +55,16 @@ struct MainTimerRootView: View {
                                 withAnimation(.snappy) { path.removeAll() }
                             }
                         }
+                        .accessibilityLabel(Text("main.timerlist.title"))
+                        .accessibilityHint(Text("main.timerlist.hint"))
                     }
                 }
         }
         // MARK: Onboarding (first launch only)
         .fullScreenCover(isPresented: Binding(get: { !hasSeenOnboarding }, set: { _ in })) {
             OnboardingView { hasSeenOnboarding = true }
+                .accessibilityIdentifier("onboarding.root")
+                .accessibilityLabel(Text("main.onboarding.title"))
         }
         // MARK: Persistent FAB (stays across navigation)
         .overlay(alignment: .bottomTrailing) {
@@ -70,6 +76,10 @@ struct MainTimerRootView: View {
                     openCreate()
                 }
             }
+            .accessibilityLabel(fabAXLabel)
+            .accessibilityHint(fabAXHint)
+            .accessibilityAddTraits(.isButton)
+            .accessibilityIdentifier("fab.main")
             .padding(.trailing, 20)
             .padding(.bottom, 0)
             .ignoresSafeArea()
@@ -90,7 +100,7 @@ struct MainTimerRootView: View {
         .fullScreenCover(isPresented: $showPaywall) {
             NavigationStack {
                 PaywallView(
-                    priceString: "₩5,900",
+                    priceString: NSLocalizedString("paywall.price", comment: "Displayed price for upgrade"),
                     onClose: { showPaywall = false },
                     onUpgradeTap: {
                         vm.handleUpgradePurchased()
@@ -106,6 +116,9 @@ struct MainTimerRootView: View {
                         // TODO: 개인정보 처리방침 링크 연결
                     }
                 )
+                .accessibilityIdentifier("paywall.root")
+                .accessibilityHint(Text("main.paywall.hint"))
+                .accessibilityLabel(Text("main.paywall.title"))
                 .navigationBarTitleDisplayMode(.inline)
             }
         }
@@ -163,3 +176,36 @@ private extension View {
     }
 }
 
+// MARK: - Preview-friendly Localized Keys (no-op helpers)
+private extension LocalizedStringKey {
+    static var empty: LocalizedStringKey { "" }
+}
+
+/*
+ Accessibility Localization Keys to provide (MainTimerRootView)
+ - "main.fab.showList.label" = "Show timers list";
+ - "main.fab.showList.hint" = "Opens the list of saved timers.";
+ - "main.fab.create.label" = "Create timer";
+ - "main.fab.create.hint" = "Create a new timer.";
+
+ - "main.onboarding.title" = "Welcome to MinimalTimer"; // Read by VoiceOver on onboarding cover
+
+ - "main.paywall.title" = "Upgrade to Premium"; // Title for paywall cover
+ - "main.paywall.price" = "$2.99"; // Example localized price string; replace with real localized value or keep using existing key
+ - "main.paywall.hint" = "Review premium features and purchase or restore.";
+ - "main.paywall.close.hint" = "Close the paywall.";
+ - "main.paywall.upgrade.hint" = "Purchase the premium upgrade.";
+ - "main.paywall.restore.hint" = "Restore previous purchases.";
+ - "main.paywall.terms.hint" = "Open the Terms of Service.";
+ - "main.paywall.privacy.hint" = "Open the Privacy Policy.";
+
+ - "main.timerlist.title" = "Timers"; // For the list screen when pushed
+ - "main.timerlist.hint" = "Browse, edit, or create timers.";
+ - "main.timerlist.create.hint" = "Create a new timer from the list.";
+ - "main.timerlist.edit.hint" = "Edit the selected timer.";
+
+ - "main.edit.create.title" = "Create Timer";
+ - "main.edit.edit.title" = "Edit Timer";
+ - "main.edit.save.hint" = "Save your changes.";
+ - "main.edit.delete.hint" = "Delete this timer.";
+*/
