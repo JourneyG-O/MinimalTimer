@@ -16,7 +16,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "D71CED602DB8D69A0042E2E1"
-               BuildableName = "MinimalTimer.app"
+               BuildableName = "MiniTime.app"
                BlueprintName = "MinimalTimer"
                ReferencedContainer = "container:MinimalTimer.xcodeproj">
             </BuildableReference>
@@ -45,7 +45,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "D71CED602DB8D69A0042E2E1"
-            BuildableName = "MinimalTimer.app"
+            BuildableName = "MiniTime.app"
             BlueprintName = "MinimalTimer"
             ReferencedContainer = "container:MinimalTimer.xcodeproj">
          </BuildableReference>
@@ -62,7 +62,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "D71CED602DB8D69A0042E2E1"
-            BuildableName = "MinimalTimer.app"
+            BuildableName = "MiniTime.app"
             BlueprintName = "MinimalTimer"
             ReferencedContainer = "container:MinimalTimer.xcodeproj">
          </BuildableReference>
