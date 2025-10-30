@@ -21,11 +21,11 @@ struct PaywallPromoRow: View {
 
 
                 VStack(alignment: .leading, spacing: 4) {
-                    Text("Minimal Timer Pro")
+                    Text(L("paywallpromo.title"))
                         .font(.headline)
                         .foregroundStyle(.background)
 
-                    Text("한 번 결제로 평생 소유")
+                    Text(L("paywallpromo.subtitle"))
                         .font(.footnote)
                         .foregroundStyle(.background.opacity(0.7))
                         .lineLimit(2)
@@ -33,7 +33,7 @@ struct PaywallPromoRow: View {
 
                 Spacer(minLength: 0)
 
-                Text("UPGRADE")
+                Text(L("paywallpromo.cta"))
                     .font(.headline)
                     .foregroundStyle(.primary)
                     .padding(.horizontal, 12)
@@ -51,7 +51,7 @@ struct PaywallPromoRow: View {
         }
         .buttonStyle(.plain)
         .accessibilityElement(children: .combine)
-        .accessibilityHint("결제 화면으로 이동")
+        .accessibilityHint(L("paywallpromo.hint"))
     }
 }
 
