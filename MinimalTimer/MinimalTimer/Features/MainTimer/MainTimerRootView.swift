@@ -100,7 +100,7 @@ struct MainTimerRootView: View {
         .fullScreenCover(isPresented: $showPaywall) {
             NavigationStack {
                 PaywallView(
-                    priceString: L("paywall.price"),
+                    priceString: String(localized: "paywall.price"),
                     onClose: { showPaywall = false },
                     onUpgradeTap: {
                         vm.handleUpgradePurchased()
@@ -209,3 +209,4 @@ private extension LocalizedStringKey {
  - "main.edit.save.hint" = "Save your changes.";
  - "main.edit.delete.hint" = "Delete this timer.";
 */
+

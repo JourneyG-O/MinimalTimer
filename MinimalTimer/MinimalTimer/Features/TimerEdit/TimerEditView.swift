@@ -210,9 +210,9 @@ struct TimerEditView: View {
 
     private var optionsSection: some View {
         Section(header:
-                    Label { Text(L("edit.options)) } icon: { Image(systemName: "lock.fill") }
-            .textCase(nil)
-            .foregroundStyle(isPremium ? .primary : .secondary)
+            Label { Text(L("edit.options")) } icon: { Image(systemName: "lock.fill") }
+                .textCase(nil)
+                .foregroundStyle(isPremium ? .primary : .secondary)
         ) {
             premiumToggle(isOn: $vm.draft.isTitleAlwaysVisible,
                           label: { Label(L("edit.option.alwaysShowTitle"), systemImage: "textformat") },

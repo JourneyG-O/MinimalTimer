@@ -29,7 +29,11 @@ struct MainTimerView: View {
                         .frame(height: 60)
                         .accessibilityElement(children: .combine)
                         .accessibilityLabel(L("main.title.label"))
-                        .accessibilityValue(Text(LocalizedStringKey(timer.title.isEmpty ? String(localized: "main.title.untitled", defaultValue: "Untitled") : timer.title)))
+                        .accessibilityValue(
+                            timer.title.isEmpty
+                            ? Text(L("main.title.untitled"))
+                            : Text(LocalizedStringKey(timer.title))
+                        )
                         .accessibilityHint(L("main.title.hint"))
                 }
 
@@ -51,7 +55,9 @@ struct MainTimerView: View {
                     .popInOnAppear()
                     .accessibilityElement(children: .combine)
                     .accessibilityLabel(L("main.timer.current.label"))
-                    .accessibilityValue(Text(vm.isRunning ? L("main.timer.state.running") : L("main.timer.state.paused")))
+                    .accessibilityValue(
+                        vm.isRunning ? Text(L("main.timer.state.running")) : Text(L("main.timer.state.paused"))
+                    )
                     .accessibilityHint(L("main.timer.current.hint"))
                 } else {
                     ContentUnavailableView(
@@ -68,7 +74,6 @@ struct MainTimerView: View {
                     .frame(height: 60)
                     .accessibilityElement(children: .combine)
                     .accessibilityLabel(L("main.remaining.label"))
-                    .accessibilityValue(Text(LF("main.remaining.value", formatRemaining(vm.remainingSeconds))))
                     .accessibilityHint(L("main.remaining.hint"))
 
                 Spacer()
@@ -110,3 +115,5 @@ private func formatRemaining(_ seconds: Int) -> String {
  - "main.remaining.hint" = "Time left until the timer completes.";
  - "main.remaining.value" = "%@ remaining"; // value will be like 05:00
 */
+
+

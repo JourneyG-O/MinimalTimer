@@ -9,7 +9,7 @@ import SwiftUI
 
 struct PaywallView: View {
     // MARK: - Dependencies
-    let priceString: LocalizedStringKey
+    let priceString: String
     var onClose: (() -> Void)?
     var onUpgradeTap: (() -> Void)?
     var onRestoreTap: (() -> Void)?
@@ -114,7 +114,7 @@ private extension PaywallView {
                     if isLoadingPrice {
                         Text(L("paywall.upgrade.loading"))
                     } else {
-                        Text(LF("paywall.upgrade.cta", priceString))
+                        Text(LF("paywall.upgrade.cta", priceString)) // priceString is now String
                     }
                 }
                 .contentTransition(.opacity)
@@ -128,7 +128,11 @@ private extension PaywallView {
         }
         .accessibilityElement(children: .combine)
         .accessibilityLabel(L("paywall.upgrade.label"))
-        .accessibilityValue(Text(isLoadingPrice ? L("paywall.upgrade.loading") : LF("paywall.upgrade.value", priceString)))
+        .accessibilityValue(
+            isLoadingPrice
+            ? Text(L("paywall.upgrade.loading"))
+            : Text(LF("paywall.upgrade.value", priceString))
+        )
         .accessibilityHint(L("paywall.upgrade.hint"))
     }
 }
@@ -184,7 +188,7 @@ private extension PaywallView {
 #Preview("NewPaywallView - 기본") {
     NavigationStack {
         PaywallView(
-            priceString: LocalizedStringKey("₩5,900"),
+            priceString: "₩5,900",
             onClose: { print("닫기") },
             onUpgradeTap: { print("업그레이드") },
             onRestoreTap: { print("복원") },
@@ -219,3 +223,4 @@ private extension PaywallView {
  - "paywall.close" = "Close";
  - "paywall.close.hint" = "Close the paywall.";
 */
+

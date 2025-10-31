@@ -86,6 +86,20 @@ private extension OnboardingView {
         UIPageControl.appearance().currentPageIndicatorTintColor = UIColor.label
         UIPageControl.appearance().pageIndicatorTintColor = UIColor.secondaryLabel
     }
+
+    func imageAccessibilityLabel(for baseName: String) -> LocalizedStringKey {
+        switch baseName {
+        case "ob_tap":
+            return LocalizedStringKey("accessibility.ob_tap")
+        case "ob_drag":
+            return LocalizedStringKey("accessibility.ob_drag")
+        case "ob_doubletap":
+            return LocalizedStringKey("accessibility.ob_doubletap")
+        default:
+            // Fallback: use the base name so VoiceOver reads something meaningful
+            return LocalizedStringKey(baseName)
+        }
+    }
 }
 
 // MARK: - Subviews
@@ -213,3 +227,4 @@ private struct OnboardingCard: View {
  - "accessibility.ob_drag" = "Drag to adjust the timer duration."
  - "accessibility.ob_doubletap" = "Double-tap for a quick reset."
 */
+
