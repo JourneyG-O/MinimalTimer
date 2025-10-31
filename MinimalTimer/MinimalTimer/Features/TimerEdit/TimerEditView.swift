@@ -106,7 +106,7 @@ struct TimerEditView: View {
                     let isCJK = vm.draft.title.isCJKLike
                     let softLimit = isCJK ? 8 : 15
 
-                    Text(LF("edit.title.count.value", count, softLimit))
+                    Text("\(count)/\(softLimit)")
                         .font(.caption2)
                         .foregroundStyle(count > softLimit ? .orange : .secondary)
 
