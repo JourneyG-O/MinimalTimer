@@ -27,6 +27,14 @@ struct MainTimerView: View {
                 if let timer = vm.currentTimer, showTitle {
                     TitleView(title: timer.title)
                         .frame(height: 60)
+                        .accessibilityElement(children: .combine)
+                        .accessibilityLabel(L("main.title.label"))
+                        .accessibilityValue(
+                            timer.title.isEmpty
+                            ? Text(L("main.title.untitled"))
+                            : Text(LocalizedStringKey(timer.title))
+                        )
+                        .accessibilityHint(L("main.title.hint"))
                 }
 
                 Spacer()
@@ -45,11 +53,17 @@ struct MainTimerView: View {
                     )
                     .frame(width: timerSize, height:timerSize)
                     .popInOnAppear()
+                    .accessibilityElement(children: .combine)
+                    .accessibilityLabel(L("main.timer.current.label"))
+                    .accessibilityValue(
+                        vm.isRunning ? Text(L("main.timer.state.running")) : Text(L("main.timer.state.paused"))
+                    )
+                    .accessibilityHint(L("main.timer.current.hint"))
                 } else {
                     ContentUnavailableView(
-                        "No Timers",
+                        L("main.empty.title"),
                         systemImage: "timer",
-                        description: Text("Create a timer to get started.")
+                        description: Text(L("main.empty.description"))
                     )
                     .frame(height: timerSize)
                 }
@@ -58,6 +72,9 @@ struct MainTimerView: View {
 
                 RemainingTimeView(viewModel: vm)
                     .frame(height: 60)
+                    .accessibilityElement(children: .combine)
+                    .accessibilityLabel(L("main.remaining.label"))
+                    .accessibilityHint(L("main.remaining.hint"))
 
                 Spacer()
 
@@ -73,6 +90,30 @@ struct MainTimerView: View {
     }
 }
 
+// MARK: - Accessibility Helpers
+private func formatRemaining(_ seconds: Int) -> String {
+    let m = seconds / 60, s = seconds % 60
+    return String(format: "%02d:%02d", m, s)
+}
+
 #Preview {
     MainTimerView(vm: .init())
 }
+
+/*
+ Localization Keys to provide (MainTimerView)
+ - "main.empty.title" = "No timers";
+ - "main.empty.description" = "Create a timer to get started.";
+ - "main.timer.current.label" = "Current timer";
+ - "main.timer.current.hint" = "Double-tap to reset, drag to adjust, single tap to start or pause.";
+ - "main.timer.state.running" = "Running";
+ - "main.timer.state.paused" = "Paused";
+ - "main.title.label" = "Timer title";
+ - "main.title.hint" = "Title of the selected timer.";
+ - "main.title.untitled" = "Untitled";
+ - "main.remaining.label" = "Remaining time";
+ - "main.remaining.hint" = "Time left until the timer completes.";
+ - "main.remaining.value" = "%@ remaining"; // value will be like 05:00
+*/
+
+

@@ -18,7 +18,7 @@ struct TimerRow: View {
                     Spacer(minLength: 12)
 
                     VStack(alignment: .center, spacing: 4) {
-                        Text(timer.title.isEmpty ? "Timer" : timer.title)
+                        Text(timer.title.isEmpty ? L("timerlist.row.untitled") : LocalizedStringKey(timer.title))
                             .font(.body.weight(.semibold))
                             .lineLimit(1)
                             .truncationMode(.tail)
@@ -48,7 +48,8 @@ struct TimerRow: View {
                 .buttonStyle(.borderless)
                 .tint(.primary)
                 .padding(.trailing, 15)
-                .accessibilityLabel("Edit Timer")
+                .accessibilityLabel(L("timerlist.row.edit.label"))
+                .accessibilityHint(L("timerlist.row.edit.hint"))
                 .allowsHitTesting(true)
             }
             .contentShape(Rectangle())
@@ -56,6 +57,9 @@ struct TimerRow: View {
         .buttonStyle(.plain)
         .glassEffect(.regular.interactive(), in: Capsule())
         .accessibilityElement(children: .combine)
+        .accessibilityLabel(L("timerlist.row.select.label"))
+        .accessibilityValue(Text(LF("timerlist.row.value", formatTotalTime(seconds: Int(timer.totalTime)))))
+        .accessibilityHint(L("timerlist.row.select.hint"))
     }
 
     // MARK: - Helpers
@@ -64,3 +68,13 @@ struct TimerRow: View {
         return String(format: "%02d:%02d", m, s)
     }
 }
+
+/*
+ Localization Keys to provide (TimerRow)
+ - "timerlist.row.untitled" = "Untitled";
+ - "timerlist.row.edit.label" = "Edit timer";
+ - "timerlist.row.edit.hint" = "Open options to edit this timer.";
+ - "timerlist.row.select.label" = "Select timer";
+ - "timerlist.row.select.hint" = "Open this timer in the main view.";
+ - "timerlist.row.value" = "%@"; // e.g., 05:00
+*/

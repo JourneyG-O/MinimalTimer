@@ -31,7 +31,7 @@ struct TimerListView: View {
         
         VStack(spacing: 0) {
             List {
-                ForEach(vm.timers) { timer in         // ← indices 대신 모델 자체 사용
+                ForEach(vm.timers) { timer in
                     let index = vm.timers.firstIndex(where: { $0.id == timer.id }) ?? 0
                     
                     TimerRow(
@@ -51,14 +51,14 @@ struct TimerListView: View {
                                 editMode?.wrappedValue = .active
                             }
                         } label: {
-                            Label("Reorder", systemImage: "arrow.up.arrow.down")
+                            Label(L("timerlist.reorder"), systemImage: "arrow.up.arrow.down")
                         }
                         .tint(.blue)
                         
                         Button(role: .destructive) {
                             vm.deleteTimer(at: index)
                         } label: {
-                            Label("Delete", systemImage: "trash")
+                            Label(L("timerlist.delete"), systemImage: "trash")
                         }
                     }
                     .moveDisabled(editMode?.wrappedValue != .active)
@@ -81,6 +81,9 @@ struct TimerListView: View {
                 .padding(.horizontal, 16)
                 .padding(.top, 12)
                 .padding(.bottom, 80)
+                .accessibilityElement(children: .combine)
+                .accessibilityLabel(L("timerlist.promo.label"))
+                .accessibilityHint(L("timerlist.promo.hint"))
             }
         }
         .background(Color(.systemBackground))
@@ -92,29 +95,31 @@ struct TimerListView: View {
                     } label: {
                         Image(systemName: "checkmark")
                     }
-                    .accessibilityLabel("편집 완료")
+                    .accessibilityLabel(L("list.edit.done"))
+                    .accessibilityHint(L("timerlist.edit.done.hint"))
                 } else {
                     Button {
                         isPresentingSettings = true
                     } label: {
                         Image(systemName: "gearshape.fill")
                     }
-                    .accessibilityLabel("설정")
+                    .accessibilityLabel(L("settings.open.label"))
+                    .accessibilityHint(L("settings.open.hint"))
                 }
             }
         }
         .sheet(isPresented: $isPresentingSettings) {
             NavigationStack {
                 List {
-                    Section("프리미엄") {
+                    Section(L("settings.premium.section")) {
                         if purchaseManager.isPremium || vm.isPremium {
-                            Label("프리미엄 활성화됨", systemImage: "checkmark.seal.fill")
+                            Label(L("settings.premium.active"), systemImage: "checkmark.seal.fill")
                                 .foregroundStyle(.green)
                         } else {
                             HStack {
                                 VStack(alignment: .leading, spacing: 4) {
-                                    Text("모든 기능 잠금해제")
-                                    Text(purchaseManager.localizedPrice.isEmpty ? "가격 불러오는 중…" : purchaseManager.localizedPrice)
+                                    Text(L("settings.premium.headline"))
+                                    Text(purchaseManager.localizedPrice.isEmpty ? L("settings.premium.price.loading") : LocalizedStringKey(purchaseManager.localizedPrice))
                                         .font(.caption)
                                         .foregroundStyle(.secondary)
                                 }
@@ -130,13 +135,13 @@ struct TimerListView: View {
                                     if isPurchasing {
                                         ProgressView()
                                     } else {
-                                        Text("구매")
+                                        Text(L("settings.premium.buy"))
                                     }
                                 }
                                 .buttonStyle(.borderedProminent)
                             }
 
-                            Button("복원") {
+                            Button(L("settings.premium.restore")) {
                                 Task { await purchaseManager.restore() }
                             }
                         }
@@ -148,17 +153,17 @@ struct TimerListView: View {
                         }
                     }
                     
-                    Section("앱 정보") {
+                    Section(L("settings.appinfo.section")) {
                         HStack {
-                            Text("버전")
+                            Text(L("settings.appinfo.version"))
                             Spacer()
                             Text(Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "-")
                                 .foregroundStyle(.secondary)
                         }
                     }
                     
-                    Section("정책") {
-                        Button("이용약관") {
+                    Section(L("settings.policy.section")) {
+                        Button(L("settings.policy.terms")) {
                             if let url = URL(string: "https://stannum.app/apps/minimal-timer/legal/terms.html") {
                                 selectedPolicyURL = url
                                 isPresentingSettings = false
@@ -168,7 +173,7 @@ struct TimerListView: View {
                             }
                         }
                         
-                        Button("개인정보처리방침") {
+                        Button(L("settings.policy.privacy")) {
                             if let url = URL(string: "https://stannum.app/apps/minimal-timer/legal/privacy.html") {
                                 selectedPolicyURL = url
                                 isPresentingSettings = false
@@ -179,12 +184,14 @@ struct TimerListView: View {
                         }
                     }
                 }
-                .navigationTitle("설정")
+                .navigationTitle(L("settings.title"))
                 .toolbar {
                     ToolbarItem(placement: .topBarTrailing) {
                         Button(action: { isPresentingSettings = false }) {
                             Image(systemName: "xmark")
                         }
+                        .accessibilityLabel(L("settings.close.label"))
+                        .accessibilityHint(L("settings.close.hint"))
                     }
                 }
             }
@@ -217,3 +224,15 @@ struct TimerListView: View {
     }
 }
 
+/*
+ Localization Keys to provide (TimerListView)
+ - "timerlist.reorder" = "Reorder";
+ - "timerlist.delete" = "Delete";
+ - "timerlist.edit.done.hint" = "Finish editing and return to the list.";
+ - "settings.open.label" = "Open settings";
+ - "settings.open.hint" = "Show app settings and information.";
+ - "timerlist.promo.label" = "Unlock premium";
+ - "timerlist.promo.hint" = "Open paywall to upgrade.";
+ - "settings.close.label" = "Close settings";
+ - "settings.close.hint" = "Dismiss the settings view.";
+*/

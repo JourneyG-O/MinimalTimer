@@ -50,34 +50,40 @@ struct PaywallView: View {
 private extension PaywallView {
     var header: some View {
         VStack(spacing: 8) {
-            Text("Minimal Timer Pro")
+            Text(L("paywall.title"))
                 .font(.system(size: 32, weight: .bold, design: .rounded))
         }
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel(L("paywall.title"))
+        .accessibilityHint(L("paywall.title.hint"))
     }
 
     var features: some View {
         VStack(alignment: .leading, spacing: 24) {
             featureRow(
                 icon: "checkmark",
-                title: "한 번의 결제로 평생 소유",
-                subtitle: "Minimal Timer의 모든 기능을 영원히 사용하세요."
+                title: L("paywall.feature.once.title"),
+                subtitle: L("paywall.feature.unlimited.subtitle")
             )
             featureRow(
                 icon: "infinity",
-                title: "무제한 타이머 생성",
-                subtitle: "제한 없이 원하는 만큼 타이머를 만들 수 있습니다."
+                title: L("paywall.feature.unlimited.title"),
+                subtitle: L("paywall.feature.unlimited.subtitle")
             )
             featureRow(
                 icon: "lock.open.fill",
-                title: "모든 기능 언락",
-                subtitle: "컬러, 무음, 눈금, 타이틀 세밀한 설정까지 모두 열립니다."
+                title: L("paywall.feature.unlock.title"),
+                subtitle: L("paywall.feature.unlock.subtitle")
             )
             featureRow(
                 icon: "sparkles",
-                title: "앞으로의 업데이트",
-                subtitle: "결제 후 추가될 모든 기능을 함께 누리세요."
+                title: L("paywall.feature.future.title"),
+                subtitle: L("paywall.feature.future.subtitle")
             )
         }
+        .accessibilityElement(children: .contain)
+        .accessibilityLabel(L("paywall.features.label"))
+        .accessibilityHint(L("paywall.features.hint"))
     }
 
     var restoreButton: some View {
@@ -85,13 +91,15 @@ private extension PaywallView {
             HStack(spacing: 6) {
                 Image(systemName: "repeat")
                     .opacity(0.5)
-                Text("구매 복원")
+                Text(L("paywall.restore"))
                     .font(.system(size: 14))
                     .foregroundStyle(.secondary)
             }
         }
         .font(.caption)
         .tint(.primary)
+        .accessibilityLabel(L("paywall.restore.label"))
+        .accessibilityHint(L("paywall.restore.hint"))
     }
 
     var upgradeButton: some View {
@@ -102,8 +110,14 @@ private extension PaywallView {
             HStack(spacing: 8) {
                 Image(systemName: isLoadingPrice ? "hourglass" : "lock.open")
                     .contentTransition(.symbolEffect(.replace))
-                Text(isLoadingPrice ? "가격 확인 중…" : "\(priceString)에 업그레이드")
-                    .contentTransition(.opacity)
+                Group {
+                    if isLoadingPrice {
+                        Text(L("paywall.upgrade.loading"))
+                    } else {
+                        Text(LF("paywall.upgrade.cta", priceString)) // priceString is now String
+                    }
+                }
+                .contentTransition(.opacity)
             }
             .font(.system(size: 17, weight: .semibold))
             .frame(maxWidth: .infinity, minHeight: 52)
@@ -112,12 +126,20 @@ private extension PaywallView {
             .padding(.horizontal, 20)
             .padding(.vertical, 8)
         }
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel(L("paywall.upgrade.label"))
+        .accessibilityValue(
+            isLoadingPrice
+            ? Text(L("paywall.upgrade.loading"))
+            : Text(LF("paywall.upgrade.value", priceString))
+        )
+        .accessibilityHint(L("paywall.upgrade.hint"))
     }
 }
 
 // MARK: - Private Views
 private extension PaywallView {
-    func featureRow(icon: String, title: String, subtitle: String) -> some View {
+    func featureRow(icon: String, title: LocalizedStringKey, subtitle: LocalizedStringKey) -> some View {
         HStack(alignment: .firstTextBaseline, spacing: 16) {
             Image(systemName: icon)
                 .font(.system(size: 18, weight: .semibold))
@@ -150,7 +172,8 @@ private extension PaywallView {
             }
             .glassEffect(.regular.tint(.primary).interactive())
             .clipShape(Circle())
-            .accessibilityLabel("닫기")
+            .accessibilityLabel(L("paywall.close"))
+            .accessibilityHint(L("paywall.close.hint"))
         }
     }
 
@@ -175,3 +198,29 @@ private extension PaywallView {
         .navigationBarTitleDisplayMode(.inline)
     }
 }
+
+/*
+ Localization Keys to provide (PaywallView)
+ - "paywall.title" = "Upgrade to Premium";
+ - "paywall.title.hint" = "Review premium features and purchase.";
+ - "paywall.features.label" = "Premium features";
+ - "paywall.features.hint" = "List of benefits included in premium.";
+ - "paywall.feature.once.title" = "One-time purchase";
+ - "paywall.feature.unlimited.title" = "Unlimited timers";
+ - "paywall.feature.unlimited.subtitle" = "Create as many timers as you want.";
+ - "paywall.feature.unlock.title" = "Unlock customization";
+ - "paywall.feature.unlock.subtitle" = "Access all colors and options.";
+ - "paywall.feature.future.title" = "Future updates";
+ - "paywall.feature.future.subtitle" = "Get new features as they arrive.";
+ - "paywall.restore" = "Restore purchases";
+ - "paywall.restore.label" = "Restore purchases";
+ - "paywall.restore.hint" = "Restore previous premium purchases.";
+ - "paywall.upgrade.loading" = "Loading price…";
+ - "paywall.upgrade.cta" = "Upgrade for %@"; // price placeholder
+ - "paywall.upgrade.label" = "Upgrade";
+ - "paywall.upgrade.value" = "%@"; // announce price as value
+ - "paywall.upgrade.hint" = "Purchase premium upgrade.";
+ - "paywall.close" = "Close";
+ - "paywall.close.hint" = "Close the paywall.";
+*/
+
