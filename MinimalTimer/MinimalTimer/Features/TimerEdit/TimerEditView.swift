@@ -97,20 +97,23 @@ struct TimerEditView: View {
                     .onChange(of: vm.draft.title) { _, _ in
                         titleError = false
                     }
+                    .accessibilityLabel(L("edit.timername.label"))
+                    .accessibilityValue(Text(LocalizedStringKey(vm.draft.title.isEmpty ? String(localized: "edit.title.untitled", defaultValue: "Untitled") : vm.draft.title)))
+                    .accessibilityHint(L("edit.timername.hint"))
 
                 HStack {
                     let count = vm.draft.title.count
                     let isCJK = vm.draft.title.isCJKLike
                     let softLimit = isCJK ? 8 : 15
 
-                    Text(LF("%lld/%lld", count, softLimit))
+                    Text(LF("edit.title.count.value", count, softLimit))
                         .font(.caption2)
                         .foregroundStyle(count > softLimit ? .orange : .secondary)
 
                     Spacer()
 
                     if count > softLimit {
-                        Text(L("edit.trimWarning"))
+                        Text(L("edit.trimwarning"))
                             .font(.caption2)
                             .foregroundStyle(.orange)
                     }
@@ -156,8 +159,8 @@ struct TimerEditView: View {
                                 }
                             }
                     }
-                    .accessibilityLabel(Text("\(String(describing: customColor))"))
-                    .accessibilityHint(isUnlocked ? Text("") : Text(L("premium.locked")))
+                    .accessibilityLabel(LF("edit.color.value", String(describing: customColor)))
+                    .accessibilityHint(isUnlocked ? Text(LocalizedStringKey("")) : Text(L("premium.locked")))
                     .accessibilityAddTraits(vm.draft.color == customColor ? .isSelected : [])
                 }
             }
@@ -178,13 +181,13 @@ struct TimerEditView: View {
             HStack {
                 Picker(L("edit.minutes"), selection: minutesBinding) {
                     ForEach(0...Constants.Time.maxMinutes, id: \.self) { m in
-                        Text("\(m) \(NSLocalizedString("edit.minutes", comment: ""))")
+                        Text(LF("edit.minutes.value", m))
                     }
                 }
 
                 Picker(L("edit.seconds"), selection: secondsBinding) {
                     ForEach(0..<60, id: \.self) { s in
-                        Text("\(s) \(NSLocalizedString("edit.seconds", comment: ""))")
+                        Text(LF("edit.seconds.value", s))
                     }
                 }
                 .disabled((vm.draft.totalSeconds / 60) >= Constants.Time.maxMinutes && (vm.draft.totalSeconds % 60) == 0)
@@ -207,7 +210,7 @@ struct TimerEditView: View {
 
     private var optionsSection: some View {
         Section(header:
-                    Label { Text(L("edit.options")) } icon: { Image(systemName: "lock.fill") }
+                    Label { Text(L("edit.options)) } icon: { Image(systemName: "lock.fill") }
             .textCase(nil)
             .foregroundStyle(isPremium ? .primary : .secondary)
         ) {
@@ -316,6 +319,8 @@ struct TimerEditView: View {
                                 .frame(maxWidth: .infinity)
                         }
                         .buttonStyle(.borderless)
+                        .accessibilityLabel(L("edit.delete.label"))
+                        .accessibilityHint(L("edit.delete.hint"))
                     }
                 }
             }
@@ -335,7 +340,9 @@ struct TimerEditView: View {
                 Button(action: { dismiss() }) {
                     Image(systemName: "xmark")
                         .foregroundColor(.primary)
-                },
+                }
+                .accessibilityLabel(L("edit.close.label"))
+                .accessibilityHint(L("edit.close.hint")),
             trailing:
                 Button(action: {
                     handleCheckTap()
@@ -344,6 +351,8 @@ struct TimerEditView: View {
                         .foregroundColor(.primary)
                         .opacity(vm.isSavable ? 1 : 0.3)
                 }
+                .accessibilityLabel(L("edit.save.label"))
+                .accessibilityHint(L("edit.save.hint"))
         )
         .simultaneousGesture(
             TapGesture().onEnded { isTitleFocused = false }
@@ -395,3 +404,38 @@ struct TimerEditView: View {
     }
 }
 
+/*
+ Localization Keys to provide (EditTimerView)
+ - "edit.timername" = "Timer name";
+ - "edit.timername.label" = "Timer name";
+ - "edit.timername.hint" = "Enter a name for your timer.";
+ - "edit.title.required" = "Title is required";
+ - "edit.placeholder.name" = "Name";
+ - "edit.title.count.value" = "%lld/%lld"; // current/limit
+ - "edit.trimwarning" = "Title may be trimmed.";
+ - "edit.color" = "Color";
+ - "edit.color.value" = "%@"; // color name
+ - "premium.locked" = "Premium feature locked";
+ - "edit.time" = "Time";
+ - "edit.time.required" = "Time is required";
+ - "edit.minutes" = "Minutes";
+ - "edit.seconds" = "Seconds";
+ - "edit.minutes.value" = "%lld minutes"; // stringsdict candidate
+ - "edit.seconds.value" = "%lld seconds"; // stringsdict candidate
+ - "edit.options" = "Options";
+ - "edit.option.alwaysshowtitle" = "Always show title";
+ - "edit.option.alwaysshowticks" = "Always show ticks";
+ - "edit.option.mute" = "Mute";
+ - "edit.option.repeat" = "Repeat";
+ - "edit.delete.label" = "Delete timer";
+ - "edit.delete.hint" = "Delete this timer and close the editor.";
+ - "edit.close.label" = "Close";
+ - "edit.close.hint" = "Close the editor without saving.";
+ - "edit.save.label" = "Save";
+ - "edit.save.hint" = "Save changes and close the editor.";
+ - "edit.title.untitled" = "Untitled";
+
+ Stringsdict candidates:
+ - edit.minutes.value (singular/plural)
+ - edit.seconds.value (singular/plural)
+*/

@@ -36,8 +36,8 @@ struct MainTimerRootView: View {
 
     // MARK: Floating Action Button State
     private var fabSymbol: String { path.isEmpty ? "list.bullet" : "plus" }
-    private var fabAXLabel: LocalizedStringKey { path.isEmpty ? "main.fab.showList.label" : "main.fab.create.label" }
-    private var fabAXHint: LocalizedStringKey { path.isEmpty ? "main.fab.showList.hint" : "main.fab.create.hint" }
+    private var fabAXLabel: LocalizedStringKey { path.isEmpty ? L("main.fab.showlist.label") : L("main.fab.create.label") }
+    private var fabAXHint: LocalizedStringKey { path.isEmpty ? L("main.fab.showlist.hint") : L("main.fab.create.hint") }
 
     var body: some View {
         NavigationStack(path: $path) {
@@ -55,8 +55,8 @@ struct MainTimerRootView: View {
                                 withAnimation(.snappy) { path.removeAll() }
                             }
                         }
-                        .accessibilityLabel(Text("main.timerlist.title"))
-                        .accessibilityHint(Text("main.timerlist.hint"))
+                        .accessibilityLabel(L("main.timerlist.title"))
+                        .accessibilityHint(L("main.timerlist.hint"))
                     }
                 }
         }
@@ -64,7 +64,7 @@ struct MainTimerRootView: View {
         .fullScreenCover(isPresented: Binding(get: { !hasSeenOnboarding }, set: { _ in })) {
             OnboardingView { hasSeenOnboarding = true }
                 .accessibilityIdentifier("onboarding.root")
-                .accessibilityLabel(Text("main.onboarding.title"))
+                .accessibilityLabel(L("main.onboarding.title"))
         }
         // MARK: Persistent FAB (stays across navigation)
         .overlay(alignment: .bottomTrailing) {
@@ -76,13 +76,13 @@ struct MainTimerRootView: View {
                     openCreate()
                 }
             }
+            .padding(.trailing, 20)
+            .padding(.bottom, 0)
+            .ignoresSafeArea()
             .accessibilityLabel(fabAXLabel)
             .accessibilityHint(fabAXHint)
             .accessibilityAddTraits(.isButton)
             .accessibilityIdentifier("fab.main")
-            .padding(.trailing, 20)
-            .padding(.bottom, 0)
-            .ignoresSafeArea()
         }
         .animation(.snappy, value: fabSymbol)
         // MARK: Create/Edit Sheet
@@ -100,7 +100,7 @@ struct MainTimerRootView: View {
         .fullScreenCover(isPresented: $showPaywall) {
             NavigationStack {
                 PaywallView(
-                    priceString: NSLocalizedString("paywall.price", comment: "Displayed price for upgrade"),
+                    priceString: L("paywall.price"),
                     onClose: { showPaywall = false },
                     onUpgradeTap: {
                         vm.handleUpgradePurchased()
@@ -117,8 +117,8 @@ struct MainTimerRootView: View {
                     }
                 )
                 .accessibilityIdentifier("paywall.root")
-                .accessibilityHint(Text("main.paywall.hint"))
-                .accessibilityLabel(Text("main.paywall.title"))
+                .accessibilityHint(L("main.paywall.hint"))
+                .accessibilityLabel(L("main.paywall.title"))
                 .navigationBarTitleDisplayMode(.inline)
             }
         }
@@ -183,15 +183,15 @@ private extension LocalizedStringKey {
 
 /*
  Accessibility Localization Keys to provide (MainTimerRootView)
- - "main.fab.showList.label" = "Show timers list";
- - "main.fab.showList.hint" = "Opens the list of saved timers.";
+ - "main.fab.showlist.label" = "Show timers list";
+ - "main.fab.showlist.hint" = "Opens the list of saved timers.";
  - "main.fab.create.label" = "Create timer";
  - "main.fab.create.hint" = "Create a new timer.";
 
  - "main.onboarding.title" = "Welcome to MinimalTimer"; // Read by VoiceOver on onboarding cover
 
  - "main.paywall.title" = "Upgrade to Premium"; // Title for paywall cover
- - "main.paywall.price" = "$2.99"; // Example localized price string; replace with real localized value or keep using existing key
+ - "paywall.price" = "$2.99"; // Example localized price string; replace with real localized value or keep using existing key
  - "main.paywall.hint" = "Review premium features and purchase or restore.";
  - "main.paywall.close.hint" = "Close the paywall.";
  - "main.paywall.upgrade.hint" = "Purchase the premium upgrade.";

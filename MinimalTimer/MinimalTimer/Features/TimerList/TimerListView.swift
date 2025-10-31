@@ -51,14 +51,14 @@ struct TimerListView: View {
                                 editMode?.wrappedValue = .active
                             }
                         } label: {
-                            Label(L("list.reorder"), systemImage: "arrow.up.arrow.down")
+                            Label(L("timerlist.reorder"), systemImage: "arrow.up.arrow.down")
                         }
                         .tint(.blue)
                         
                         Button(role: .destructive) {
                             vm.deleteTimer(at: index)
                         } label: {
-                            Label(L("list.delete"), systemImage: "trash")
+                            Label(L("timerlist.delete"), systemImage: "trash")
                         }
                     }
                     .moveDisabled(editMode?.wrappedValue != .active)
@@ -81,6 +81,9 @@ struct TimerListView: View {
                 .padding(.horizontal, 16)
                 .padding(.top, 12)
                 .padding(.bottom, 80)
+                .accessibilityElement(children: .combine)
+                .accessibilityLabel(L("timerlist.promo.label"))
+                .accessibilityHint(L("timerlist.promo.hint"))
             }
         }
         .background(Color(.systemBackground))
@@ -93,13 +96,15 @@ struct TimerListView: View {
                         Image(systemName: "checkmark")
                     }
                     .accessibilityLabel(L("list.edit.done"))
+                    .accessibilityHint(L("timerlist.edit.done.hint"))
                 } else {
                     Button {
                         isPresentingSettings = true
                     } label: {
                         Image(systemName: "gearshape.fill")
                     }
-                    .accessibilityLabel(L("settings.title"))
+                    .accessibilityLabel(L("settings.open.label"))
+                    .accessibilityHint(L("settings.open.hint"))
                 }
             }
         }
@@ -185,7 +190,8 @@ struct TimerListView: View {
                         Button(action: { isPresentingSettings = false }) {
                             Image(systemName: "xmark")
                         }
-                        .accessibilityLabel(L("common.close"))
+                        .accessibilityLabel(L("settings.close.label"))
+                        .accessibilityHint(L("settings.close.hint"))
                     }
                 }
             }
@@ -218,3 +224,15 @@ struct TimerListView: View {
     }
 }
 
+/*
+ Localization Keys to provide (TimerListView)
+ - "timerlist.reorder" = "Reorder";
+ - "timerlist.delete" = "Delete";
+ - "timerlist.edit.done.hint" = "Finish editing and return to the list.";
+ - "settings.open.label" = "Open settings";
+ - "settings.open.hint" = "Show app settings and information.";
+ - "timerlist.promo.label" = "Unlock premium";
+ - "timerlist.promo.hint" = "Open paywall to upgrade.";
+ - "settings.close.label" = "Close settings";
+ - "settings.close.hint" = "Dismiss the settings view.";
+*/

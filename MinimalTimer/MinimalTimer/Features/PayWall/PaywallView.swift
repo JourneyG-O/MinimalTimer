@@ -9,7 +9,7 @@ import SwiftUI
 
 struct PaywallView: View {
     // MARK: - Dependencies
-    let priceString: String
+    let priceString: LocalizedStringKey
     var onClose: (() -> Void)?
     var onUpgradeTap: (() -> Void)?
     var onRestoreTap: (() -> Void)?
@@ -53,6 +53,9 @@ private extension PaywallView {
             Text(L("paywall.title"))
                 .font(.system(size: 32, weight: .bold, design: .rounded))
         }
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel(L("paywall.title"))
+        .accessibilityHint(L("paywall.title.hint"))
     }
 
     var features: some View {
@@ -78,6 +81,9 @@ private extension PaywallView {
                 subtitle: L("paywall.feature.future.subtitle")
             )
         }
+        .accessibilityElement(children: .contain)
+        .accessibilityLabel(L("paywall.features.label"))
+        .accessibilityHint(L("paywall.features.hint"))
     }
 
     var restoreButton: some View {
@@ -92,33 +98,39 @@ private extension PaywallView {
         }
         .font(.caption)
         .tint(.primary)
+        .accessibilityLabel(L("paywall.restore.label"))
+        .accessibilityHint(L("paywall.restore.hint"))
     }
 
     var upgradeButton: some View {
-            Button {
-                UIImpactFeedbackGenerator(style: .light).impactOccurred()
-                onUpgradeTap?()
-            } label: {
-                HStack(spacing: 8) {
-                    Image(systemName: isLoadingPrice ? "hourglass" : "lock.open")
-                        .contentTransition(.symbolEffect(.replace))
-                    Group {
-                        if isLoadingPrice {
-                            Text(L("paywall.upgrade.loading"))
-                        } else {
-                            Text(LF("paywall.upgrade.cta", priceString))
-                        }
+        Button {
+            UIImpactFeedbackGenerator(style: .light).impactOccurred()
+            onUpgradeTap?()
+        } label: {
+            HStack(spacing: 8) {
+                Image(systemName: isLoadingPrice ? "hourglass" : "lock.open")
+                    .contentTransition(.symbolEffect(.replace))
+                Group {
+                    if isLoadingPrice {
+                        Text(L("paywall.upgrade.loading"))
+                    } else {
+                        Text(LF("paywall.upgrade.cta", priceString))
                     }
-                    .contentTransition(.opacity)
                 }
-                .font(.system(size: 17, weight: .semibold))
-                .frame(maxWidth: .infinity, minHeight: 52)
-                .foregroundStyle(.background)
-                .glassEffect(.regular.tint(.primary).interactive())
-                .padding(.horizontal, 20)
-                .padding(.vertical, 8)
+                .contentTransition(.opacity)
             }
+            .font(.system(size: 17, weight: .semibold))
+            .frame(maxWidth: .infinity, minHeight: 52)
+            .foregroundStyle(.background)
+            .glassEffect(.regular.tint(.primary).interactive())
+            .padding(.horizontal, 20)
+            .padding(.vertical, 8)
         }
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel(L("paywall.upgrade.label"))
+        .accessibilityValue(Text(isLoadingPrice ? L("paywall.upgrade.loading") : LF("paywall.upgrade.value", priceString)))
+        .accessibilityHint(L("paywall.upgrade.hint"))
+    }
 }
 
 // MARK: - Private Views
@@ -157,6 +169,7 @@ private extension PaywallView {
             .glassEffect(.regular.tint(.primary).interactive())
             .clipShape(Circle())
             .accessibilityLabel(L("paywall.close"))
+            .accessibilityHint(L("paywall.close.hint"))
         }
     }
 
@@ -171,7 +184,7 @@ private extension PaywallView {
 #Preview("NewPaywallView - 기본") {
     NavigationStack {
         PaywallView(
-            priceString: "₩5,900",
+            priceString: LocalizedStringKey("₩5,900"),
             onClose: { print("닫기") },
             onUpgradeTap: { print("업그레이드") },
             onRestoreTap: { print("복원") },
@@ -182,3 +195,27 @@ private extension PaywallView {
     }
 }
 
+/*
+ Localization Keys to provide (PaywallView)
+ - "paywall.title" = "Upgrade to Premium";
+ - "paywall.title.hint" = "Review premium features and purchase.";
+ - "paywall.features.label" = "Premium features";
+ - "paywall.features.hint" = "List of benefits included in premium.";
+ - "paywall.feature.once.title" = "One-time purchase";
+ - "paywall.feature.unlimited.title" = "Unlimited timers";
+ - "paywall.feature.unlimited.subtitle" = "Create as many timers as you want.";
+ - "paywall.feature.unlock.title" = "Unlock customization";
+ - "paywall.feature.unlock.subtitle" = "Access all colors and options.";
+ - "paywall.feature.future.title" = "Future updates";
+ - "paywall.feature.future.subtitle" = "Get new features as they arrive.";
+ - "paywall.restore" = "Restore purchases";
+ - "paywall.restore.label" = "Restore purchases";
+ - "paywall.restore.hint" = "Restore previous premium purchases.";
+ - "paywall.upgrade.loading" = "Loading price…";
+ - "paywall.upgrade.cta" = "Upgrade for %@"; // price placeholder
+ - "paywall.upgrade.label" = "Upgrade";
+ - "paywall.upgrade.value" = "%@"; // announce price as value
+ - "paywall.upgrade.hint" = "Purchase premium upgrade.";
+ - "paywall.close" = "Close";
+ - "paywall.close.hint" = "Close the paywall.";
+*/
