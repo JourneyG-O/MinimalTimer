@@ -85,6 +85,7 @@ struct MainTimerRootView: View {
             .accessibilityIdentifier("fab.main")
         }
         .animation(.snappy, value: fabSymbol)
+
         // MARK: Create/Edit Sheet
         .sheet(item: $editRoute) { route in
             switch route {
@@ -134,22 +135,20 @@ private extension MainTimerRootView {
         switch mode {
         case .create:
             TimerEditView(
-                vm: .init(
-                    mode: .create,
-                    initial: .init(),
-                    saveAction: vm.handleSave
-                )
+                mode: .create,
+                initial: .init(),
+                onPaywall: { showPaywall = true },
+                saveAction: vm.handleSave
             )
         case .edit:
             if let i = index {
                 let initial = TimerDraft(model: vm.timers[i])
                 TimerEditView(
-                    vm: .init(
-                        mode: .edit(index: i),
-                        initial: initial,
-                        saveAction: vm.handleSave,
-                        deleteAction: { idx in vm.deleteTimer(at: idx) }
-                    )
+                    mode: .edit(index: i),
+                    initial: initial,
+                    onPaywall: { showPaywall = true },
+                    saveAction: vm.handleSave,
+                    deleteAction: { idx in vm.deleteTimer(at: idx)}
                 )
             }
         }
