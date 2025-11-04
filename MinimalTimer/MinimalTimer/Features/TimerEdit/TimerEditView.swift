@@ -8,22 +8,22 @@
 import SwiftUI
 
 struct TimerEditView: View {
-    
+
     @StateObject private var vm: TimerEditViewModel
     @FocusState private var isTitleFocused: Bool
     @Environment(\.dismiss) private var dismiss
-    
-    @Environment(\.isPremium) private var isPremium
-    // Optional callback to present paywall from parent
+
+    @EnvironmentObject var purchaseManager: PurchaseManager
+
     var onPaywall: (() -> Void)? = nil
-    
+
     // MARK: - Local validation flags
     @State private var titleError: Bool = false
     @State private var timeError: Bool = false
-    
+
     // MARK: - Color Options
     private let availableColors = CustomColor.allCases
-    
+
     // MARK: - Preview/Tick layout
     private let previewSize: CGFloat = 150
     private let previewHeaderHeight: CGFloat = 220   // 프리뷰 컨테이너(배경 포함) 높이
@@ -32,7 +32,7 @@ struct TimerEditView: View {
     private let tickLength: CGFloat = 10
     private let previewPadding: CGFloat = 16
     private let formTopExtraSpacing: CGFloat = 36
-    
+
     // MARK: - Helpers
     private var minutesBinding: Binding<Int> {
         Binding<Int>(
@@ -51,7 +51,7 @@ struct TimerEditView: View {
             }
         )
     }
-    
+
     private var secondsBinding: Binding<Int> {
         Binding<Int>(
             get: { vm.draft.totalSeconds % 60 },
@@ -64,7 +64,7 @@ struct TimerEditView: View {
             }
         )
     }
-    
+
     private func triggerPaywall() {
         if let onPaywall {
             onPaywall()
@@ -73,15 +73,15 @@ struct TimerEditView: View {
             gen.notificationOccurred(.warning)
         }
     }
-    
+
     private func enforceColorEntitlement() {
-        guard !isPremium else { return }
+        guard !purchaseManager.isPremium else { return }
         guard let first = availableColors.first else { return }
         if vm.draft.color != first {
             vm.draft.color = first
         }
     }
-    
+
     // MARK: - Subviews
     private var titleSection: some View {
         Section(
@@ -100,18 +100,18 @@ struct TimerEditView: View {
                     .accessibilityLabel(L("edit.timername.label"))
                     .accessibilityValue(Text(LocalizedStringKey(vm.draft.title.isEmpty ? String(localized: "edit.title.untitled", defaultValue: "Untitled") : vm.draft.title)))
                     .accessibilityHint(L("edit.timername.hint"))
-                
+
                 HStack {
                     let count = vm.draft.title.count
                     let isCJK = vm.draft.title.isCJKLike
                     let softLimit = isCJK ? 8 : 15
-                    
+
                     Text("\(count)/\(softLimit)")
                         .font(.caption2)
                         .foregroundStyle(count > softLimit ? .orange : .secondary)
-                    
+
                     Spacer()
-                    
+
                     if count > softLimit {
                         Text(L("edit.trimwarning"))
                             .font(.caption2)
@@ -121,17 +121,17 @@ struct TimerEditView: View {
             }
         }
     }
-    
+
     private var colorGridSection: some View {
         Section(header:
                     Label { Text(L("edit.color")) } icon: { Image(systemName: "lock.fill") }
             .textCase(nil)
-            .foregroundStyle(isPremium ? .primary : .secondary)
+            .foregroundStyle(purchaseManager.isPremium ? .primary : .secondary)
         ) {
             let firstColor = availableColors.first
             LazyVGrid(columns: Array(repeating: .init(.flexible()), count: 6)) {
                 ForEach(availableColors, id: \.self) { customColor in
-                    let isUnlocked = isPremium || customColor == firstColor
+                    let isUnlocked = purchaseManager.isPremium || customColor == firstColor
                     ZStack {
                         Circle()
                             .fill(customColor.toColor)
@@ -167,10 +167,10 @@ struct TimerEditView: View {
             .padding(.vertical, 4)
         }
         .onAppear { enforceColorEntitlement() }
-        .onChange(of: isPremium) { _, _ in enforceColorEntitlement() }
+        .onChange(of: purchaseManager.isPremium) { _, _ in enforceColorEntitlement() }
         .onChange(of: vm.draft.color) { _, _ in enforceColorEntitlement() }
     }
-    
+
     private var timeSection: some View {
         Section(
             header:
@@ -184,7 +184,7 @@ struct TimerEditView: View {
                         Text(LF("edit.minutes.value", m))
                     }
                 }
-                
+
                 Picker(L("edit.seconds"), selection: secondsBinding) {
                     ForEach(0..<60, id: \.self) { s in
                         Text(LF("edit.seconds.value", s))
@@ -207,63 +207,63 @@ struct TimerEditView: View {
             }
         }
     }
-    
+
     private var optionsSection: some View {
         Section(header:
                     Label { Text(L("edit.options")) } icon: { Image(systemName: "lock.fill") }
             .textCase(nil)
-            .foregroundStyle(isPremium ? .primary : .secondary)
+            .foregroundStyle(purchaseManager.isPremium ? .primary : .secondary)
         ) {
-            premiumToggle(isOn: $vm.draft.isTitleAlwaysVisible,
-                          label: { Label(L("edit.option.alwaysShowTitle"), systemImage: "textformat") },
-                          isPremium: isPremium)
-            premiumToggle(isOn: $vm.draft.isTickAlwaysVisible,
-                          label: { Label(L("edit.option.alwaysShowTicks"), systemImage: "dial.min") },
-                          isPremium: isPremium)
-            premiumToggle(isOn: $vm.draft.isMuted,
-                          label: { Label(L("edit.option.mute"), systemImage: "speaker.slash.fill") },
-                          isPremium: isPremium)
-            premiumToggle(isOn: $vm.draft.isRepeatEnabled,
-                          label: { Label(L("edit.option.repeat"), systemImage: "repeat") },
-                          isPremium: isPremium)
+            premiumToggle(isOn: $vm.draft.isTitleAlwaysVisible) {
+                Label(L("edit.option.alwaysShowTitle"), systemImage: "textformat")
+            }
+            premiumToggle(isOn: $vm.draft.isTickAlwaysVisible) {
+                Label(L("edit.option.alwaysShowTicks"), systemImage: "dial.min")
+            }
+            premiumToggle(isOn: $vm.draft.isMuted) {
+                Label(L("edit.option.mute"), systemImage: "speaker.slash.fill")
+            }
+            premiumToggle(isOn: $vm.draft.isRepeatEnabled) {
+                Label(L("edit.option.repeat"), systemImage: "repeat")
+            }
         }
     }
-    
+
     @ViewBuilder
-    private func premiumToggle(isOn: Binding<Bool>, label: () -> some View, isPremium: Bool) -> some View {
+    private func premiumToggle(isOn: Binding<Bool>, label: () -> some View) -> some View {
         ZStack {
             Toggle(isOn: isOn) { label() }
-                .opacity(isPremium ? 1.0 : 0.45)
-                .disabled(!isPremium)
+                .opacity(purchaseManager.isPremium ? 1.0 : 0.45)
+                .disabled(!purchaseManager.isPremium)
             // Tap catcher overlay to show paywall when not premium
-            if !isPremium {
+            if !purchaseManager.isPremium {
                 Color.clear
                     .contentShape(Rectangle())
                     .onTapGesture { triggerPaywall() }
             }
         }
         .overlay(alignment: .trailing) {
-            if !isPremium {
+            if !purchaseManager.isPremium {
                 Image(systemName: "lock.fill")
                     .font(.system(size: 12, weight: .semibold))
                     .foregroundStyle(.secondary)
             }
         }
-        .accessibilityHint(isPremium ? Text("") : Text(L("premium.locked")))
+        .accessibilityHint(purchaseManager.isPremium ? Text("") : Text(L("premium.locked")))
     }
-    
+
     private var previewHeader: some View {
         ZStack {
             RoundedRectangle(cornerRadius: previewCornerRadius, style: .continuous)
                 .fill(.ultraThinMaterial)
-            
+
             ZStack {
                 Circle()
                     .fill(vm.draft.color.toColor)
                     .frame(width: previewSize, height: previewSize)
                     .shadow(color: .black.opacity(0.18), radius: 16, x: 0, y: 10)
                     .shadow(color: .black.opacity(0.26), radius: 4,  x: 0, y: 2)
-                
+
                 if vm.draft.isTickAlwaysVisible {
                     Circle()
                         .fill(Color.clear)
@@ -278,7 +278,7 @@ struct TimerEditView: View {
                             }
                         )
                 }
-                
+
                 Text(formattedTime(vm.draft.totalSeconds))
                     .font(.system(size: 32, weight: .bold, design: .rounded))
                     .foregroundColor(Color(.systemBackground))
@@ -288,7 +288,7 @@ struct TimerEditView: View {
         .padding(.top, previewPadding)
         .padding(.horizontal, previewPadding)
     }
-    
+
     init(
         mode: TimerEditViewModel.Mode,
         initial: TimerDraft = .init(),
@@ -303,23 +303,23 @@ struct TimerEditView: View {
             deleteAction: deleteAction
         ))
     }
-    
+
     var body: some View {
         ZStack(alignment: .top) {
             // MARK: - 1) Base Form (화면 전체, 배경 숨김)
             Form {
                 // title
                 titleSection
-                
+
                 // Color grid
                 colorGridSection
-                
+
                 // Time
                 timeSection
-                
+
                 // Options
                 optionsSection
-                
+
                 // 편집 모드에서만 노출 삭제 버튼
                 if case .edit = vm.mode {
                     Section {
@@ -343,7 +343,7 @@ struct TimerEditView: View {
             .safeAreaInset(edge: .top, spacing: 0) {
                 Color.clear.frame(height: previewHeaderHeight + formTopExtraSpacing)
             }
-            
+
             // MARK: - 2) Overlay Preview Header (유리 배경 + 프리뷰 내용)
             previewHeader
         }
@@ -374,36 +374,36 @@ struct TimerEditView: View {
         )
         .ignoresSafeArea(.keyboard)
     }
-    
+
     private func formattedTime(_ sec: Int) -> String {
         let minutes = sec / 60
         let seconds = sec % 60
         return String(format: "%02d:%02d", minutes, seconds)
     }
-    
+
     // MARK: - Validation & Save
     private func handleCheckTap() {
         let isTitleEmpty = vm.draft.title.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
         let isTimeZero = vm.draft.totalSeconds <= 0
-        
+
         if isTitleEmpty { titleError = true }
         if isTimeZero { timeError = true }
-        
+
         guard !isTitleEmpty, !isTimeZero else {
             let generator = UINotificationFeedbackGenerator()
             generator.notificationOccurred(.error)
             return
         }
-        
+
         // Success path: provide light feedback, save, and dismiss
         let successGenerator = UINotificationFeedbackGenerator()
         successGenerator.notificationOccurred(.success)
-        
+
         // End any active text field focus before dismissing
         isTitleFocused = false
-        
+
         vm.save()
-        
+
         // Dismiss after successful save
         dismiss()
     }
@@ -451,7 +451,7 @@ struct TimerEditView: View {
  - "edit.save.label" = "Save";
  - "edit.save.hint" = "Save changes and close the editor.";
  - "edit.title.untitled" = "Untitled";
- 
+
  Stringsdict candidates:
  - edit.minutes.value (singular/plural)
  - edit.seconds.value (singular/plural)

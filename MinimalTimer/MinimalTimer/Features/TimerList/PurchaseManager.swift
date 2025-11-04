@@ -52,6 +52,7 @@ final class PurchaseManager: ObservableObject {
 
     // MARK: - Purchasing
     func purchase() async -> Bool {
+        lastError = nil
         guard let product = product else {
             lastError = "상품을 불러오지 못했습니다."
             return false
@@ -71,9 +72,10 @@ final class PurchaseManager: ObservableObject {
                     return false
                 }
             case .userCancelled:
+                lastError = nil
                 return false
             case .pending:
-                // The purchase is pending (e.g., Ask to Buy)
+                lastError = String(localized: "구매가 보류중입니다.")
                 return false
             @unknown default:
                 return false
@@ -105,6 +107,7 @@ final class PurchaseManager: ObservableObject {
                 if t.productID == premiumProductID {
                     if isTransactionActive(t) {
                         hasPremium = true
+                        break
                     }
                 }
             case .unverified(_, _):
@@ -140,7 +143,7 @@ final class PurchaseManager: ObservableObject {
 
     // MARK: - Updates Listener
     private func listenForEntitlements() {
-        Task.detached { [weak self] in
+        Task { [weak self] in
             guard let self else { return }
             for await update in StoreKit.Transaction.updates {
                 switch update {
