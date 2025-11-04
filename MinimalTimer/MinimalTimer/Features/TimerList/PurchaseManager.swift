@@ -16,7 +16,7 @@ final class PurchaseManager: ObservableObject {
     @Published var lastError: String?
 
     // MARK: - Configuration
-    let premiumProductID = "minimal.timer.premium"
+    let premiumProductID = "app.stannum.minitime.premium"
 
     // MARK: - Init
     init() {
