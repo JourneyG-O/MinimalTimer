@@ -26,6 +26,9 @@ struct MainTimerRootView: View {
     // MARK: Dependencies
     @ObservedObject var vm: MainViewModel
 
+    // MARK: Purchase
+    @EnvironmentObject var purchaseManager: PurchaseManager
+
     // MARK: Persistent Flags
     @AppStorage("hasSeenOnboarding") private var hasSeenOnboarding: Bool = false
 
@@ -101,14 +104,16 @@ struct MainTimerRootView: View {
         .fullScreenCover(isPresented: $showPaywall) {
             NavigationStack {
                 PaywallView(
-                    priceString: String(localized: "paywall.price"),
+                    priceString: purchaseManager.localizedPrice,
                     onClose: { showPaywall = false },
                     onUpgradeTap: {
-                        vm.handleUpgradePurchased()
-                        showPaywall = false
+                        Task {
+                            let success = await purchaseManager.purchase()
+                            if success { showPaywall = false }
+                        }
                     },
                     onRestoreTap: {
-                        vm.restorePurchases()
+                        Task { await purchaseManager.restore() }
                     }
                 )
                 .accessibilityIdentifier("paywall.root")
@@ -149,7 +154,7 @@ private extension MainTimerRootView {
     }
 
     func openCreate() {
-        if vm.isPremium || vm.timers.count < 3 {
+        if purchaseManager.isPremium || vm.timers.count < 3 {
             withAnimation(.snappy) { editRoute = .create }
         } else {
             showPaywall = true

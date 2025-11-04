@@ -2149,9 +2149,6 @@
         }
       }
     },
-    "paywall.price" : {
-      "comment" : "Displayed price for upgrade"
-    },
     "paywall.restore" : {
       "extractionState" : "manual",
       "localizations" : {

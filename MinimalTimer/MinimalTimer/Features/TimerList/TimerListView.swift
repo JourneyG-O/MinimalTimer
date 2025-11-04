@@ -15,7 +15,10 @@ struct TimerListView: View {
     var onEdit: ((Int) -> Void)?
     var onShowPaywall: (() -> Void)?
     var onSelectTimer: ((Int) -> Void)?
-    
+
+    // MARK: Purchase
+    @EnvironmentObject var purchaseManager: PurchaseManager
+
     
     // MARK: - States
     @Environment(\.dismiss) private var dismiss
@@ -24,7 +27,7 @@ struct TimerListView: View {
     @State private var showSafari = false
     @State private var selectedPolicyURL: URL?
     @State private var isPurchasing: Bool = false
-    @StateObject private var purchaseManager = PurchaseManager.shared
+    
     
     // MARK: - Body
     var body: some View {
@@ -74,7 +77,7 @@ struct TimerListView: View {
             .listStyle(.plain)
             .scrollContentBackground(.hidden)
             
-            if !vm.isPremium {
+            if !purchaseManager.isPremium {
                 PaywallPromoRow {
                     onShowPaywall?()
                 }
@@ -112,7 +115,7 @@ struct TimerListView: View {
             NavigationStack {
                 List {
                     Section(L("settings.premium.section")) {
-                        if purchaseManager.isPremium || vm.isPremium {
+                        if purchaseManager.isPremium {
                             Label(L("settings.premium.active"), systemImage: "checkmark.seal.fill")
                                 .foregroundStyle(.green)
                         } else {
@@ -125,12 +128,7 @@ struct TimerListView: View {
                                 }
                                 Spacer()
                                 Button(action: {
-                                    isPurchasing = true
-                                    Task {
-                                        let _ = await purchaseManager.purchase()
-                                        isPurchasing = false
-                                        if purchaseManager.isPremium { vm.handleUpgradePurchased() }
-                                    }
+                                    onShowPaywall?()
                                 }) {
                                     if isPurchasing {
                                         ProgressView()
@@ -203,9 +201,6 @@ struct TimerListView: View {
                 SafariView(url: url)
                     .ignoresSafeArea()
             }
-        }
-        .onChange(of: purchaseManager.isPremium) { newValue, _ in
-            if newValue { vm.handleUpgradePurchased() }
         }
     }
     
