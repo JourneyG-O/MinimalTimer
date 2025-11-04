@@ -115,7 +115,10 @@ struct MainTimerRootView: View {
                 }
             case .settings:
                 NavigationStack {
-                    SettingsView(onClose: { modalRoute = nil })
+                    SettingsView(
+                        onClose: { modalRoute = nil },
+                        onShowPaywall: { modalRoute = .paywall }
+                    )
                 }
             case .paywall:
                 NavigationStack {
