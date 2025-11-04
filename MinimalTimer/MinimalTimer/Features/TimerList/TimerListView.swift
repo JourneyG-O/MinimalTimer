@@ -187,7 +187,8 @@ struct TimerListView: View {
                 .navigationTitle(L("settings.title"))
                 .toolbar {
                     ToolbarItem(placement: .topBarTrailing) {
-                        Button(action: { isPresentingSettings = false }) {
+                        Button(action: {
+                            isPresentingSettings = false }) {
                             Image(systemName: "xmark")
                         }
                         .accessibilityLabel(L("settings.close.label"))

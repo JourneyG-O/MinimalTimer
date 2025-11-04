@@ -6,8 +6,13 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		D792FE762EB6087D0053F65A /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D792FE752EB6087D0053F65A /* StoreKit.framework */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXFileReference section */
 		D71CED612DB8D69A0042E2E1 /* MiniTime.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MiniTime.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		D792FE752EB6087D0053F65A /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -23,6 +28,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D792FE762EB6087D0053F65A /* StoreKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -33,6 +39,7 @@
 			isa = PBXGroup;
 			children = (
 				D71CED632DB8D69A0042E2E1 /* MinimalTimer */,
+				D792FE722EB6076B0053F65A /* Frameworks */,
 				D71CED622DB8D69A0042E2E1 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -43,6 +50,14 @@
 				D71CED612DB8D69A0042E2E1 /* MiniTime.app */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		D792FE722EB6076B0053F65A /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				D792FE752EB6087D0053F65A /* StoreKit.framework */,
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -262,6 +277,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"MinimalTimer/Preview Content\"";
@@ -281,8 +297,9 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = app.stannum.MiniTime;
+				PRODUCT_BUNDLE_IDENTIFIER = app.stannum.minitime;
 				PRODUCT_NAME = MiniTime;
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -294,6 +311,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"MinimalTimer/Preview Content\"";
@@ -313,8 +331,9 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = app.stannum.MiniTime;
+				PRODUCT_BUNDLE_IDENTIFIER = app.stannum.minitime;
 				PRODUCT_NAME = MiniTime;
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
