@@ -14,6 +14,7 @@ struct TimerListView: View {
     var onCreate: (() -> Void)?
     var onEdit: ((Int) -> Void)?
     var onShowPaywall: (() -> Void)?
+    var onShowSettings: (() -> Void)?
     var onSelectTimer: ((Int) -> Void)?
 
     // MARK: Purchase

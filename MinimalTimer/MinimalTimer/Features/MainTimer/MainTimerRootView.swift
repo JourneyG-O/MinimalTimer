@@ -10,6 +10,20 @@ import SwiftUI
 // MARK: - Routes
 private enum AppRoute { case list }
 
+private enum ModalRoute: Identifiable {
+    case edit(EditSheetRoute)
+    case settings
+    case paywall
+
+    var id: String {
+        switch self {
+        case .edit(let r): return "edit-\(r.id)"
+        case .settings: return "settings"
+        case .paywall: return "paywall"
+        }
+    }
+}
+
 private enum EditSheetRoute: Identifiable {
     case create
     case edit(Int)
@@ -34,8 +48,7 @@ struct MainTimerRootView: View {
 
     // MARK: Navigation State
     @State private var path: [AppRoute] = []
-    @State private var editRoute: EditSheetRoute?
-    @State private var showPaywall: Bool = false
+    @State private var modalRoute: ModalRoute?
 
     // MARK: Floating Action Button State
     private var fabSymbol: String { path.isEmpty ? "list.bullet" : "plus" }
@@ -52,7 +65,8 @@ struct MainTimerRootView: View {
                             vm: vm,
                             onCreate: { openCreate() },
                             onEdit: { idx in openEdit(idx) },
-                            onShowPaywall: { showPaywall = true }
+                            onShowPaywall: { modalRoute = .paywall },
+                            onShowSettings: { modalRoute = .settings }
                         ) { _ in
                             DispatchQueue.main.async {
                                 withAnimation(.snappy) { path.removeAll() }
@@ -89,37 +103,40 @@ struct MainTimerRootView: View {
         }
         .animation(.snappy, value: fabSymbol)
 
-        // MARK: Create/Edit Sheet
-        .sheet(item: $editRoute) { route in
+        // MARK: Sheets
+        .sheet(item: $modalRoute) { route in
             switch route {
-            case .create:
-                NavigationStack { editView(mode: .create, index: nil) }
-                    .sheetStyle()
-            case .edit(let idx):
-                NavigationStack { editView(mode: .edit, index: idx) }
-                    .sheetStyle()
-            }
-        }
-        // MARK: Paywall
-        .fullScreenCover(isPresented: $showPaywall) {
-            NavigationStack {
-                PaywallView(
-                    priceString: purchaseManager.localizedPrice,
-                    onClose: { showPaywall = false },
-                    onUpgradeTap: {
-                        Task {
-                            let success = await purchaseManager.purchase()
-                            if success { showPaywall = false }
+            case .edit(let editRoute):
+                switch editRoute {
+                case .create:
+                    NavigationStack { editView(index: nil) }
+                case .edit(let idx):
+                    NavigationStack { editView(index: idx) }
+                }
+            case .settings:
+                NavigationStack {
+                    SettingsView(onClose: { modalRoute = nil })
+                }
+            case .paywall:
+                NavigationStack {
+                    PaywallView(
+                        priceString: purchaseManager.localizedPrice,
+                        onClose: { modalRoute = nil },
+                        onUpgradeTap: {
+                            Task {
+                                let success = await purchaseManager.purchase()
+                                if success { modalRoute = nil }
+                            }
+                        },
+                        onRestoreTap: {
+                            Task { await purchaseManager.restore() }
                         }
-                    },
-                    onRestoreTap: {
-                        Task { await purchaseManager.restore() }
-                    }
-                )
-                .accessibilityIdentifier("paywall.root")
-                .accessibilityHint(L("main.paywall.hint"))
-                .accessibilityLabel(L("main.paywall.title"))
-                .navigationBarTitleDisplayMode(.inline)
+                    )
+                    .accessibilityIdentifier("paywall.root")
+                    .accessibilityHint(L("main.paywall.hint"))
+                    .accessibilityLabel(L("main.paywall.title"))
+                    .navigationBarTitleDisplayMode(.inline)
+                }
             }
         }
     }
@@ -130,39 +147,37 @@ private extension MainTimerRootView {
     enum EditMode { case create, edit }
 
     @ViewBuilder
-    func editView(mode: EditMode, index: Int?) -> some View {
-        switch mode {
-        case .create:
+    func editView(index: Int?) -> some View {
+        if let i = index {
+            // Edit existing
+            let initial = TimerDraft(model: vm.timers[i])
+            TimerEditView(
+                mode: .edit(index: i),
+                initial: initial,
+                onPaywall: { modalRoute = .paywall },
+                saveAction: vm.handleSave,
+                deleteAction: { idx in vm.deleteTimer(at: idx) }
+            )
+        } else {
+            // Create new
             TimerEditView(
                 mode: .create,
                 initial: .init(),
-                onPaywall: { showPaywall = true },
-                saveAction: vm.handleSave
-            )
-        case .edit:
-            if let i = index {
-                let initial = TimerDraft(model: vm.timers[i])
-                TimerEditView(
-                    mode: .edit(index: i),
-                    initial: initial,
-                    onPaywall: { showPaywall = true },
-                    saveAction: vm.handleSave,
-                    deleteAction: { idx in vm.deleteTimer(at: idx)}
-                )
-            }
+                onPaywall: { modalRoute = .paywall },
+                saveAction: vm.handleSave)
         }
     }
 
     func openCreate() {
         if purchaseManager.isPremium || vm.timers.count < 3 {
-            withAnimation(.snappy) { editRoute = .create }
+            withAnimation(.snappy) { modalRoute = .edit(.create) }
         } else {
-            showPaywall = true
+            modalRoute = .paywall
         }
     }
 
     func openEdit(_ index: Int) {
-        withAnimation(.snappy) { editRoute = .edit(index) }
+        withAnimation(.snappy) { modalRoute = .edit(.edit(index)) }
     }
 }
 
