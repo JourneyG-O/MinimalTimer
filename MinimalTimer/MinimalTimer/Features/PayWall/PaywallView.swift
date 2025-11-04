@@ -13,8 +13,6 @@ struct PaywallView: View {
     var onClose: (() -> Void)?
     var onUpgradeTap: (() -> Void)?
     var onRestoreTap: (() -> Void)?
-    var onOpenTerms: (() -> Void)?
-    var onOpenPrivacy: (() -> Void)?
 
     // MARK: - State
     @State private var isLoadingPrice = false
@@ -191,9 +189,7 @@ private extension PaywallView {
             priceString: "₩5,900",
             onClose: { print("닫기") },
             onUpgradeTap: { print("업그레이드") },
-            onRestoreTap: { print("복원") },
-            onOpenTerms: { print("이용약관") },
-            onOpenPrivacy: { print("개인정보 처리방침") }
+            onRestoreTap: { print("복원") }
         )
         .navigationBarTitleDisplayMode(.inline)
     }

@@ -109,12 +109,6 @@ struct MainTimerRootView: View {
                     },
                     onRestoreTap: {
                         vm.restorePurchases()
-                    },
-                    onOpenTerms: {
-                        // TODO: 약관 링크 연결
-                    },
-                    onOpenPrivacy: {
-                        // TODO: 개인정보 처리방침 링크 연결
                     }
                 )
                 .accessibilityIdentifier("paywall.root")
