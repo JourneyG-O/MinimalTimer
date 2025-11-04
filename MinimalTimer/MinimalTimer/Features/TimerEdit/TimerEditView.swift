@@ -137,7 +137,7 @@ struct TimerEditView: View {
                             .fill(customColor.toColor)
                             .frame(width: 32, height: 32)
                             .overlay(
-                                Circle().stroke(Color.primary, lineWidth: vm.draft.color == customColor ? 2 : 0)
+                                Circle().stroke(Color(.systemBackground), lineWidth: vm.draft.color == customColor ? 4 : 0)
                             )
                             .opacity(isUnlocked ? 1.0 : 0.45)
                             .overlay(alignment: .center) {
