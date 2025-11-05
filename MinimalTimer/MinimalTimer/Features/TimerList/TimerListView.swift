@@ -101,7 +101,7 @@ struct TimerListView: View {
                     Button {
                         onShowSettings?()
                     } label: {
-                        Image(systemName: "gearshape.fill")
+                        Image(systemName: "line.3.horizontal")
                     }
                     .accessibilityLabel(L("settings.open.label"))
                     .accessibilityHint(L("settings.open.hint"))
