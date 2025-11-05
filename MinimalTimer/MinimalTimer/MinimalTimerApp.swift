@@ -9,9 +9,12 @@ import SwiftUI
 
 @main
 struct MinimalTimerApp: App {
+    @StateObject private var purchaseManager = PurchaseManager.shared
+
     var body: some Scene {
         WindowGroup {
             MainTimerRootView(vm: .init())
+                .environmentObject(purchaseManager)
         }
     }
 }

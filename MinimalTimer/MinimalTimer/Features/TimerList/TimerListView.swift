@@ -14,17 +14,17 @@ struct TimerListView: View {
     var onCreate: (() -> Void)?
     var onEdit: ((Int) -> Void)?
     var onShowPaywall: (() -> Void)?
+    var onShowSettings: (() -> Void)?
     var onSelectTimer: ((Int) -> Void)?
-    
+
+    // MARK: Purchase
+    @EnvironmentObject var purchaseManager: PurchaseManager
+
     
     // MARK: - States
     @Environment(\.dismiss) private var dismiss
     @Environment(\.editMode) private var editMode
-    @State private var isPresentingSettings: Bool = false
-    @State private var showSafari = false
-    @State private var selectedPolicyURL: URL?
-    @State private var isPurchasing: Bool = false
-    @StateObject private var purchaseManager = PurchaseManager.shared
+    
     
     // MARK: - Body
     var body: some View {
@@ -74,7 +74,7 @@ struct TimerListView: View {
             .listStyle(.plain)
             .scrollContentBackground(.hidden)
             
-            if !vm.isPremium {
+            if !purchaseManager.isPremium {
                 PaywallPromoRow {
                     onShowPaywall?()
                 }
@@ -99,7 +99,7 @@ struct TimerListView: View {
                     .accessibilityHint(L("timerlist.edit.done.hint"))
                 } else {
                     Button {
-                        isPresentingSettings = true
+                        onShowSettings?()
                     } label: {
                         Image(systemName: "gearshape.fill")
                     }
@@ -107,105 +107,6 @@ struct TimerListView: View {
                     .accessibilityHint(L("settings.open.hint"))
                 }
             }
-        }
-        .sheet(isPresented: $isPresentingSettings) {
-            NavigationStack {
-                List {
-                    Section(L("settings.premium.section")) {
-                        if purchaseManager.isPremium || vm.isPremium {
-                            Label(L("settings.premium.active"), systemImage: "checkmark.seal.fill")
-                                .foregroundStyle(.green)
-                        } else {
-                            HStack {
-                                VStack(alignment: .leading, spacing: 4) {
-                                    Text(L("settings.premium.headline"))
-                                    Text(purchaseManager.localizedPrice.isEmpty ? L("settings.premium.price.loading") : LocalizedStringKey(purchaseManager.localizedPrice))
-                                        .font(.caption)
-                                        .foregroundStyle(.secondary)
-                                }
-                                Spacer()
-                                Button(action: {
-                                    isPurchasing = true
-                                    Task {
-                                        let _ = await purchaseManager.purchase()
-                                        isPurchasing = false
-                                        if purchaseManager.isPremium { vm.handleUpgradePurchased() }
-                                    }
-                                }) {
-                                    if isPurchasing {
-                                        ProgressView()
-                                    } else {
-                                        Text(L("settings.premium.buy"))
-                                    }
-                                }
-                                .buttonStyle(.borderedProminent)
-                            }
-
-                            Button(L("settings.premium.restore")) {
-                                Task { await purchaseManager.restore() }
-                            }
-                        }
-
-                        if let err = purchaseManager.lastError {
-                            Text(err)
-                                .font(.caption)
-                                .foregroundStyle(.red)
-                        }
-                    }
-                    
-                    Section(L("settings.appinfo.section")) {
-                        HStack {
-                            Text(L("settings.appinfo.version"))
-                            Spacer()
-                            Text(Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "-")
-                                .foregroundStyle(.secondary)
-                        }
-                    }
-                    
-                    Section(L("settings.policy.section")) {
-                        Button(L("settings.policy.terms")) {
-                            if let url = URL(string: "https://stannum.app/apps/minimal-timer/legal/terms.html") {
-                                selectedPolicyURL = url
-                                isPresentingSettings = false
-                                DispatchQueue.main.asyncAfter(deadline: .now() + 0.35) {
-                                    showSafari = true
-                                }
-                            }
-                        }
-                        
-                        Button(L("settings.policy.privacy")) {
-                            if let url = URL(string: "https://stannum.app/apps/minimal-timer/legal/privacy.html") {
-                                selectedPolicyURL = url
-                                isPresentingSettings = false
-                                DispatchQueue.main.asyncAfter(deadline: .now() + 0.35) {
-                                    showSafari = true
-                                }
-                            }
-                        }
-                    }
-                }
-                .navigationTitle(L("settings.title"))
-                .toolbar {
-                    ToolbarItem(placement: .topBarTrailing) {
-                        Button(action: {
-                            isPresentingSettings = false }) {
-                            Image(systemName: "xmark")
-                        }
-                        .accessibilityLabel(L("settings.close.label"))
-                        .accessibilityHint(L("settings.close.hint"))
-                    }
-                }
-            }
-            .task { await purchaseManager.refreshProducts() }
-        }
-        .sheet(isPresented: $showSafari) {
-            if let url = selectedPolicyURL {
-                SafariView(url: url)
-                    .ignoresSafeArea()
-            }
-        }
-        .onChange(of: purchaseManager.isPremium) { newValue, _ in
-            if newValue { vm.handleUpgradePurchased() }
         }
     }
     
