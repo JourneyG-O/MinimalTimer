@@ -12,14 +12,7 @@ struct PaywallPromoRow: View {
 
     var body: some View {
         Button(action: onTap) {
-            HStack(spacing: 12) {
-                Image(systemName: "sparkles")
-                    .font(.system(size: 18, weight: .semibold))
-                    .foregroundStyle(.background)
-                    .padding(.horizontal, 12)
-
-
-
+            HStack(spacing: 8) {
                 VStack(alignment: .leading, spacing: 4) {
                     Text(L("paywallpromo.title"))
                         .font(.headline)
@@ -43,7 +36,8 @@ struct PaywallPromoRow: View {
                             .fill(.background)
                     )
             }
-            .padding(16)
+            .padding(.horizontal, 16)
+            .padding(.vertical, 8)
             .background {
                 RoundedRectangle(cornerRadius: 18)
                     .fill(.primary)

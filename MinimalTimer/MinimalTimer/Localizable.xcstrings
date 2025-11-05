@@ -2300,25 +2300,25 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "UPGRADE"
+            "value" : "Upgrade"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "アップグレード"
+            "value" : "Upgrade"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "업그레이드"
+            "value" : "Upgrade"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "升级"
+            "value" : "Upgrade"
           }
         }
       }
@@ -2358,24 +2358,24 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Own it forever with a one-time purchase"
+            "value" : "One-time purchase. Forever yours."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "一度の購入で永久に利用できます"
+            "value" : "一度の購入で永久に"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "한 번 결제로 평생 소유하세요"
+            "value" : "한 번 결제로 평생 소유"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "一次购买，永久拥有"
           }
         }
@@ -2387,25 +2387,25 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "MiniTime Pro"
+            "value" : "MiniTimePro"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "MiniTime Pro"
+            "value" : "MiniTimePro"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "MiniTime Pro"
+            "value" : "MiniTimePro"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
-            "state" : "translated",
-            "value" : "MiniTime Pro"
+            "state" : "needs_review",
+            "value" : "MiniTimePro"
           }
         }
       }

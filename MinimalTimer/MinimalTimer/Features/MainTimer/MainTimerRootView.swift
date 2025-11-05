@@ -50,6 +50,11 @@ struct MainTimerRootView: View {
     @State private var path: [AppRoute] = []
     @State private var modalRoute: ModalRoute?
 
+    // MARK: Layout constants
+    private let fabPadding: CGFloat = 20
+    private let fabSize: CGFloat = 64
+
+
     // MARK: Floating Action Button State
     private var fabSymbol: String { path.isEmpty ? "list.bullet" : "plus" }
     private var fabAXLabel: LocalizedStringKey { path.isEmpty ? L("main.fab.showlist.label") : L("main.fab.create.label") }
@@ -93,7 +98,7 @@ struct MainTimerRootView: View {
                     openCreate()
                 }
             }
-            .padding(.trailing, 20)
+            .padding(.trailing, fabPadding)
             .padding(.bottom, 0)
             .ignoresSafeArea()
             .accessibilityLabel(fabAXLabel)
@@ -102,6 +107,23 @@ struct MainTimerRootView: View {
             .accessibilityIdentifier("fab.main")
         }
         .animation(.snappy, value: fabSymbol)
+
+        // MARK: Paywall Promo
+        .overlay(alignment: .bottomLeading) {
+            let isOnList = path.last == .list
+            if isOnList, !purchaseManager.isPremium {
+                PaywallPromoRow {
+                    modalRoute = .paywall
+                }
+                .padding(.leading, fabPadding)
+                .padding(.trailing, fabPadding + fabSize + 10)
+                .padding(.bottom, 0)
+                .accessibilityElement(children: .combine)
+                .accessibilityLabel(L("timerlist.promo.label"))
+                .accessibilityHint(L("timerlist.promo.hint"))
+                .transition(.move(edge: .bottom).combined(with: .opacity))
+            }
+        }
 
         // MARK: Sheets
         .sheet(item: $modalRoute) { route in
