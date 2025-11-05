@@ -44,6 +44,12 @@ struct TimerListView: View {
                     .listRowBackground(Color.clear)
                     .padding(.vertical, 8)
                     .swipeActions(edge: .trailing) {
+                        Button(role: .destructive) {
+                            vm.deleteTimer(at: index)
+                        } label: {
+                            Label(L("timerlist.delete"), systemImage: "trash")
+                        }
+
                         Button {
                             if editMode?.wrappedValue == .active {
                                 editMode?.wrappedValue = .inactive
@@ -54,12 +60,6 @@ struct TimerListView: View {
                             Label(L("timerlist.reorder"), systemImage: "arrow.up.arrow.down")
                         }
                         .tint(.blue)
-                        
-                        Button(role: .destructive) {
-                            vm.deleteTimer(at: index)
-                        } label: {
-                            Label(L("timerlist.delete"), systemImage: "trash")
-                        }
                     }
                     .moveDisabled(editMode?.wrappedValue != .active)
                 }
