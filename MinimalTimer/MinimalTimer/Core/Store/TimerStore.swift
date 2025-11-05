@@ -84,8 +84,9 @@ class TimerStore {
     }
 
     static var defaultTimers: [TimerModel] {
+        let title: String = String(localized: "default.timer.name")
         return [
-            TimerModel(title: "기본 타이머", totalTime: 30 * 30, currentTime: 30 * 30, color: CustomColor.dynamicForeground)
+            TimerModel(title: title, totalTime: 30 * 60, currentTime: 30 * 60, color: CustomColor.dynamicForeground)
         ]
     }
 }

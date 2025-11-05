@@ -73,18 +73,6 @@ struct TimerListView: View {
             }
             .listStyle(.plain)
             .scrollContentBackground(.hidden)
-            
-            if !purchaseManager.isPremium {
-                PaywallPromoRow {
-                    onShowPaywall?()
-                }
-                .padding(.horizontal, 16)
-                .padding(.top, 12)
-                .padding(.bottom, 80)
-                .accessibilityElement(children: .combine)
-                .accessibilityLabel(L("timerlist.promo.label"))
-                .accessibilityHint(L("timerlist.promo.hint"))
-            }
         }
         .background(Color(.systemBackground))
         .toolbar {
@@ -101,7 +89,7 @@ struct TimerListView: View {
                     Button {
                         onShowSettings?()
                     } label: {
-                        Image(systemName: "gearshape.fill")
+                        Image(systemName: "line.3.horizontal")
                     }
                     .accessibilityLabel(L("settings.open.label"))
                     .accessibilityHint(L("settings.open.hint"))
