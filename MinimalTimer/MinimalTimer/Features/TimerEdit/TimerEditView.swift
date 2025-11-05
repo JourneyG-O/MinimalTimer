@@ -131,19 +131,23 @@ struct TimerEditView: View {
                     ZStack {
                         Circle()
                             .fill(customColor.toColor)
-                            .frame(width: 32, height: 32)
-                            .overlay(
-                                Circle().stroke(Color(.systemBackground), lineWidth: vm.draft.color == customColor ? 4 : 0)
-                            )
+                            .frame(width: 40, height: 40)
                             .opacity(isUnlocked ? 1.0 : 0.45)
                             .overlay(alignment: .center) {
                                 if !isUnlocked {
                                     Image(systemName: "lock.fill")
-                                        .font(.system(size: 10, weight: .semibold))
+                                        .font(.system(size: 16, weight: .semibold))
                                         .foregroundStyle(.secondary)
                                         .padding(2)
                                 }
                             }
+
+                        Circle()
+                            .fill(.clear)
+                            .frame(width: 46, height: 46)
+                            .overlay(
+                                Circle().stroke(Color(.gray), lineWidth: vm.draft.color == customColor ? 3 : 0)
+                            )
                         // Invisible tap catcher to either select or show paywall
                         Color.clear
                             .contentShape(Circle())
@@ -230,7 +234,7 @@ struct TimerEditView: View {
         HStack(spacing: 6) {
             if !purchaseManager.isPremium {
                 Image(systemName: "lock.fill")
-                    .font(.caption2)
+                    .font(.title2)
                     .foregroundStyle(.secondary)
                     .accessibilityHidden(true)
             }
@@ -276,6 +280,7 @@ struct TimerEditView: View {
                 Image(systemName: "lock.fill")
                     .font(.system(size: 12, weight: .semibold))
                     .foregroundStyle(.secondary)
+                    .padding(5)
             }
         }
         .accessibilityHint(purchaseManager.isPremium ? Text("") : Text(L("premium.locked")))
