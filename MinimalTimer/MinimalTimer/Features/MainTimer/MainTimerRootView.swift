@@ -58,10 +58,10 @@ struct MainTimerRootView: View {
     
     
     // MARK: Floating Action Button State
-    private var fabSymbol: String { path.isEmpty ? "list.bullet" : "plus" }
-    private var fabAXLabel: LocalizedStringKey { path.isEmpty ? L("main.fab.showlist.label") : L("main.fab.create.label") }
-    private var fabAXHint: LocalizedStringKey { path.isEmpty ? L("main.fab.showlist.hint") : L("main.fab.create.hint") }
-    
+    private var fabSymbol: String { path.isEmpty && !vm.timers.isEmpty ? "list.bullet" : "plus" }
+    private var fabAXLabel: LocalizedStringKey { path.isEmpty && !vm.timers.isEmpty ? L("main.fab.showlist.label") : L("main.fab.create.label") }
+    private var fabAXHint: LocalizedStringKey { path.isEmpty && !vm.timers.isEmpty ? L("main.fab.showlist.hint") : L("main.fab.create.hint") }
+
     var body: some View {
         NavigationStack(path: $path) {
             MainTimerView(vm: vm)
@@ -93,7 +93,7 @@ struct MainTimerRootView: View {
         // MARK: Persistent FAB (stays across navigation)
         .overlay(alignment: .bottomTrailing) {
             FloatingButton(symbol: fabSymbol) {
-                if path.isEmpty {
+                if path.isEmpty && !vm.timers.isEmpty {
                     vm.pause(fromUser: false)
                     withAnimation(.snappy) { path.append(.list) }
                 } else {
