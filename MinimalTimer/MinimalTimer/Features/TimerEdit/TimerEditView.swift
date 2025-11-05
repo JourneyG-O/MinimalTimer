@@ -451,7 +451,6 @@ struct TimerEditView: View {
             onPaywall: { print("Present Paywall") },
             saveAction: { _, _ in }
         )
-        .environment(\.isPremium, false)
     }
 }
 
