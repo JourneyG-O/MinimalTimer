@@ -123,11 +123,7 @@ struct TimerEditView: View {
     }
 
     private var colorGridSection: some View {
-        Section(header:
-                    Label { Text(L("edit.color")) } icon: { Image(systemName: "lock.fill") }
-            .textCase(nil)
-            .foregroundStyle(purchaseManager.isPremium ? .primary : .secondary)
-        ) {
+        Section(header: sectionHeader(L("edit.color"))) {
             let firstColor = availableColors.first
             LazyVGrid(columns: Array(repeating: .init(.flexible()), count: 6)) {
                 ForEach(availableColors, id: \.self) { customColor in
@@ -167,8 +163,12 @@ struct TimerEditView: View {
             .padding(.vertical, 4)
         }
         .onAppear { enforceColorEntitlement() }
-        .onChange(of: purchaseManager.isPremium) { _, _ in enforceColorEntitlement() }
-        .onChange(of: vm.draft.color) { _, _ in enforceColorEntitlement() }
+        .onChange(of: purchaseManager.isPremium) {
+            enforceColorEntitlement()
+        }
+        .onChange(of: vm.draft.color) {
+            enforceColorEntitlement()
+        }
     }
 
     private var timeSection: some View {
@@ -209,11 +209,7 @@ struct TimerEditView: View {
     }
 
     private var optionsSection: some View {
-        Section(header:
-                    Label { Text(L("edit.options")) } icon: { Image(systemName: "lock.fill") }
-            .textCase(nil)
-            .foregroundStyle(purchaseManager.isPremium ? .primary : .secondary)
-        ) {
+        Section(header: sectionHeader(L("edit.options"))) {
             premiumToggle(isOn: $vm.draft.isTitleAlwaysVisible) {
                 Label(L("edit.option.alwaysShowTitle"), systemImage: "textformat")
             }
@@ -227,6 +223,39 @@ struct TimerEditView: View {
                 Label(L("edit.option.repeat"), systemImage: "repeat")
             }
         }
+    }
+
+    @ViewBuilder
+    private func sectionHeader(_ title: LocalizedStringKey) -> some View {
+        HStack(spacing: 6) {
+            if !purchaseManager.isPremium {
+                Image(systemName: "lock.fill")
+                    .font(.caption2)
+                    .foregroundStyle(.secondary)
+                    .accessibilityHidden(true)
+            }
+            Text(title)
+        }
+        .textCase(nil)
+        .foregroundStyle(purchaseManager.isPremium ? .primary : .secondary)
+        .accessibilityLabel({
+            let accessibilityString: String
+            let titleString = String(describing: title)
+
+            if purchaseManager.isPremium {
+                accessibilityString = titleString
+            } else {
+
+                let lockedString = L("premium.locked")
+                accessibilityString = "\(titleString), \(lockedString)"
+            }
+            return Text(accessibilityString)
+        }())
+        .accessibilityHint(
+            purchaseManager.isPremium
+            ? Text("")
+            : Text(L("premium.locked"))
+        )
     }
 
     @ViewBuilder
@@ -456,3 +485,4 @@ struct TimerEditView: View {
  - edit.minutes.value (singular/plural)
  - edit.seconds.value (singular/plural)
  */
+
