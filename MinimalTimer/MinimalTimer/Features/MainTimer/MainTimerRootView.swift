@@ -14,12 +14,14 @@ private enum ModalRoute: Identifiable {
     case edit(EditSheetRoute)
     case settings
     case paywall
-
+    case limitInfo
+    
     var id: String {
         switch self {
         case .edit(let r): return "edit-\(r.id)"
         case .settings: return "settings"
         case .paywall: return "paywall"
+        case .limitInfo: return "limitInfo"
         }
     }
 }
@@ -27,7 +29,7 @@ private enum ModalRoute: Identifiable {
 private enum EditSheetRoute: Identifiable {
     case create
     case edit(Int)
-
+    
     var id: String {
         switch self {
         case .create:           return "create"
@@ -39,26 +41,26 @@ private enum EditSheetRoute: Identifiable {
 struct MainTimerRootView: View {
     // MARK: Dependencies
     @ObservedObject var vm: MainViewModel
-
+    
     // MARK: Purchase
     @EnvironmentObject var purchaseManager: PurchaseManager
-
+    
     // MARK: Persistent Flags
     @AppStorage("hasSeenOnboarding") private var hasSeenOnboarding: Bool = false
-
+    
     // MARK: Navigation State
     @State private var path: [AppRoute] = []
     @State private var modalRoute: ModalRoute?
-
+    
     // MARK: Layout constants
     private let fabPadding: CGFloat = 20
     private let fabSize: CGFloat = 64
-
-
+    
+    
     // MARK: Floating Action Button State
-    private var fabSymbol: String { path.isEmpty ? "list.bullet" : "plus" }
-    private var fabAXLabel: LocalizedStringKey { path.isEmpty ? L("main.fab.showlist.label") : L("main.fab.create.label") }
-    private var fabAXHint: LocalizedStringKey { path.isEmpty ? L("main.fab.showlist.hint") : L("main.fab.create.hint") }
+    private var fabSymbol: String { path.isEmpty && !vm.timers.isEmpty ? "list.bullet" : "plus" }
+    private var fabAXLabel: LocalizedStringKey { path.isEmpty && !vm.timers.isEmpty ? L("main.fab.showlist.label") : L("main.fab.create.label") }
+    private var fabAXHint: LocalizedStringKey { path.isEmpty && !vm.timers.isEmpty ? L("main.fab.showlist.hint") : L("main.fab.create.hint") }
 
     var body: some View {
         NavigationStack(path: $path) {
@@ -91,7 +93,7 @@ struct MainTimerRootView: View {
         // MARK: Persistent FAB (stays across navigation)
         .overlay(alignment: .bottomTrailing) {
             FloatingButton(symbol: fabSymbol) {
-                if path.isEmpty {
+                if path.isEmpty && !vm.timers.isEmpty {
                     vm.pause(fromUser: false)
                     withAnimation(.snappy) { path.append(.list) }
                 } else {
@@ -107,7 +109,7 @@ struct MainTimerRootView: View {
             .accessibilityIdentifier("fab.main")
         }
         .animation(.snappy, value: fabSymbol)
-
+        
         // MARK: Paywall Promo
         .overlay(alignment: .bottomLeading) {
             let isOnList = path.last == .list
@@ -124,7 +126,7 @@ struct MainTimerRootView: View {
                 .transition(.move(edge: .bottom).combined(with: .opacity))
             }
         }
-
+        
         // MARK: Sheets
         .sheet(item: $modalRoute) { route in
             switch route {
@@ -162,6 +164,17 @@ struct MainTimerRootView: View {
                     .accessibilityLabel(L("main.paywall.title"))
                     .navigationBarTitleDisplayMode(.inline)
                 }
+            case .limitInfo:
+                LimitInfoSheet(
+                    currentCount: vm.timers.count, limit: 3,
+                    onUpgrade: { modalRoute = .paywall },
+                    onManage: {
+                        // 리스트로 이동해 정리하도록 유도
+                        if path.isEmpty { withAnimation(.snappy) { path.append(.list) } }
+                        modalRoute = nil
+                    },
+                    onClose: { modalRoute = nil }
+                )
             }
         }
     }
@@ -170,7 +183,7 @@ struct MainTimerRootView: View {
 // MARK: - Private Helpers
 private extension MainTimerRootView {
     enum EditMode { case create, edit }
-
+    
     @ViewBuilder
     func editView(index: Int?) -> some View {
         if let i = index {
@@ -192,15 +205,15 @@ private extension MainTimerRootView {
                 saveAction: vm.handleSave)
         }
     }
-
+    
     func openCreate() {
         if purchaseManager.isPremium || vm.timers.count < 3 {
             withAnimation(.snappy) { modalRoute = .edit(.create) }
         } else {
-            modalRoute = .paywall
+            modalRoute = .limitInfo
         }
     }
-
+    
     func openEdit(_ index: Int) {
         withAnimation(.snappy) { modalRoute = .edit(.edit(index)) }
     }
@@ -225,9 +238,9 @@ private extension LocalizedStringKey {
  - "main.fab.showlist.hint" = "Opens the list of saved timers.";
  - "main.fab.create.label" = "Create timer";
  - "main.fab.create.hint" = "Create a new timer.";
-
+ 
  - "main.onboarding.title" = "Welcome to MinimalTimer"; // Read by VoiceOver on onboarding cover
-
+ 
  - "main.paywall.title" = "Upgrade to Premium"; // Title for paywall cover
  - "paywall.price" = "$2.99"; // Example localized price string; replace with real localized value or keep using existing key
  - "main.paywall.hint" = "Review premium features and purchase or restore.";
@@ -236,15 +249,15 @@ private extension LocalizedStringKey {
  - "main.paywall.restore.hint" = "Restore previous purchases.";
  - "main.paywall.terms.hint" = "Open the Terms of Service.";
  - "main.paywall.privacy.hint" = "Open the Privacy Policy.";
-
+ 
  - "main.timerlist.title" = "Timers"; // For the list screen when pushed
  - "main.timerlist.hint" = "Browse, edit, or create timers.";
  - "main.timerlist.create.hint" = "Create a new timer from the list.";
  - "main.timerlist.edit.hint" = "Edit the selected timer.";
-
+ 
  - "main.edit.create.title" = "Create Timer";
  - "main.edit.edit.title" = "Edit Timer";
  - "main.edit.save.hint" = "Save your changes.";
  - "main.edit.delete.hint" = "Delete this timer.";
-*/
+ */
 
