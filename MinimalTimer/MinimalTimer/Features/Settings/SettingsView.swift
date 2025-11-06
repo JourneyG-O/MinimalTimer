@@ -8,21 +8,51 @@
 import SwiftUI
 
 struct SettingsView: View {
+    // MARK: - Callbacks
     var onClose: (() -> Void)?
     var onShowPaywall: (() -> Void)?
 
+    // MARK: - Env / Deps
     @EnvironmentObject private var purchaseManager: PurchaseManager
     @Environment(\.openURL) private var openURL
 
+    // MARK: - State
+    @State private var isRestoring = false
+    @State private var showRestoreAlert = false
+    @State private var restoreMessage: LocalizedStringKey = ""
+
     var body: some View {
-        List {
-            premiumSection
-            appInfoSection
-            policySection
+        ZStack {
+            // Base content
+            List {
+                premiumSection
+                appInfoSection
+                policySection
+            }
+            .listStyle(.insetGrouped)
+            .allowsHitTesting(!isRestoring)
+
+            // HUD overlay while restoring
+            if isRestoring {
+                Color.black.opacity(0.08).ignoresSafeArea()
+                VStack(spacing: 8) {
+                    ProgressView().progressViewStyle(.circular)
+                    Text(L("restore.inprogress"))
+                        .font(.footnote)
+                        .foregroundStyle(.secondary)
+
+                }
+                .padding(16)
+                .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 12, style: .continuous))
+            }
         }
-        .listStyle(.insetGrouped)
         .navigationTitle(L("settings.title"))
         .toolbar {
+            ToolbarItem(placement: .topBarLeading) {
+                if isRestoring {
+                    ProgressView().scaleEffect(0.9)
+                }
+            }
             ToolbarItem(placement: .topBarTrailing) {
                 Button(action: { onClose?() }) {
                     Image(systemName: "xmark")
@@ -33,6 +63,13 @@ struct SettingsView: View {
             }
         }
         .task { await purchaseManager.refreshProducts() }
+        .alert(isPresented: $showRestoreAlert) {
+            Alert(
+                title: Text(L("restore.title")),
+                message: Text(restoreMessage),
+                dismissButton: .default(Text(L("common.ok")))
+            )
+        }
     }
 }
 
@@ -47,19 +84,46 @@ private extension SettingsView {
                 HStack(alignment: .firstTextBaseline) {
                     VStack(alignment: .leading, spacing: 4) {
                         Text(L("settings.premium.headline"))
-                        Text(purchaseManager.localizedPrice.isEmpty
-                             ? L("settings.premium.price.loading")
-                             : LocalizedStringKey(purchaseManager.localizedPrice))
-                            .font(.caption)
-                            .foregroundStyle(.secondary)
+                        Text(
+                            purchaseManager.localizedPrice.isEmpty
+                            ? L("settings.premium.price.loading")
+                            : LocalizedStringKey(purchaseManager.localizedPrice)
+                        )
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
                     }
                     Spacer(minLength: 12)
                     Button(L("settings.premium.buy")) { onShowPaywall?() }
                         .buttonStyle(.borderedProminent)
                 }
-                Button(L("settings.premium.restore")) {
-                    Task { await purchaseManager.restore() }
+
+                Button {
+                    guard !isRestoring else { return }
+                    isRestoring = true
+                    Task {
+                        await purchaseManager.restore()
+                        isRestoring = false
+                        if purchaseManager.isPremium {
+                            restoreMessage = L("restore.success")
+                        } else if let err = purchaseManager.lastError {
+                            restoreMessage = LocalizedStringKey(err)
+                        } else {
+                            restoreMessage = L("restore.nothing")
+                        }
+                        showRestoreAlert = true
+                    }
+                } label: {
+                    HStack(spacing: 8) {
+                        if isRestoring {
+                            ProgressView().scaleEffect(0.9)
+                            Text(L("restore.inprogress"))
+                                .foregroundStyle(.secondary)
+                        } else {
+                            Text(L("settings.premium.restore"))
+                        }
+                    }
                 }
+                .disabled(isRestoring)
             }
 
             if let err = purchaseManager.lastError {
@@ -97,6 +161,10 @@ private extension SettingsView {
     }
 }
 
+// MARK: - Preview
 #Preview {
-    SettingsView()
+    NavigationStack {
+        SettingsView()
+            .environmentObject(PurchaseManager.shared)
+    }
 }

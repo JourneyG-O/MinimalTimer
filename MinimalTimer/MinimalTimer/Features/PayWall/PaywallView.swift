@@ -13,9 +13,13 @@ struct PaywallView: View {
     var onClose: (() -> Void)?
     var onUpgradeTap: (() -> Void)?
     var onRestoreTap: (() -> Void)?
+    @EnvironmentObject private var purchaseManager: PurchaseManager
 
     // MARK: - State
     @State private var isLoadingPrice = false
+    @State private var isRestoring = false
+    @State private var showRestoreAlert = false
+    @State private var restoreMessage: LocalizedStringKey = ""
 
     // MARK: - Body
     var body: some View {
@@ -41,6 +45,17 @@ struct PaywallView: View {
         .toolbar { topBar }
         .navigationBarTitleDisplayMode(.inline)
         .task { await simulatePriceLoading() }
+        .alert(isPresented: $showRestoreAlert) {
+            Alert(title: Text(L("restore.title")),
+                  message: Text(restoreMessage),
+                  dismissButton: .default(Text(L("common.ok")))
+            )
+        }
+        .onChange(of: showRestoreAlert) { oldValue, newValue in
+            if oldValue == true, newValue == false, purchaseManager.isPremium {
+                onClose?()
+            }
+        }
     }
 }
 
@@ -85,10 +100,29 @@ private extension PaywallView {
     }
 
     var restoreButton: some View {
-        Button(action: { onRestoreTap?() }) {
+        Button(action: {
+            guard !isRestoring else { return }
+            isRestoring = true
+            UIImpactFeedbackGenerator(style: .light).impactOccurred()
+            Task {
+                await purchaseManager.restore()
+                isRestoring = false
+                if purchaseManager.isPremium {
+                    restoreMessage = L("restore.success")
+                } else if let err = purchaseManager.lastError {
+                    restoreMessage = LocalizedStringKey(err)
+                } else {
+                    restoreMessage = L("restore.nothing")
+                }
+                showRestoreAlert = true
+            }
+        }) {
             HStack(spacing: 6) {
-                Image(systemName: "repeat")
-                    .opacity(0.5)
+                if isRestoring {
+                    ProgressView().scaleEffect(0.85)
+                } else {
+                    Image(systemName: "arrow.clockwise").opacity(0.5)
+                }
                 Text(L("paywall.restore"))
                     .font(.system(size: 14))
                     .foregroundStyle(.secondary)
@@ -98,6 +132,7 @@ private extension PaywallView {
         .tint(.primary)
         .accessibilityLabel(L("paywall.restore.label"))
         .accessibilityHint(L("paywall.restore.hint"))
+        .disabled(isRestoring)
     }
 
     var upgradeButton: some View {
