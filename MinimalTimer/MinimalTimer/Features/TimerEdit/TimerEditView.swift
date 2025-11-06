@@ -289,7 +289,8 @@ struct TimerEditView: View {
     private var previewHeader: some View {
         ZStack {
             RoundedRectangle(cornerRadius: previewCornerRadius, style: .continuous)
-                .fill(.ultraThinMaterial)
+                .fill(.clear)
+                .glassEffect(in: .rect(cornerRadius: previewCornerRadius))
 
             ZStack {
                 Circle()
