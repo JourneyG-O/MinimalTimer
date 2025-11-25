@@ -14,6 +14,7 @@ struct PaywallView: View {
     var onUpgradeTap: (() -> Void)?
     var onRestoreTap: (() -> Void)?
     @EnvironmentObject private var purchaseManager: PurchaseManager
+    @Environment(\.colorScheme) private var colorScheme
 
     // MARK: - State
     @State private var isLoadingPrice = false
@@ -154,8 +155,8 @@ private extension PaywallView {
             }
             .font(.system(size: 17, weight: .semibold))
             .frame(maxWidth: .infinity, minHeight: 52)
-            .foregroundStyle(.background)
-            .glassEffect(.regular.tint(.primary).interactive())
+            .foregroundStyle(colorScheme == .dark ? Color.black : Color.white)
+            .glassEffect(.regular.tint(colorScheme == .dark ? Color.white : Color.black).interactive())
             .padding(.horizontal, 20)
             .padding(.vertical, 8)
         }
@@ -200,10 +201,10 @@ private extension PaywallView {
             Button { onClose?() } label: {
                 Image(systemName: "xmark")
                     .font(.system(size: 14, weight: .bold))
-                    .foregroundStyle(.background)
+                    .foregroundStyle(colorScheme == .dark ? Color.black : Color.white)
                     .frame(width: 32, height: 32)
             }
-            .glassEffect(.regular.tint(.primary).interactive())
+            .glassEffect(.regular.tint(colorScheme == .dark ? Color.white : Color.black).interactive())
             .clipShape(Circle())
             .accessibilityLabel(L("paywall.close"))
             .accessibilityHint(L("paywall.close.hint"))
