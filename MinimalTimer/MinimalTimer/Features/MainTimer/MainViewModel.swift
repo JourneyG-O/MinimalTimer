@@ -17,15 +17,12 @@ enum InteractionMode {
 
 final class MainViewModel: ObservableObject {
 
-    // MARK: - Premium
     @Published var isPremium: Bool = UserDefaults.standard.bool(forKey: "isPremium") {
         didSet { UserDefaults.standard.set(isPremium, forKey: "isPremium") }
     }
 
-    // MARK: - Dependencies
     private let store = TimerStore()
 
-    // MARK: - Published Properties
     @Published var interactionMode: InteractionMode = .normal
     @Published var timers: [TimerModel] = [] {
         didSet {
@@ -41,7 +38,6 @@ final class MainViewModel: ObservableObject {
     @Published var isRunning: Bool = false
     @Published var isDragging: Bool = false
 
-    // MARK: - Internal State
     private var timer: Timer?
     private var previousSnappedIndex: Int?
     private var previousAngle: Double = 0.0
@@ -49,18 +45,6 @@ final class MainViewModel: ObservableObject {
     private let notifyGenerator = UINotificationFeedbackGenerator()
     private var audioPlayer: AVAudioPlayer?
 
-    // MARK: - Computed Properties
-    var progress: CGFloat {
-        guard let timer = currentTimer, timer.totalTime > 0 else { return 0 }
-        return CGFloat(timer.currentTime / timer.totalTime)
-    }
-
-    var currentTimer: TimerModel? {
-        guard timers.indices.contains(selectedTimerIndex) else { return nil }
-        return timers[selectedTimerIndex]
-    }
-
-    // MARK: - Initialization
     init() {
         let (savedTimers, savedIndex) = store.load()
         self.timers = savedTimers
@@ -71,14 +55,22 @@ final class MainViewModel: ObservableObject {
         configureAudioSession()
     }
 
-    // MARK: - Index Validation
+    var progress: CGFloat {
+        guard let timer = currentTimer, timer.totalTime > 0 else { return 0 }
+        return CGFloat(timer.currentTime / timer.totalTime)
+    }
+
+    var currentTimer: TimerModel? {
+        guard timers.indices.contains(selectedTimerIndex) else { return nil }
+        return timers[selectedTimerIndex]
+    }
+
     private func validateSelectedTimerIndex() {
         if selectedTimerIndex >= timers.count {
             selectedTimerIndex = max(timers.count - 1, 0)
         }
     }
 
-    // MARK: - Persistence
     func saveTimers() {
         store.save(timers: timers, selectedIndex: selectedTimerIndex)
     }
@@ -92,7 +84,6 @@ final class MainViewModel: ObservableObject {
         saveTimers()
     }
 
-    // MARK: - Timer Control
     func start() {
         guard !isRunning,
               timers.indices.contains(selectedTimerIndex),
@@ -152,7 +143,6 @@ final class MainViewModel: ObservableObject {
         timers[selectedTimerIndex].currentTime = resetTime
     }
 
-    // MARK: - Interaction
     func setUserProgress(to percentage: Double) {
         guard timers.indices.contains(selectedTimerIndex) else { return }
         let clamped = min(max(percentage, 0.0), 1.0)
@@ -227,8 +217,6 @@ final class MainViewModel: ObservableObject {
         updatePreviousAngle()
     }
 
-
-    // MARK: - Interaction Mode Control
     func enterSwitchMode() {
         pause(fromUser: false)
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
@@ -249,8 +237,6 @@ final class MainViewModel: ObservableObject {
     func restorePurchases() {
         Task { await PurchaseManager.shared.restore() }
     }
-
-    // MARK: - Feedback
 
     private func playEndFeedback(for timer: TimerModel) {
         guard !timer.isMuted else { return }
@@ -275,7 +261,6 @@ final class MainViewModel: ObservableObject {
         }
     }
 
-    // MARK: - Audio helpers
     private func configureAudioSession() {
         do {
             try AVAudioSession.sharedInstance().setCategory(.ambient, mode: .default, options: [])
@@ -316,4 +301,3 @@ extension MainViewModel {
         store.save(timers: timers, selectedIndex: selectedTimerIndex)
     }
 }
-

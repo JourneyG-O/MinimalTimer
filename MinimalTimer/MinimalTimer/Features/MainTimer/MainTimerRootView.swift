@@ -7,7 +7,6 @@
 
 import SwiftUI
 
-// MARK: - Routes
 private enum AppRoute { case list }
 
 private enum ModalRoute: Identifiable {
@@ -39,25 +38,18 @@ private enum EditSheetRoute: Identifiable {
 }
 
 struct MainTimerRootView: View {
-    // MARK: Dependencies
     @ObservedObject var vm: MainViewModel
     
-    // MARK: Purchase
     @EnvironmentObject var purchaseManager: PurchaseManager
     
-    // MARK: Persistent Flags
     @AppStorage("hasSeenOnboarding") private var hasSeenOnboarding: Bool = false
     
-    // MARK: Navigation State
     @State private var path: [AppRoute] = []
     @State private var modalRoute: ModalRoute?
     
-    // MARK: Layout constants
     private let fabPadding: CGFloat = 20
     private let fabSize: CGFloat = 64
     
-    
-    // MARK: Floating Action Button State
     private var fabSymbol: String { path.isEmpty && !vm.timers.isEmpty ? "list.bullet" : "plus" }
     private var fabAXLabel: LocalizedStringKey { path.isEmpty && !vm.timers.isEmpty ? L("main.fab.showlist.label") : L("main.fab.create.label") }
     private var fabAXHint: LocalizedStringKey { path.isEmpty && !vm.timers.isEmpty ? L("main.fab.showlist.hint") : L("main.fab.create.hint") }
@@ -84,13 +76,11 @@ struct MainTimerRootView: View {
                     }
                 }
         }
-        // MARK: Onboarding (first launch only)
         .fullScreenCover(isPresented: Binding(get: { !hasSeenOnboarding }, set: { _ in })) {
             OnboardingView { hasSeenOnboarding = true }
                 .accessibilityIdentifier("onboarding.root")
                 .accessibilityLabel(L("main.onboarding.title"))
         }
-        // MARK: Persistent FAB (stays across navigation)
         .overlay(alignment: .bottomTrailing) {
             FloatingButton(symbol: fabSymbol) {
                 if path.isEmpty && !vm.timers.isEmpty {
@@ -110,7 +100,6 @@ struct MainTimerRootView: View {
         }
         .animation(.snappy, value: fabSymbol)
         
-        // MARK: Paywall Promo
         .overlay(alignment: .bottomLeading) {
             let isOnList = path.last == .list
             if isOnList, !purchaseManager.isPremium {
@@ -127,7 +116,6 @@ struct MainTimerRootView: View {
             }
         }
         
-        // MARK: Sheets
         .sheet(item: $modalRoute) { route in
             switch route {
             case .edit(let editRoute):
@@ -180,10 +168,7 @@ struct MainTimerRootView: View {
     }
 }
 
-// MARK: - Private Helpers
 private extension MainTimerRootView {
-    enum EditMode { case create, edit }
-    
     @ViewBuilder
     func editView(index: Int?) -> some View {
         if let i = index {
@@ -218,46 +203,3 @@ private extension MainTimerRootView {
         withAnimation(.snappy) { modalRoute = .edit(.edit(index)) }
     }
 }
-
-// MARK: - View Modifiers
-private extension View {
-    func sheetStyle() -> some View {
-        self
-            .presentationDragIndicator(.visible)
-    }
-}
-
-// MARK: - Preview-friendly Localized Keys (no-op helpers)
-private extension LocalizedStringKey {
-    static var empty: LocalizedStringKey { "" }
-}
-
-/*
- Accessibility Localization Keys to provide (MainTimerRootView)
- - "main.fab.showlist.label" = "Show timers list";
- - "main.fab.showlist.hint" = "Opens the list of saved timers.";
- - "main.fab.create.label" = "Create timer";
- - "main.fab.create.hint" = "Create a new timer.";
- 
- - "main.onboarding.title" = "Welcome to MinimalTimer"; // Read by VoiceOver on onboarding cover
- 
- - "main.paywall.title" = "Upgrade to Premium"; // Title for paywall cover
- - "paywall.price" = "$2.99"; // Example localized price string; replace with real localized value or keep using existing key
- - "main.paywall.hint" = "Review premium features and purchase or restore.";
- - "main.paywall.close.hint" = "Close the paywall.";
- - "main.paywall.upgrade.hint" = "Purchase the premium upgrade.";
- - "main.paywall.restore.hint" = "Restore previous purchases.";
- - "main.paywall.terms.hint" = "Open the Terms of Service.";
- - "main.paywall.privacy.hint" = "Open the Privacy Policy.";
- 
- - "main.timerlist.title" = "Timers"; // For the list screen when pushed
- - "main.timerlist.hint" = "Browse, edit, or create timers.";
- - "main.timerlist.create.hint" = "Create a new timer from the list.";
- - "main.timerlist.edit.hint" = "Edit the selected timer.";
- 
- - "main.edit.create.title" = "Create Timer";
- - "main.edit.edit.title" = "Edit Timer";
- - "main.edit.save.hint" = "Save your changes.";
- - "main.edit.delete.hint" = "Delete this timer.";
- */
-

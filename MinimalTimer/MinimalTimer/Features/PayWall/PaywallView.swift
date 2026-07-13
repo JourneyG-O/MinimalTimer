@@ -8,16 +8,13 @@
 import SwiftUI
 
 struct PaywallView: View {
-    // MARK: - Dependencies
     let priceString: String
     var onClose: (() -> Void)?
     var onUpgradeTap: (() -> Void)?
     var onRestoreTap: (() -> Void)?
 
-    // MARK: - State
     @State private var isLoadingPrice = false
 
-    // MARK: - Body
     var body: some View {
         ZStack {
             Color(.systemBackground).ignoresSafeArea()
@@ -44,7 +41,6 @@ struct PaywallView: View {
     }
 }
 
-// MARK: - Sections
 private extension PaywallView {
     var header: some View {
         VStack(spacing: 8) {
@@ -135,7 +131,6 @@ private extension PaywallView {
     }
 }
 
-// MARK: - Private Views
 private extension PaywallView {
     func featureRow(icon: String, title: LocalizedStringKey, subtitle: LocalizedStringKey) -> some View {
         HStack(alignment: .firstTextBaseline, spacing: 16) {
@@ -158,7 +153,6 @@ private extension PaywallView {
     }
 }
 
-// MARK: - Toolbar & Tasks
 private extension PaywallView {
     var topBar: some ToolbarContent {
         ToolbarItem(placement: .topBarTrailing) {
@@ -182,7 +176,6 @@ private extension PaywallView {
     }
 }
 
-// MARK: - Preview
 #Preview("NewPaywallView - 기본") {
     NavigationStack {
         PaywallView(
@@ -219,4 +212,3 @@ private extension PaywallView {
  - "paywall.close" = "Close";
  - "paywall.close.hint" = "Close the paywall.";
 */
-

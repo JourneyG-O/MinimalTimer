@@ -17,14 +17,11 @@ struct TimerEditView: View {
 
     var onPaywall: (() -> Void)? = nil
 
-    // MARK: - Local validation flags
     @State private var titleError: Bool = false
     @State private var timeError: Bool = false
 
-    // MARK: - Color Options
     private let availableColors = CustomColor.allCases
 
-    // MARK: - Preview/Tick layout
     private let previewSize: CGFloat = 150
     private let previewHeaderHeight: CGFloat = 220   // 프리뷰 컨테이너(배경 포함) 높이
     private let previewCornerRadius: CGFloat = 16    // 프리뷰 배경 모서리
@@ -33,7 +30,21 @@ struct TimerEditView: View {
     private let previewPadding: CGFloat = 16
     private let formTopExtraSpacing: CGFloat = 36
 
-    // MARK: - Helpers
+    init(
+        mode: TimerEditViewModel.Mode,
+        initial: TimerDraft = .init(),
+        onPaywall: (() -> Void)? = nil,
+        saveAction: @escaping (TimerEditViewModel.Mode, TimerDraft) -> Void,
+        deleteAction:((Int) -> Void)? = nil
+    ) {
+        _vm = StateObject(wrappedValue: TimerEditViewModel(
+            mode: mode,
+            initial: initial,
+            saveAction: saveAction,
+            deleteAction: deleteAction
+        ))
+    }
+
     private var minutesBinding: Binding<Int> {
         Binding<Int>(
             get: { vm.draft.totalSeconds / 60 },
@@ -82,7 +93,6 @@ struct TimerEditView: View {
         }
     }
 
-    // MARK: - Subviews
     private var titleSection: some View {
         Section(
             header:
@@ -324,24 +334,8 @@ struct TimerEditView: View {
         .padding(.horizontal, previewPadding)
     }
 
-    init(
-        mode: TimerEditViewModel.Mode,
-        initial: TimerDraft = .init(),
-        onPaywall: (() -> Void)? = nil,
-        saveAction: @escaping (TimerEditViewModel.Mode, TimerDraft) -> Void,
-        deleteAction:((Int) -> Void)? = nil
-    ) {
-        _vm = StateObject(wrappedValue: TimerEditViewModel(
-            mode: mode,
-            initial: initial,
-            saveAction: saveAction,
-            deleteAction: deleteAction
-        ))
-    }
-
     var body: some View {
         ZStack(alignment: .top) {
-            // MARK: - 1) Base Form (화면 전체, 배경 숨김)
             Form {
                 // title
                 titleSection
@@ -379,7 +373,6 @@ struct TimerEditView: View {
                 Color.clear.frame(height: previewHeaderHeight + formTopExtraSpacing)
             }
 
-            // MARK: - 2) Overlay Preview Header (유리 배경 + 프리뷰 내용)
             previewHeader
         }
         .navigationTitle(vm.navTitle)
@@ -416,7 +409,6 @@ struct TimerEditView: View {
         return String(format: "%02d:%02d", minutes, seconds)
     }
 
-    // MARK: - Validation & Save
     private func handleCheckTap() {
         let isTitleEmpty = vm.draft.title.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
         let isTimeZero = vm.draft.totalSeconds <= 0
@@ -454,40 +446,3 @@ struct TimerEditView: View {
         )
     }
 }
-
-/*
- Localization Keys to provide (EditTimerView)
- - "edit.timername" = "Timer name";
- - "edit.timername.label" = "Timer name";
- - "edit.timername.hint" = "Enter a name for your timer.";
- - "edit.title.required" = "Title is required";
- - "edit.placeholder.name" = "Name";
- - "edit.title.count.value" = "%lld/%lld"; // current/limit
- - "edit.trimwarning" = "Title may be trimmed.";
- - "edit.color" = "Color";
- - "edit.color.value" = "%@"; // color name
- - "premium.locked" = "Premium feature locked";
- - "edit.time" = "Time";
- - "edit.time.required" = "Time is required";
- - "edit.minutes" = "Minutes";
- - "edit.seconds" = "Seconds";
- - "edit.minutes.value" = "%lld minutes"; // stringsdict candidate
- - "edit.seconds.value" = "%lld seconds"; // stringsdict candidate
- - "edit.options" = "Options";
- - "edit.option.alwaysshowtitle" = "Always show title";
- - "edit.option.alwaysshowticks" = "Always show ticks";
- - "edit.option.mute" = "Mute";
- - "edit.option.repeat" = "Repeat";
- - "edit.delete.label" = "Delete timer";
- - "edit.delete.hint" = "Delete this timer and close the editor.";
- - "edit.close.label" = "Close";
- - "edit.close.hint" = "Close the editor without saving.";
- - "edit.save.label" = "Save";
- - "edit.save.hint" = "Save changes and close the editor.";
- - "edit.title.untitled" = "Untitled";
-
- Stringsdict candidates:
- - edit.minutes.value (singular/plural)
- - edit.seconds.value (singular/plural)
- */
-

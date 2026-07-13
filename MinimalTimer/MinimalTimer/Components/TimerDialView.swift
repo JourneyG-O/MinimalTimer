@@ -8,16 +8,13 @@
 import SwiftUI
 
 struct TimerDialView: View {
-    // MARK: - Configuration
     let interactionMode: InteractionMode
 
-    // MARK: - Actions
     let onSingleTap: (() -> Void)?
     let onDoubleTap: (() -> Void)?
     let onDrag: ((Double) -> Void)?
     let onDragEnd: (() -> Void)?
 
-    // MARK: - Body
     var body: some View {
         GeometryReader { geometry in
             let width = geometry.size.width
@@ -46,7 +43,6 @@ struct TimerDialView: View {
 
     }
 
-    // MARK: - Tap Handlers
     private func singleTapHandler() {
         onSingleTap?()
     }
@@ -56,4 +52,3 @@ struct TimerDialView: View {
         onDoubleTap?()
     }
 }
-

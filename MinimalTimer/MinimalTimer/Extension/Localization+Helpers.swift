@@ -9,7 +9,6 @@ import Foundation
 
 import SwiftUI
 
-// MARK: - Localization Helpers
 func L(_ key: String) -> LocalizedStringKey {
     LocalizedStringKey(key)
 }

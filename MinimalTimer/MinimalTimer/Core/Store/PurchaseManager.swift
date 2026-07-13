@@ -5,7 +5,6 @@ import SwiftUI
 final class PurchaseManager: ObservableObject {
     static let shared = PurchaseManager()
 
-    // MARK: - Published State
     @Published var product: Product?
     @Published var isPremium: Bool = UserDefaults.standard.bool(forKey: "isPremium") {
         didSet {
@@ -15,10 +14,8 @@ final class PurchaseManager: ObservableObject {
     @Published var isLoading: Bool = false
     @Published var lastError: String?
 
-    // MARK: - Configuration
     let premiumProductID = "app.stannum.minitime.premium"
 
-    // MARK: - Init
     init() {
         Task { [weak self] in
             guard let self else { return }
@@ -27,13 +24,11 @@ final class PurchaseManager: ObservableObject {
         listenForEntitlements()
     }
 
-    // MARK: - Bootstrap
     private func bootstrap() async {
         await refreshProducts()
         await recalculateEntitlements()
     }
 
-    // MARK: - Product Loading
     func refreshProducts() async {
         await MainActor.run { isLoading = true; lastError = nil }
         do {
@@ -50,7 +45,6 @@ final class PurchaseManager: ObservableObject {
         }
     }
 
-    // MARK: - Purchasing
     func purchase() async -> Bool {
         lastError = nil
         guard let product = product else {
@@ -86,7 +80,6 @@ final class PurchaseManager: ObservableObject {
         }
     }
 
-    // MARK: - Restore
     func restore() async {
         do {
             try await AppStore.sync()
@@ -97,7 +90,6 @@ final class PurchaseManager: ObservableObject {
         }
     }
 
-    // MARK: - Entitlement Calculation
     /// Recalculate entitlement using current transactions for the premium product.
     private func recalculateEntitlements() async {
         var hasPremium = false
@@ -141,7 +133,6 @@ final class PurchaseManager: ObservableObject {
         return true
     }
 
-    // MARK: - Updates Listener
     private func listenForEntitlements() {
         Task { [weak self] in
             guard let self else { return }
@@ -159,10 +150,8 @@ final class PurchaseManager: ObservableObject {
         }
     }
 
-    // MARK: - Price
     var localizedPrice: String {
         guard let p = product else { return "" }
         return p.displayPrice
     }
 }
-

@@ -8,7 +8,6 @@
 import SwiftUI
 import UIKit
 
-// MARK: - 1. CustomColor.swift
 // Color 대신 이 열거형을 사용합니다.
 enum CustomColor: String, CaseIterable, Hashable, Codable {
     case dynamicForeground // 라이트: 검은색, 다크: 흰색

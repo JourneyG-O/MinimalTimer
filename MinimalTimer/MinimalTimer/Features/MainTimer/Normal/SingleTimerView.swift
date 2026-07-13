@@ -8,7 +8,6 @@
 import SwiftUI
 
 struct SingleTimerView: View {
-    // MARK: - Properties
     let timer: TimerModel
     let progress: CGFloat
     let isRunning: Bool
@@ -19,7 +18,6 @@ struct SingleTimerView: View {
     let onDrag: ((Double) -> Void)?
     let onDragEnd: (() -> Void)?
 
-    // MARK: - Body
     var body: some View {
         ZStack {
             TimerPieView(
@@ -31,7 +29,6 @@ struct SingleTimerView: View {
             )
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             
-
             TimerDialView(
                 interactionMode: interactionMode,
                 onSingleTap: onSingleTap,

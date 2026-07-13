@@ -36,7 +36,6 @@ struct SettingsView: View {
     }
 }
 
-// MARK: - Sections
 private extension SettingsView {
     var premiumSection: some View {
         Section(L("settings.premium.section")) {

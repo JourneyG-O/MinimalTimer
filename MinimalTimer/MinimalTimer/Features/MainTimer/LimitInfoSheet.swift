@@ -17,14 +17,12 @@ struct LimitInfoSheet: View {
     var body: some View {
         VStack(spacing: 16) {
 
-            // MARK: - Title & Subtitle (Localized)
             Text(LF("limit.title", limit))
                 .font(.title3.bold())
 
             Text(LF("limit.subtitle", currentCount, limit))
                 .foregroundStyle(.secondary)
 
-            // MARK: - CTA Buttons
             HStack(spacing: 12) {
                 Button(L("limit.cta.manage"), action: onManage)
                     .buttonStyle(.bordered)
@@ -38,7 +36,6 @@ struct LimitInfoSheet: View {
             }
             .padding(.top, 4)
 
-            // MARK: - Close
             Button(L("limit.close"), action: onClose)
                 .font(.footnote)
                 .foregroundStyle(.secondary)

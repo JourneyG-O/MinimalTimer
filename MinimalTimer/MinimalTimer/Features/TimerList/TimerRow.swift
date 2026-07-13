@@ -1,7 +1,6 @@
 import SwiftUI
 
 struct TimerRow: View {
-    // MARK: - Dependencies
     let timer: TimerModel
     let onSelect: () -> Void
     let onEdit: () -> Void
@@ -62,7 +61,6 @@ struct TimerRow: View {
         .accessibilityHint(L("timerlist.row.select.hint"))
     }
 
-    // MARK: - Helpers
     private func formatTotalTime(seconds: Int) -> String {
         let m = seconds / 60, s = seconds % 60
         return String(format: "%02d:%02d", m, s)

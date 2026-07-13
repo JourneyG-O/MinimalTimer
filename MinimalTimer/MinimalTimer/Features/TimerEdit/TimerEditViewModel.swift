@@ -7,7 +7,6 @@
 
 import SwiftUI
 
-// MARK: - Draft
 // 타이머 편집/생성 화면에 쓰는 임시 상태(폼 데이터): 원본 TimerModel을 건드리지 않고 안전하게 저장, 화면 닫을 때 저장 안 하면 원본 그대로 유지
 struct TimerDraft: Equatable {
     var title: String = ""
@@ -19,7 +18,6 @@ struct TimerDraft: Equatable {
     var isRepeatEnabled: Bool = false
 }
 
-// MARK: - ViewModel
 final class TimerEditViewModel: ObservableObject {
     enum Mode: Equatable {
         case create
@@ -66,7 +64,6 @@ final class TimerEditViewModel: ObservableObject {
     }
 }
 
-// MARK: - UI Helpers
 extension TimerEditViewModel {
     var navTitle: LocalizedStringKey {
         switch mode {

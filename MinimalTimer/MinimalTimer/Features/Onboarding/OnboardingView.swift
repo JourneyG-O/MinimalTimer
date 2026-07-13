@@ -8,10 +8,8 @@
 import SwiftUI
 
 struct OnboardingView: View {
-    // MARK: - Dependencies
     @Environment(\.colorScheme) private var colorScheme
 
-    // MARK: - Models
     struct Page: Identifiable {
         let id = UUID()
         let imageName: String
@@ -19,10 +17,8 @@ struct OnboardingView: View {
         let captionKey: String
     }
 
-    // MARK: - External Callbacks
     var onFinish: (() -> Void)?
 
-    // MARK: - Initialization / Pages
     private let pages: [Page] = [
         .init(
             imageName: "ob_tap",
@@ -41,10 +37,8 @@ struct OnboardingView: View {
         ),
     ]
 
-    // MARK: - State
     @State private var selection: Int = 0
 
-    // MARK: - Body
     var body: some View {
         ZStack {
             Color(.systemBackground).ignoresSafeArea()
@@ -75,7 +69,6 @@ struct OnboardingView: View {
     }
 }
 
-// MARK: - Private Helpers
 private extension OnboardingView {
     func resolvedImageName(for base: String) -> String {
         let suffix = (colorScheme == .dark) ? "_dark" : "_light"
@@ -102,7 +95,6 @@ private extension OnboardingView {
     }
 }
 
-// MARK: - Subviews
 private extension OnboardingView {
     var pager: some View {
         TabView(selection: $selection) {
@@ -181,7 +173,6 @@ private extension OnboardingView {
     }
 }
 
-// MARK: - Components
 private struct OnboardingCard: View {
     let imageName: String
     let imageAccessibilityLabel: LocalizedStringKey
@@ -227,4 +218,3 @@ private struct OnboardingCard: View {
  - "accessibility.ob_drag" = "Drag to adjust the timer duration."
  - "accessibility.ob_doubletap" = "Double-tap for a quick reset."
 */
-

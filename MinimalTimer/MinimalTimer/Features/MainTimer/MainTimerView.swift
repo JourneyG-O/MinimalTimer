@@ -7,12 +7,8 @@
 import SwiftUI
 
 struct MainTimerView: View {
-    // MARK: - Dependencies
     @ObservedObject var vm: MainViewModel
 
-    
-
-    // MARK: - Body
     var body: some View {
         GeometryReader { proxy in
 
@@ -84,13 +80,11 @@ struct MainTimerView: View {
         }
     }
 
-    // MARK: - Background
     private var backgroundLayer: some View {
         Color(.systemBackground)
     }
 }
 
-// MARK: - Accessibility Helpers
 private func formatRemaining(_ seconds: Int) -> String {
     let m = seconds / 60, s = seconds % 60
     return String(format: "%02d:%02d", m, s)
@@ -115,5 +109,3 @@ private func formatRemaining(_ seconds: Int) -> String {
  - "main.remaining.hint" = "Time left until the timer completes.";
  - "main.remaining.value" = "%@ remaining"; // value will be like 05:00
 */
-
-

@@ -9,7 +9,6 @@ import SwiftUI
 import StoreKit
 
 struct TimerListView: View {
-    // MARK: - Dependencies
     @ObservedObject var vm: MainViewModel
     var onCreate: (() -> Void)?
     var onEdit: ((Int) -> Void)?
@@ -17,16 +16,11 @@ struct TimerListView: View {
     var onShowSettings: (() -> Void)?
     var onSelectTimer: ((Int) -> Void)?
 
-    // MARK: Purchase
     @EnvironmentObject var purchaseManager: PurchaseManager
 
-    
-    // MARK: - States
     @Environment(\.dismiss) private var dismiss
     @Environment(\.editMode) private var editMode
     
-    
-    // MARK: - Body
     var body: some View {
         
         VStack(spacing: 0) {
@@ -98,7 +92,6 @@ struct TimerListView: View {
         }
     }
     
-    // MARK: - Helpers
     private func handleSelect(_ index: Int) {
         vm.selectTimer(at: index)
         UISelectionFeedbackGenerator().selectionChanged()
