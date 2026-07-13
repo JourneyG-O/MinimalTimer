@@ -17,10 +17,6 @@ enum InteractionMode {
 
 final class MainViewModel: ObservableObject {
 
-    @Published var isPremium: Bool = UserDefaults.standard.bool(forKey: "isPremium") {
-        didSet { UserDefaults.standard.set(isPremium, forKey: "isPremium") }
-    }
-
     private let store = TimerStore()
 
     @Published var interactionMode: InteractionMode = .normal

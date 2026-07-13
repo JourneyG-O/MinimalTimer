@@ -5,10 +5,13 @@ import SwiftUI
 final class PurchaseManager: ObservableObject {
     static let shared = PurchaseManager()
 
+    private static let premiumStateKey = "isPremium"
+    private let secureStore = KeychainStore()
+
     @Published var product: Product?
-    @Published var isPremium: Bool = UserDefaults.standard.bool(forKey: "isPremium") {
+    @Published var isPremium: Bool = KeychainStore().bool(forKey: PurchaseManager.premiumStateKey) {
         didSet {
-            UserDefaults.standard.set(isPremium, forKey: "isPremium")
+            secureStore.setBool(isPremium, forKey: Self.premiumStateKey)
         }
     }
     @Published var isLoading: Bool = false
@@ -17,11 +20,23 @@ final class PurchaseManager: ObservableObject {
     let premiumProductID = "app.stannum.minitime.premium"
 
     init() {
+        migrateLegacyEntitlementIfNeeded()
         Task { [weak self] in
             guard let self else { return }
             await self.bootstrap()
         }
         listenForEntitlements()
+    }
+
+    /// 이전 버전은 결제 권한을 UserDefaults 평문으로 저장했다.
+    /// 최초 실행 1회에 한해 Keychain으로 이관하고 평문 값을 제거한다.
+    private func migrateLegacyEntitlementIfNeeded() {
+        guard secureStore.data(forKey: Self.premiumStateKey) == nil else { return }
+        if UserDefaults.standard.bool(forKey: Self.premiumStateKey) {
+            secureStore.setBool(true, forKey: Self.premiumStateKey)
+            isPremium = true
+        }
+        UserDefaults.standard.removeObject(forKey: Self.premiumStateKey)
     }
 
     private func bootstrap() async {
