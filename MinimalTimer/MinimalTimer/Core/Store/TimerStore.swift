@@ -55,7 +55,12 @@ extension TimerModelDTO {
     }
 }
 
-class TimerStore {
+protocol TimerStoring {
+    func save(timers: [TimerModel], selectedIndex: Int)
+    func load() -> ([TimerModel], Int)
+}
+
+final class TimerStore: TimerStoring {
     private let timerKey = "savedTimers"
     private let selectedIndexKey = "selectedTimerIndex"
 

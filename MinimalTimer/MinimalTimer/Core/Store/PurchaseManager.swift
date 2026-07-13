@@ -2,7 +2,7 @@ import StoreKit
 import SwiftUI
 
 @MainActor
-final class PurchaseManager: ObservableObject {
+final class PurchaseManager: ObservableObject, PurchaseGating {
     static let shared = PurchaseManager()
 
     private static let premiumStateKey = "isPremium"

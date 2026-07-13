@@ -17,7 +17,8 @@ enum InteractionMode {
 
 final class MainViewModel: ObservableObject {
 
-    private let store = TimerStore()
+    private let store: TimerStoring
+    private let purchaseGating: any PurchaseGating
 
     @Published var interactionMode: InteractionMode = .normal
     @Published var timers: [TimerModel] = [] {
@@ -41,7 +42,12 @@ final class MainViewModel: ObservableObject {
     private let notifyGenerator = UINotificationFeedbackGenerator()
     private var audioPlayer: AVAudioPlayer?
 
-    init() {
+    init(
+        store: TimerStoring = TimerStore(),
+        purchaseGating: any PurchaseGating
+    ) {
+        self.store = store
+        self.purchaseGating = purchaseGating
         let (savedTimers, savedIndex) = store.load()
         self.timers = savedTimers
         self.selectedTimerIndex = savedIndex
@@ -59,6 +65,12 @@ final class MainViewModel: ObservableObject {
     var currentTimer: TimerModel? {
         guard timers.indices.contains(selectedTimerIndex) else { return nil }
         return timers[selectedTimerIndex]
+    }
+
+    /// 무료 사용자는 타이머 개수 제한 내에서만 새 타이머를 만들 수 있다.
+    @MainActor
+    var canCreateTimer: Bool {
+        purchaseGating.isPremium || timers.count < Constants.Purchase.freeTimerLimit
     }
 
     private func validateSelectedTimerIndex() {
@@ -228,10 +240,6 @@ final class MainViewModel: ObservableObject {
                 self.interactionMode = .normal
             }
         }
-    }
-
-    func restorePurchases() {
-        Task { await PurchaseManager.shared.restore() }
     }
 
     private func playEndFeedback(for timer: TimerModel) {

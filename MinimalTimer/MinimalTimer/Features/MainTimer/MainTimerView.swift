@@ -91,5 +91,5 @@ private func formatRemaining(_ seconds: Int) -> String {
 }
 
 #Preview {
-    MainTimerView(vm: .init())
+    MainTimerView(vm: MainViewModel(purchaseGating: PurchaseManager.shared))
 }

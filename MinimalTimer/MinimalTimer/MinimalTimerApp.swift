@@ -13,7 +13,7 @@ struct MinimalTimerApp: App {
 
     var body: some Scene {
         WindowGroup {
-            MainTimerRootView(vm: .init())
+            MainTimerRootView(vm: MainViewModel(purchaseGating: purchaseManager))
                 .environmentObject(purchaseManager)
         }
     }

@@ -192,7 +192,7 @@ private extension MainTimerRootView {
     }
     
     func openCreate() {
-        if purchaseManager.isPremium || vm.timers.count < Constants.Purchase.freeTimerLimit {
+        if vm.canCreateTimer {
             withAnimation(.snappy) { modalRoute = .edit(.create) }
         } else {
             modalRoute = .limitInfo
