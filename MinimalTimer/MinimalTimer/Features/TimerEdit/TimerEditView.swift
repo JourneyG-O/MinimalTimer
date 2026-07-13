@@ -49,15 +49,15 @@ struct TimerEditView: View {
         Binding<Int>(
             get: { vm.draft.totalSeconds / 60 },
             set: { newMinutes in
-                let m = max(0, min(newMinutes, Constants.Time.maxMinutes))
-                let s = vm.draft.totalSeconds % 60
-                let maxTotal = Constants.Time.maxMinutes * 60
-                if m >= Constants.Time.maxMinutes && s > 0 {
+                let minutes = max(0, min(newMinutes, Constants.Time.maxMinutes))
+                let seconds = vm.draft.totalSeconds % 60
+                let maxTotalSeconds = Constants.Time.maxMinutes * 60
+                if minutes >= Constants.Time.maxMinutes && seconds > 0 {
                     withAnimation(.easeInOut(duration: 0.15)) {
-                        vm.draft.totalSeconds = maxTotal
+                        vm.draft.totalSeconds = maxTotalSeconds
                     }
                 } else {
-                    vm.draft.totalSeconds = m * 60 + s
+                    vm.draft.totalSeconds = minutes * 60 + seconds
                 }
             }
         )
@@ -67,11 +67,11 @@ struct TimerEditView: View {
         Binding<Int>(
             get: { vm.draft.totalSeconds % 60 },
             set: { newSeconds in
-                let m = vm.draft.totalSeconds / 60
-                let sCap = (m >= Constants.Time.maxMinutes) ? 0 : min(max(0, newSeconds), 59)
-                let maxTotal = Constants.Time.maxMinutes * 60
-                let total = m * 60 + sCap
-                vm.draft.totalSeconds = min(total, maxTotal)
+                let minutes = vm.draft.totalSeconds / 60
+                let cappedSeconds = (minutes >= Constants.Time.maxMinutes) ? 0 : min(max(0, newSeconds), 59)
+                let maxTotalSeconds = Constants.Time.maxMinutes * 60
+                let totalSeconds = minutes * 60 + cappedSeconds
+                vm.draft.totalSeconds = min(totalSeconds, maxTotalSeconds)
             }
         )
     }
@@ -80,8 +80,8 @@ struct TimerEditView: View {
         if let onPaywall {
             onPaywall()
         } else {
-            let gen = UINotificationFeedbackGenerator()
-            gen.notificationOccurred(.warning)
+            let feedbackGenerator = UINotificationFeedbackGenerator()
+            feedbackGenerator.notificationOccurred(.warning)
         }
     }
 
@@ -403,9 +403,9 @@ struct TimerEditView: View {
         .ignoresSafeArea(.keyboard)
     }
 
-    private func formattedTime(_ sec: Int) -> String {
-        let minutes = sec / 60
-        let seconds = sec % 60
+    private func formattedTime(_ totalSeconds: Int) -> String {
+        let minutes = totalSeconds / 60
+        let seconds = totalSeconds % 60
         return String(format: "%02d:%02d", minutes, seconds)
     }
 

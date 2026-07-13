@@ -187,28 +187,3 @@ private extension PaywallView {
         .navigationBarTitleDisplayMode(.inline)
     }
 }
-
-/*
- Localization Keys to provide (PaywallView)
- - "paywall.title" = "Upgrade to Premium";
- - "paywall.title.hint" = "Review premium features and purchase.";
- - "paywall.features.label" = "Premium features";
- - "paywall.features.hint" = "List of benefits included in premium.";
- - "paywall.feature.once.title" = "One-time purchase";
- - "paywall.feature.unlimited.title" = "Unlimited timers";
- - "paywall.feature.unlimited.subtitle" = "Create as many timers as you want.";
- - "paywall.feature.unlock.title" = "Unlock customization";
- - "paywall.feature.unlock.subtitle" = "Access all colors and options.";
- - "paywall.feature.future.title" = "Future updates";
- - "paywall.feature.future.subtitle" = "Get new features as they arrive.";
- - "paywall.restore" = "Restore purchases";
- - "paywall.restore.label" = "Restore purchases";
- - "paywall.restore.hint" = "Restore previous premium purchases.";
- - "paywall.upgrade.loading" = "Loading price…";
- - "paywall.upgrade.cta" = "Upgrade for %@"; // price placeholder
- - "paywall.upgrade.label" = "Upgrade";
- - "paywall.upgrade.value" = "%@"; // announce price as value
- - "paywall.upgrade.hint" = "Purchase premium upgrade.";
- - "paywall.close" = "Close";
- - "paywall.close.hint" = "Close the paywall.";
-*/

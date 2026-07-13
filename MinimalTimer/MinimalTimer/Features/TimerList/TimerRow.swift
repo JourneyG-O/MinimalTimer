@@ -62,17 +62,7 @@ struct TimerRow: View {
     }
 
     private func formatTotalTime(seconds: Int) -> String {
-        let m = seconds / 60, s = seconds % 60
-        return String(format: "%02d:%02d", m, s)
+        let minutes = seconds / 60, remainingSeconds = seconds % 60
+        return String(format: "%02d:%02d", minutes, remainingSeconds)
     }
 }
-
-/*
- Localization Keys to provide (TimerRow)
- - "timerlist.row.untitled" = "Untitled";
- - "timerlist.row.edit.label" = "Edit timer";
- - "timerlist.row.edit.hint" = "Open options to edit this timer.";
- - "timerlist.row.select.label" = "Select timer";
- - "timerlist.row.select.hint" = "Open this timer in the main view.";
- - "timerlist.row.value" = "%@"; // e.g., 05:00
-*/

@@ -106,16 +106,3 @@ struct TimerListView: View {
         onEdit?(index)
     }
 }
-
-/*
- Localization Keys to provide (TimerListView)
- - "timerlist.reorder" = "Reorder";
- - "timerlist.delete" = "Delete";
- - "timerlist.edit.done.hint" = "Finish editing and return to the list.";
- - "settings.open.label" = "Open settings";
- - "settings.open.hint" = "Show app settings and information.";
- - "timerlist.promo.label" = "Unlock premium";
- - "timerlist.promo.hint" = "Open paywall to upgrade.";
- - "settings.close.label" = "Close settings";
- - "settings.close.hint" = "Dismiss the settings view.";
-*/

@@ -80,8 +80,8 @@ extension TimerModel {
         self.totalTime = TimeInterval(draft.totalSeconds)
         self.currentTime = TimeInterval(draft.totalSeconds)
         self.isTitleAlwaysVisible = draft.isTitleAlwaysVisible
-        if let t = lastUserSetTime {
-            self.lastUserSetTime = min(t, self.totalTime)
+        if let lastUserSetTime {
+            self.lastUserSetTime = min(lastUserSetTime, self.totalTime)
         }
         self.isTickAlwaysVisible = draft.isTickAlwaysVisible
         self.isMuted = draft.isMuted

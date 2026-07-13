@@ -103,8 +103,8 @@ final class MainViewModel: ObservableObject {
             self.timers[self.selectedTimerIndex].currentTime -= 1
 
             if self.timers[self.selectedTimerIndex].currentTime <= 0 {
-                if let t = self.currentTimer {
-                    self.playEndFeedback(for: t)
+                if let timerModel = self.currentTimer {
+                    self.playEndFeedback(for: timerModel)
                 }
 
                 if self.timers[self.selectedTimerIndex].isRepeatEnabled {
@@ -116,7 +116,7 @@ final class MainViewModel: ObservableObject {
                 }
             }
         }
-        if let t = currentTimer { playTapFeedback(for: t) }
+        if let timerModel = currentTimer { playTapFeedback(for: timerModel) }
     }
 
     func pause(fromUser: Bool) {
@@ -126,7 +126,7 @@ final class MainViewModel: ObservableObject {
         timer = nil
 
         if fromUser {
-            if let t = currentTimer { playTapFeedback(for: t) }
+            if let timerModel = currentTimer { playTapFeedback(for: timerModel) }
         }
     }
 
@@ -187,8 +187,8 @@ final class MainViewModel: ObservableObject {
         // 스냅 단위 인덱스(초or분)
         let snappedIndex = Int(clampedTime / unit)
 
-        if let prev = previousSnappedIndex {
-            if snappedIndex != prev {
+        if let previousIndex = previousSnappedIndex {
+            if snappedIndex != previousIndex {
                 playSnapFeedback(for: timer)
                 previousSnappedIndex = snappedIndex
             }

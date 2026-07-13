@@ -86,26 +86,10 @@ struct MainTimerView: View {
 }
 
 private func formatRemaining(_ seconds: Int) -> String {
-    let m = seconds / 60, s = seconds % 60
-    return String(format: "%02d:%02d", m, s)
+    let minutes = seconds / 60, remainingSeconds = seconds % 60
+    return String(format: "%02d:%02d", minutes, remainingSeconds)
 }
 
 #Preview {
     MainTimerView(vm: .init())
 }
-
-/*
- Localization Keys to provide (MainTimerView)
- - "main.empty.title" = "No timers";
- - "main.empty.description" = "Create a timer to get started.";
- - "main.timer.current.label" = "Current timer";
- - "main.timer.current.hint" = "Double-tap to reset, drag to adjust, single tap to start or pause.";
- - "main.timer.state.running" = "Running";
- - "main.timer.state.paused" = "Paused";
- - "main.title.label" = "Timer title";
- - "main.title.hint" = "Title of the selected timer.";
- - "main.title.untitled" = "Untitled";
- - "main.remaining.label" = "Remaining time";
- - "main.remaining.hint" = "Time left until the timer completes.";
- - "main.remaining.value" = "%@ remaining"; // value will be like 05:00
-*/

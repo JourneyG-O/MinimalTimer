@@ -95,9 +95,9 @@ final class PurchaseManager: ObservableObject {
         var hasPremium = false
         for await entitlement in StoreKit.Transaction.currentEntitlements {
             switch entitlement {
-            case .verified(let t):
-                if t.productID == premiumProductID {
-                    if isTransactionActive(t) {
+            case .verified(let transaction):
+                if transaction.productID == premiumProductID {
+                    if isTransactionActive(transaction) {
                         hasPremium = true
                         break
                     }
@@ -138,10 +138,10 @@ final class PurchaseManager: ObservableObject {
             guard let self else { return }
             for await update in StoreKit.Transaction.updates {
                 switch update {
-                case .verified(let t):
-                    if t.productID == self.premiumProductID {
-                        await self.updateEntitlementFrom(t)
-                        await t.finish()
+                case .verified(let transaction):
+                    if transaction.productID == self.premiumProductID {
+                        await self.updateEntitlementFrom(transaction)
+                        await transaction.finish()
                     }
                 case .unverified(_, _):
                     continue
@@ -151,7 +151,7 @@ final class PurchaseManager: ObservableObject {
     }
 
     var localizedPrice: String {
-        guard let p = product else { return "" }
-        return p.displayPrice
+        guard let product else { return "" }
+        return product.displayPrice
     }
 }

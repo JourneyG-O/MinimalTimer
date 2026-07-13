@@ -202,19 +202,3 @@ private struct OnboardingCard: View {
         }
     }
 }
-
-/*
- Accessibility Localization Keys to provide:
- - "onboarding.pages.label" = "Onboarding pages"; // Label for the pager
- - "onboarding.pages.hint" = "Swipe left or right with three fingers to change pages."; // Adjust gesture language as appropriate
- - "onboarding.pages.value" = "Page %lld of %lld"; // Used to announce current page out of total (with two integer placeholders)
- - "onboarding.skip" = "Skip"
- - "onboarding.skip.hint" = "Skip the introduction."
- - "onboarding.next" = "Next"
- - "onboarding.next.hint" = "Go to the next page."
- - "onboarding.start" = "Start"
- - "onboarding.start.hint" = "Finish onboarding and start using the app."
- - "accessibility.ob_tap" = "Single tap to start or pause the timer."
- - "accessibility.ob_drag" = "Drag to adjust the timer duration."
- - "accessibility.ob_doubletap" = "Double-tap for a quick reset."
-*/

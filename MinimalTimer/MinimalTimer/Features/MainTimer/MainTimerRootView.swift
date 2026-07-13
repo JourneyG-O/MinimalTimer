@@ -154,7 +154,7 @@ struct MainTimerRootView: View {
                 }
             case .limitInfo:
                 LimitInfoSheet(
-                    currentCount: vm.timers.count, limit: 3,
+                    currentCount: vm.timers.count, limit: Constants.Purchase.freeTimerLimit,
                     onUpgrade: { modalRoute = .paywall },
                     onManage: {
                         // 리스트로 이동해 정리하도록 유도
@@ -171,15 +171,15 @@ struct MainTimerRootView: View {
 private extension MainTimerRootView {
     @ViewBuilder
     func editView(index: Int?) -> some View {
-        if let i = index {
+        if let index {
             // Edit existing
-            let initial = TimerDraft(model: vm.timers[i])
+            let initial = TimerDraft(model: vm.timers[index])
             TimerEditView(
-                mode: .edit(index: i),
+                mode: .edit(index: index),
                 initial: initial,
                 onPaywall: { modalRoute = .paywall },
                 saveAction: vm.handleSave,
-                deleteAction: { idx in vm.deleteTimer(at: idx) }
+                deleteAction: { deletedIndex in vm.deleteTimer(at: deletedIndex) }
             )
         } else {
             // Create new
@@ -192,7 +192,7 @@ private extension MainTimerRootView {
     }
     
     func openCreate() {
-        if purchaseManager.isPremium || vm.timers.count < 3 {
+        if purchaseManager.isPremium || vm.timers.count < Constants.Purchase.freeTimerLimit {
             withAnimation(.snappy) { modalRoute = .edit(.create) }
         } else {
             modalRoute = .limitInfo
