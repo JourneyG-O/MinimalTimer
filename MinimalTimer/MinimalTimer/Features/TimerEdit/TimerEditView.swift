@@ -34,8 +34,8 @@ struct TimerEditView: View {
         mode: TimerEditViewModel.Mode,
         initial: TimerDraft = .init(),
         onPaywall: (() -> Void)? = nil,
-        saveAction: @escaping (TimerEditViewModel.Mode, TimerDraft) -> Void,
-        deleteAction:((Int) -> Void)? = nil
+        saveAction: @escaping @MainActor (TimerEditViewModel.Mode, TimerDraft) -> Void,
+        deleteAction: (@MainActor (Int) -> Void)? = nil
     ) {
         _vm = StateObject(wrappedValue: TimerEditViewModel(
             mode: mode,

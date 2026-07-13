@@ -1,6 +1,26 @@
 import StoreKit
 import SwiftUI
 
+enum PurchaseError: LocalizedError {
+    case productUnavailable
+    case purchasePending
+    case verificationFailed(Error)
+    case underlying(Error)
+
+    var errorDescription: String? {
+        switch self {
+        case .productUnavailable:
+            return String(localized: "purchase.error.productUnavailable", defaultValue: "상품을 불러오지 못했습니다.")
+        case .purchasePending:
+            return String(localized: "purchase.error.pending", defaultValue: "구매가 보류중입니다.")
+        case .verificationFailed(let error):
+            return error.localizedDescription
+        case .underlying(let error):
+            return error.localizedDescription
+        }
+    }
+}
+
 @MainActor
 final class PurchaseManager: ObservableObject, PurchaseGating {
     static let shared = PurchaseManager()
@@ -15,7 +35,7 @@ final class PurchaseManager: ObservableObject, PurchaseGating {
         }
     }
     @Published var isLoading: Bool = false
-    @Published var lastError: String?
+    @Published var lastError: PurchaseError?
 
     let premiumProductID = "app.stannum.minitime.premium"
 
@@ -45,25 +65,22 @@ final class PurchaseManager: ObservableObject, PurchaseGating {
     }
 
     func refreshProducts() async {
-        await MainActor.run { isLoading = true; lastError = nil }
+        isLoading = true
+        lastError = nil
         do {
             let products = try await Product.products(for: [premiumProductID])
-            await MainActor.run {
-                self.product = products.first
-                self.isLoading = false
-            }
+            product = products.first
+            isLoading = false
         } catch {
-            await MainActor.run {
-                self.isLoading = false
-                self.lastError = error.localizedDescription
-            }
+            isLoading = false
+            lastError = .underlying(error)
         }
     }
 
     func purchase() async -> Bool {
         lastError = nil
-        guard let product = product else {
-            lastError = "상품을 불러오지 못했습니다."
+        guard let product else {
+            lastError = .productUnavailable
             return false
         }
         do {
@@ -77,20 +94,20 @@ final class PurchaseManager: ObservableObject, PurchaseGating {
                     await transaction.finish()
                     return isPremium
                 case .unverified(_, let error):
-                    lastError = error.localizedDescription
+                    lastError = .verificationFailed(error)
                     return false
                 }
             case .userCancelled:
                 lastError = nil
                 return false
             case .pending:
-                lastError = String(localized: "구매가 보류중입니다.")
+                lastError = .purchasePending
                 return false
             @unknown default:
                 return false
             }
         } catch {
-            lastError = error.localizedDescription
+            lastError = .underlying(error)
             return false
         }
     }
@@ -101,7 +118,7 @@ final class PurchaseManager: ObservableObject, PurchaseGating {
             // After sync, recompute entitlements
             await recalculateEntitlements()
         } catch {
-            lastError = error.localizedDescription
+            lastError = .underlying(error)
         }
     }
 
@@ -122,14 +139,13 @@ final class PurchaseManager: ObservableObject, PurchaseGating {
                 break
             }
         }
-        await MainActor.run { self.isPremium = hasPremium }
+        isPremium = hasPremium
     }
 
     /// Update entitlement from a specific transaction considering state (revoked/expired/refunded).
     private func updateEntitlementFrom(_ transaction: StoreKit.Transaction) async {
         guard transaction.productID == premiumProductID else { return }
-        let active = isTransactionActive(transaction)
-        await MainActor.run { self.isPremium = active }
+        isPremium = isTransactionActive(transaction)
     }
 
     /// Determine if a transaction currently grants access.

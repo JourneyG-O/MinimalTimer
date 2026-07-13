@@ -61,8 +61,8 @@ private extension SettingsView {
                 }
             }
 
-            if let err = purchaseManager.lastError {
-                Text(err)
+            if let error = purchaseManager.lastError {
+                Text(error.localizedDescription)
                     .font(.caption)
                     .foregroundStyle(.red)
             }

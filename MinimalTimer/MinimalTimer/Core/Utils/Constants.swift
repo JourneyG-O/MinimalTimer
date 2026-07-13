@@ -20,4 +20,15 @@ enum Constants {
         /// 무료 사용자가 생성할 수 있는 최대 타이머 개수
         static let freeTimerLimit: Int = 3
     }
+
+    enum Interaction {
+        /// 카운트다운 1틱 간격
+        static let tickInterval: Duration = .seconds(1)
+
+        /// 스위치 모드 전환 전 지연
+        static let switchModeDelay: Duration = .seconds(0.1)
+
+        /// 스위치 모드 전환 애니메이션 시간
+        static let switchModeAnimationSeconds: TimeInterval = 0.1
+    }
 }

@@ -18,6 +18,7 @@ struct TimerDraft: Equatable {
     var isRepeatEnabled: Bool = false
 }
 
+@MainActor
 final class TimerEditViewModel: ObservableObject {
     enum Mode: Equatable {
         case create
@@ -28,15 +29,15 @@ final class TimerEditViewModel: ObservableObject {
     let mode: Mode
 
     // 저장은 상위(MainViewModel)에서 주입
-    private let saveAction: (Mode, TimerDraft) -> Void
+    private let saveAction: @MainActor (Mode, TimerDraft) -> Void
 
     // 삭제는 편집 모드에서만 사용
-    private let deleteAction: ((Int) -> Void)?
+    private let deleteAction: (@MainActor (Int) -> Void)?
 
     init(mode: Mode,
          initial: TimerDraft = .init(),
-         saveAction: @escaping (Mode, TimerDraft) -> Void,
-         deleteAction: ((Int) -> Void)? = nil) {
+         saveAction: @escaping @MainActor (Mode, TimerDraft) -> Void,
+         deleteAction: (@MainActor (Int) -> Void)? = nil) {
         self.mode = mode
         self.draft = initial
         self.saveAction = saveAction
@@ -48,9 +49,8 @@ final class TimerEditViewModel: ObservableObject {
         draft.totalSeconds > 0
     }
 
-    func setTime(byMinutes m: Int) {
-        let sec = max(0, min(m, 120)) * 60
-        draft.totalSeconds = sec
+    func setTime(byMinutes minutes: Int) {
+        draft.totalSeconds = max(0, min(minutes, Constants.Time.maxMinutes)) * 60
     }
 
     func save() {

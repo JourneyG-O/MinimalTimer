@@ -8,13 +8,13 @@
 import AudioToolbox
 import AVFoundation
 import SwiftUI
-import StoreKit
 
 enum InteractionMode {
     case normal
     case switching
 }
 
+@MainActor
 final class MainViewModel: ObservableObject {
 
     private let store: TimerStoring
@@ -35,11 +35,10 @@ final class MainViewModel: ObservableObject {
     @Published var isRunning: Bool = false
     @Published var isDragging: Bool = false
 
-    private var timer: Timer?
+    private var countdownTask: Task<Void, Never>?
     private var previousSnappedIndex: Int?
     private var previousAngle: Double = 0.0
     private let feedbackGenerator = UIImpactFeedbackGenerator(style: .light)
-    private let notifyGenerator = UINotificationFeedbackGenerator()
     private var audioPlayer: AVAudioPlayer?
 
     init(
@@ -68,7 +67,6 @@ final class MainViewModel: ObservableObject {
     }
 
     /// 무료 사용자는 타이머 개수 제한 내에서만 새 타이머를 만들 수 있다.
-    @MainActor
     var canCreateTimer: Bool {
         purchaseGating.isPremium || timers.count < Constants.Purchase.freeTimerLimit
     }
@@ -100,38 +98,46 @@ final class MainViewModel: ObservableObject {
         isRunning = true
         UIApplication.shared.isIdleTimerDisabled = true
 
-        timer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { [weak self] _ in
-            guard let self = self else { return }
+        if let timerModel = currentTimer { playTapFeedback(for: timerModel) }
+        startCountdown()
+    }
 
-            guard self.timers.indices.contains(self.selectedTimerIndex) else {
-                self.pause(fromUser: false)
-                return
-            }
-
-            self.timers[self.selectedTimerIndex].currentTime -= 1
-
-            if self.timers[self.selectedTimerIndex].currentTime <= 0 {
-                if let timerModel = self.currentTimer {
-                    self.playEndFeedback(for: timerModel)
-                }
-
-                if self.timers[self.selectedTimerIndex].isRepeatEnabled {
-                    self.reset()
-                    self.start()
-                } else {
-                    self.pause(fromUser: false)
-                    self.reset()
-                }
+    private func startCountdown() {
+        countdownTask?.cancel()
+        countdownTask = Task { [weak self] in
+            while !Task.isCancelled {
+                try? await Task.sleep(for: Constants.Interaction.tickInterval)
+                guard !Task.isCancelled, let self else { return }
+                self.advanceOneSecond()
             }
         }
-        if let timerModel = currentTimer { playTapFeedback(for: timerModel) }
+    }
+
+    private func advanceOneSecond() {
+        guard timers.indices.contains(selectedTimerIndex) else {
+            pause(fromUser: false)
+            return
+        }
+
+        timers[selectedTimerIndex].currentTime -= 1
+        guard timers[selectedTimerIndex].currentTime <= 0 else { return }
+
+        if let timerModel = currentTimer { playEndFeedback(for: timerModel) }
+
+        if timers[selectedTimerIndex].isRepeatEnabled {
+            reset()
+            start()
+        } else {
+            pause(fromUser: false)
+            reset()
+        }
     }
 
     func pause(fromUser: Bool) {
         isRunning = false
         UIApplication.shared.isIdleTimerDisabled = false
-        timer?.invalidate()
-        timer = nil
+        countdownTask?.cancel()
+        countdownTask = nil
 
         if fromUser {
             if let timerModel = currentTimer { playTapFeedback(for: timerModel) }
@@ -227,42 +233,38 @@ final class MainViewModel: ObservableObject {
 
     func enterSwitchMode() {
         pause(fromUser: false)
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-            withAnimation(.easeInOut(duration: 0.1)) {
-                self.interactionMode = .switching
-            }
-        }
+        transitionInteractionMode(to: .switching)
     }
 
     func exitSwitchMode() {
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-            withAnimation(.easeInOut(duration: 0.1)) {
-                self.interactionMode = .normal
+        transitionInteractionMode(to: .normal)
+    }
+
+    private func transitionInteractionMode(to mode: InteractionMode) {
+        Task { [weak self] in
+            try? await Task.sleep(for: Constants.Interaction.switchModeDelay)
+            guard let self else { return }
+            withAnimation(.easeInOut(duration: Constants.Interaction.switchModeAnimationSeconds)) {
+                self.interactionMode = mode
             }
         }
     }
 
     private func playEndFeedback(for timer: TimerModel) {
         guard !timer.isMuted else { return }
-        DispatchQueue.main.async {
-            AudioServicesPlaySystemSound(kSystemSoundID_Vibrate)
-        }
+        AudioServicesPlaySystemSound(kSystemSoundID_Vibrate)
         playSoundIfAllowed(named: "finish", ext: "mp3")
     }
 
     private func playTapFeedback(for timer: TimerModel) {
         guard !timer.isMuted else { return }
-        DispatchQueue.main.async {
-            self.feedbackGenerator.prepare()
-            self.feedbackGenerator.impactOccurred()
-        }
+        feedbackGenerator.prepare()
+        feedbackGenerator.impactOccurred()
     }
 
     private func playSnapFeedback(for timer: TimerModel) {
         guard !timer.isMuted else { return }
-        DispatchQueue.main.async {
-            self.feedbackGenerator.impactOccurred()
-        }
+        feedbackGenerator.impactOccurred()
     }
 
     private func configureAudioSession() {

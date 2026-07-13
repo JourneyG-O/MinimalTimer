@@ -65,9 +65,12 @@ final class TimerStore: TimerStoring {
     private let selectedIndexKey = "selectedTimerIndex"
 
     func save(timers: [TimerModel], selectedIndex: Int) {
-        let dtos = timers.map { $0.toDTO() }
-        if let encoded = try? JSONEncoder().encode(dtos) {
+        do {
+            let dtos = timers.map { $0.toDTO() }
+            let encoded = try JSONEncoder().encode(dtos)
             UserDefaults.standard.set(encoded, forKey: timerKey)
+        } catch {
+            assertionFailure("타이머 인코딩 실패: \(error)")
         }
         UserDefaults.standard.set(selectedIndex, forKey: selectedIndexKey)
     }

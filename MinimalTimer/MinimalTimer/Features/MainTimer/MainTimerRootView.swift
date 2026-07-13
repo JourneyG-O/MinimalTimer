@@ -63,11 +63,11 @@ struct MainTimerRootView: View {
                         TimerListView(
                             vm: vm,
                             onCreate: { openCreate() },
-                            onEdit: { idx in openEdit(idx) },
+                            onEdit: { index in openEdit(index) },
                             onShowPaywall: { modalRoute = .paywall },
                             onShowSettings: { modalRoute = .settings }
                         ) { _ in
-                            DispatchQueue.main.async {
+                            Task {
                                 withAnimation(.snappy) { path.removeAll() }
                             }
                         }
