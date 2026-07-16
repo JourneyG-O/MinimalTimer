@@ -65,6 +65,14 @@ struct MainTimerRootView: View {
     // 극한의 미니멀함: 타이머 실행 중에는 우측 하단 버튼도 숨긴다.
     private var isFloatingButtonVisible: Bool { !vm.isRunning }
 
+    // 메인 화면에서 가로모드 옵션이 켜진 타이머를 볼 때만 가로 회전을 허용한다.
+    // 리스트·편집·설정 등 다른 화면(path/modal)에서는 항상 세로로 고정한다.
+    private var allowsLandscape: Bool {
+        path.isEmpty
+        && modalRoute == nil
+        && (vm.currentTimer?.isLandscapeEnabled == true)
+    }
+
     var body: some View {
         NavigationStack(path: $path) {
             MainTimerView(vm: vm)
@@ -183,6 +191,12 @@ struct MainTimerRootView: View {
                     onClose: { modalRoute = nil }
                 )
             }
+        }
+        .onAppear {
+            AppOrientationDelegate.apply(allowsLandscape: allowsLandscape)
+        }
+        .onChange(of: allowsLandscape) { _, newValue in
+            AppOrientationDelegate.apply(allowsLandscape: newValue)
         }
     }
 }

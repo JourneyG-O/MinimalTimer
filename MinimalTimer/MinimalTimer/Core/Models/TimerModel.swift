@@ -18,6 +18,7 @@ struct TimerModel: Identifiable {
     var isTickAlwaysVisible: Bool
     var isMuted: Bool
     var isRepeatEnabled: Bool
+    var isLandscapeEnabled: Bool
 
     init(
         id: UUID = UUID(), // ← 기본값 설정
@@ -29,7 +30,8 @@ struct TimerModel: Identifiable {
         isTitleAlwaysVisible: Bool = false ,
         isTickAlwaysVisible: Bool = false,
         isMuted: Bool = false,
-        isRepeatEnabled: Bool = false
+        isRepeatEnabled: Bool = false,
+        isLandscapeEnabled: Bool = false
 
     ) {
         self.id = id
@@ -42,6 +44,7 @@ struct TimerModel: Identifiable {
         self.isTickAlwaysVisible = isTickAlwaysVisible
         self.isMuted = isMuted
         self.isRepeatEnabled = isRepeatEnabled
+        self.isLandscapeEnabled = isLandscapeEnabled
     }
 }
 
@@ -55,6 +58,7 @@ extension TimerDraft {
         self.isTickAlwaysVisible = model.isTickAlwaysVisible
         self.isMuted = model.isMuted
         self.isRepeatEnabled = model.isRepeatEnabled
+        self.isLandscapeEnabled = model.isLandscapeEnabled
     }
 }
 
@@ -71,6 +75,7 @@ extension TimerModel {
         self.isTickAlwaysVisible = draft.isTickAlwaysVisible
         self.isMuted = draft.isMuted
         self.isRepeatEnabled = draft.isRepeatEnabled
+        self.isLandscapeEnabled = draft.isLandscapeEnabled
     }
 
     // 기존 TimerModel에 Draft 값 반영 (편집 저장 시)
@@ -86,5 +91,6 @@ extension TimerModel {
         self.isTickAlwaysVisible = draft.isTickAlwaysVisible
         self.isMuted = draft.isMuted
         self.isRepeatEnabled = draft.isRepeatEnabled
+        self.isLandscapeEnabled = draft.isLandscapeEnabled
     }
 }

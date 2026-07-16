@@ -19,6 +19,8 @@ struct TimerModelDTO: Codable {
     var isTickAlwaysVisible: Bool
     var isMuted: Bool
     var isRepeatEnabled: Bool
+    // 하위호환: 기존 저장 데이터에는 이 키가 없으므로 Optional로 두어 디코딩 실패를 막는다.
+    var isLandscapeEnabled: Bool?
 }
 
 extension TimerModel {
@@ -33,7 +35,8 @@ extension TimerModel {
             isTitleAlwaysVisible: isTitleAlwaysVisible,
             isTickAlwaysVisible: isTickAlwaysVisible,
             isMuted: isMuted,
-            isRepeatEnabled: isRepeatEnabled
+            isRepeatEnabled: isRepeatEnabled,
+            isLandscapeEnabled: isLandscapeEnabled
         )
     }
 }
@@ -50,7 +53,8 @@ extension TimerModelDTO {
             isTitleAlwaysVisible: isTitleAlwaysVisible,
             isTickAlwaysVisible: isTickAlwaysVisible,
             isMuted: isMuted,
-            isRepeatEnabled: isRepeatEnabled
+            isRepeatEnabled: isRepeatEnabled,
+            isLandscapeEnabled: isLandscapeEnabled ?? false
         )
     }
 }

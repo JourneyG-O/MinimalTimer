@@ -17,6 +17,7 @@ struct TimerDraft: Equatable {
     var isTickAlwaysVisible: Bool = false
     var isMuted: Bool = false
     var isRepeatEnabled: Bool = false
+    var isLandscapeEnabled: Bool = false
 }
 
 // MARK: - ViewModel

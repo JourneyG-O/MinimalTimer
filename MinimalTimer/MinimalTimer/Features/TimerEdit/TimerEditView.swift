@@ -226,6 +226,9 @@ struct TimerEditView: View {
             premiumToggle(isOn: $vm.draft.isRepeatEnabled) {
                 Label(L("edit.option.repeat"), systemImage: "repeat")
             }
+            premiumToggle(isOn: $vm.draft.isLandscapeEnabled) {
+                Label(L("edit.option.landscape"), systemImage: "rectangle.landscape.rotate")
+            }
         }
     }
 

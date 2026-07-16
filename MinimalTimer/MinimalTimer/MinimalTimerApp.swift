@@ -9,6 +9,7 @@ import SwiftUI
 
 @main
 struct MinimalTimerApp: App {
+    @UIApplicationDelegateAdaptor(AppOrientationDelegate.self) private var orientationDelegate
     @StateObject private var purchaseManager = PurchaseManager.shared
 
     var body: some Scene {

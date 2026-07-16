@@ -22,7 +22,8 @@ struct MainTimerView: View {
 
     var body: some View {
         GeometryReader { proxy in
-            let isLandscape = proxy.size.width > proxy.size.height
+            let allowsLandscape = vm.currentTimer?.isLandscapeEnabled == true
+            let isLandscape = allowsLandscape && proxy.size.width > proxy.size.height
 
             Group {
                 if isLandscape {
