@@ -8,14 +8,12 @@
 import SwiftUI
 
 struct TimerPieView: View {
-    // MARK: - Properties
     let timer: TimerModel
-    let progress: CGFloat
+    let progressAt: (Date) -> CGFloat
     let isRunning: Bool
     let isDragging: Bool
     let interactionMode: InteractionMode
 
-    // MARK: - Computed Properties
     private var fillColor: Color {
         if interactionMode == .normal && !isRunning && !isDragging {
             return timer.color.toColor.opacity(0.7)
@@ -24,7 +22,6 @@ struct TimerPieView: View {
         }
     }
 
-    // MARK: - Body
     var body: some View {
         ZStack {
 
@@ -33,9 +30,11 @@ struct TimerPieView: View {
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
             }
 
-            PieShape(progress: progress)
-                .fill(fillColor)
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
+            TimelineView(.animation(paused: !isRunning)) { context in
+                PieShape(progress: progressAt(context.date))
+                    .fill(fillColor)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+            }
 
             if isDragging || timer.isTickAlwaysVisible {
                 let useSeconds = timer.totalTime < Constants.Time.snapSecondThreshold
