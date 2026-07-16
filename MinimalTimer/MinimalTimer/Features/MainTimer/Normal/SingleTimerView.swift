@@ -9,7 +9,7 @@ import SwiftUI
 
 struct SingleTimerView: View {
     let timer: TimerModel
-    let progress: CGFloat
+    let progressAt: (Date) -> CGFloat
     let isRunning: Bool
     let isDragging: Bool
     let interactionMode: InteractionMode
@@ -22,7 +22,7 @@ struct SingleTimerView: View {
         ZStack {
             TimerPieView(
                 timer: timer,
-                progress: progress,
+                progressAt: progressAt,
                 isRunning: isRunning,
                 isDragging: isDragging,
                 interactionMode: interactionMode

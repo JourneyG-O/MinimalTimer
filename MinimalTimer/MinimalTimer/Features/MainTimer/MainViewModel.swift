@@ -36,6 +36,8 @@ final class MainViewModel: ObservableObject {
     @Published var isDragging: Bool = false
 
     private var countdownTask: Task<Void, Never>?
+    private var runStartDate: Date?
+    private var runStartRemaining: TimeInterval = 0
     private var previousSnappedIndex: Int?
     private var previousAngle: Double = 0.0
     private let feedbackGenerator = UIImpactFeedbackGenerator(style: .light)
@@ -56,9 +58,16 @@ final class MainViewModel: ObservableObject {
         configureAudioSession()
     }
 
-    var progress: CGFloat {
+    /// 원형 그래프 전용 진행도. 실행 중에는 시작 시각을 기준으로 남은 시간을 연속
+    /// 계산해 초 단위 이산 감소 없이 부드럽게 움직이고, 정지 상태에서는 currentTime을 따른다.
+    func graphProgress(at date: Date) -> CGFloat {
         guard let timer = currentTimer, timer.totalTime > 0 else { return 0 }
-        return CGFloat(timer.currentTime / timer.totalTime)
+        guard isRunning, let start = runStartDate else {
+            return CGFloat(timer.currentTime / timer.totalTime)
+        }
+        let elapsed = date.timeIntervalSince(start)
+        let remaining = max(0, runStartRemaining - elapsed)
+        return CGFloat(remaining / timer.totalTime)
     }
 
     var currentTimer: TimerModel? {
@@ -97,6 +106,9 @@ final class MainViewModel: ObservableObject {
 
         isRunning = true
         UIApplication.shared.isIdleTimerDisabled = true
+
+        runStartRemaining = timers[selectedTimerIndex].currentTime
+        runStartDate = Date()
 
         if let timerModel = currentTimer { playTapFeedback(for: timerModel) }
         startCountdown()
@@ -138,6 +150,7 @@ final class MainViewModel: ObservableObject {
         UIApplication.shared.isIdleTimerDisabled = false
         countdownTask?.cancel()
         countdownTask = nil
+        runStartDate = nil
 
         if fromUser {
             if let timerModel = currentTimer { playTapFeedback(for: timerModel) }
@@ -145,7 +158,21 @@ final class MainViewModel: ObservableObject {
     }
 
     func startOrPauseTimer() {
-        isRunning ? pause(fromUser: true) : start()
+        if isRunning {
+            syncCurrentTimeToElapsed()
+            pause(fromUser: true)
+        } else {
+            start()
+        }
+    }
+
+    /// 사용자가 정지를 누른 순간의 연속 남은 시간을 currentTime에 반영해,
+    /// 정지 직후 그래프가 초 경계로 튀지 않고 이어지도록 한다.
+    private func syncCurrentTimeToElapsed() {
+        guard let start = runStartDate,
+              timers.indices.contains(selectedTimerIndex) else { return }
+        let elapsed = Date().timeIntervalSince(start)
+        timers[selectedTimerIndex].currentTime = max(0, runStartRemaining - elapsed)
     }
 
     func reset() {

@@ -97,7 +97,7 @@ private extension MainTimerView {
         if let timer = vm.currentTimer {
             SingleTimerView(
                 timer: timer,
-                progress: vm.progress,
+                progressAt: { vm.graphProgress(at: $0) },
                 isRunning: vm.isRunning,
                 isDragging: vm.isDragging,
                 interactionMode: vm.interactionMode,
