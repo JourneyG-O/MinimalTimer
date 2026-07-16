@@ -62,6 +62,9 @@ struct MainTimerRootView: View {
     private var fabAXLabel: LocalizedStringKey { path.isEmpty && !vm.timers.isEmpty ? L("main.fab.showlist.label") : L("main.fab.create.label") }
     private var fabAXHint: LocalizedStringKey { path.isEmpty && !vm.timers.isEmpty ? L("main.fab.showlist.hint") : L("main.fab.create.hint") }
 
+    // 극한의 미니멀함: 타이머 실행 중에는 우측 하단 버튼도 숨긴다.
+    private var isFloatingButtonVisible: Bool { !vm.isRunning }
+
     var body: some View {
         NavigationStack(path: $path) {
             MainTimerView(vm: vm)
@@ -92,23 +95,27 @@ struct MainTimerRootView: View {
         }
         // MARK: Persistent FAB (stays across navigation)
         .overlay(alignment: .bottomTrailing) {
-            FloatingButton(symbol: fabSymbol) {
-                if path.isEmpty && !vm.timers.isEmpty {
-                    vm.pause(fromUser: false)
-                    withAnimation(.snappy) { path.append(.list) }
-                } else {
-                    openCreate()
+            if isFloatingButtonVisible {
+                FloatingButton(symbol: fabSymbol) {
+                    if path.isEmpty && !vm.timers.isEmpty {
+                        vm.pause(fromUser: false)
+                        withAnimation(.snappy) { path.append(.list) }
+                    } else {
+                        openCreate()
+                    }
                 }
+                .padding(.trailing, fabPadding)
+                .padding(.bottom, 0)
+                .ignoresSafeArea()
+                .accessibilityLabel(fabAXLabel)
+                .accessibilityHint(fabAXHint)
+                .accessibilityAddTraits(.isButton)
+                .accessibilityIdentifier("fab.main")
+                .transition(.scale.combined(with: .opacity))
             }
-            .padding(.trailing, fabPadding)
-            .padding(.bottom, 0)
-            .ignoresSafeArea()
-            .accessibilityLabel(fabAXLabel)
-            .accessibilityHint(fabAXHint)
-            .accessibilityAddTraits(.isButton)
-            .accessibilityIdentifier("fab.main")
         }
         .animation(.snappy, value: fabSymbol)
+        .animation(.snappy, value: isFloatingButtonVisible)
         
         // MARK: Paywall Promo
         .overlay(alignment: .bottomLeading) {
