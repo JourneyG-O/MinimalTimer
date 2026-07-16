@@ -4,15 +4,18 @@ import SwiftUI
 enum PurchaseError: LocalizedError {
     case productUnavailable
     case purchasePending
+    case nothingToRestore
     case verificationFailed(Error)
     case underlying(Error)
 
     var errorDescription: String? {
         switch self {
         case .productUnavailable:
-            return String(localized: "purchase.error.productUnavailable", defaultValue: "상품을 불러오지 못했습니다.")
+            return String(localized: "purchase.error.productUnavailable", defaultValue: "Couldn't load the product.")
         case .purchasePending:
-            return String(localized: "purchase.error.pending", defaultValue: "구매가 보류중입니다.")
+            return String(localized: "purchase.error.pending", defaultValue: "Your purchase is pending approval.")
+        case .nothingToRestore:
+            return String(localized: "purchase.error.nothingToRestore", defaultValue: "No purchase was found for the Apple Account signed in to the App Store.")
         case .verificationFailed(let error):
             return error.localizedDescription
         case .underlying(let error):
@@ -113,10 +116,13 @@ final class PurchaseManager: ObservableObject, PurchaseGating {
     }
 
     func restore() async {
+        lastError = nil
         do {
             try await AppStore.sync()
-            // After sync, recompute entitlements
             await recalculateEntitlements()
+            lastError = isPremium ? nil : .nothingToRestore
+        } catch StoreKitError.userCancelled {
+            lastError = nil
         } catch {
             lastError = .underlying(error)
         }
